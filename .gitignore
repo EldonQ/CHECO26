@@ -1,0 +1,19 @@
+# WorkBuddy local workspace (memory, build scripts) — not part of the repository
+.workbuddy/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Temporary / output artefacts
+*.tmp
+output_folder*/
+standardized_*.tif
+focal_*.tif
+dist_*.tif
+*.log
+
+# OS
+Thumbs.db
+.DS_Store

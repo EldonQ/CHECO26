@@ -1,0 +1,10 @@
+relpath,verdict,match,n,max_abs_diff,tol
+glo/anthro/foothii/2015/hii/glo_anthro_foothii_2015_hii.tif,fail,0.9244,992,14.8952,2.941
+glo/anthro/foothii/2019/hii/glo_anthro_foothii_2019_hii.tif,fail,0.9083,992,14.6567,2.991
+glo/anthro/landscan/2022/pop/glo_anthro_landscan_2022_pop.tif,pass,0.974,1000,2697.66,399.4
+glo/bioclim/cnclim1km-ensmean/scenario/2030/ssp126/bio14/glo_bioclim_cnclim1km-ensmean_scenario_2030_ssp126_bio14.tif,pass,0.999,1000,7.47116,5.40718
+glo/bioclim/cnclim1km-ensmean/scenario/2030/ssp585/bio14/glo_bioclim_cnclim1km-ensmean_scenario_2030_ssp585_bio14.tif,pass,0.999,1000,7.16447,5.06355
+glo/bioclim/cnclim1km-ensmean/scenario/2055/ssp245/bio13/glo_bioclim_cnclim1km-ensmean_scenario_2055_ssp245_bio13.tif,pass,1.0,1000,20.8326,25.4696
+glo/bioclim/cnclim1km/present/bio09/glo_bioclim_cnclim1km_present_bio09.tif,pass,0.986,1000,2.91059,1.303
+glo/soil/csdlv2/clay/30/glo_soil_csdlv2_clay_30.tif,fail,0.903,1000,6.51682,2.3085
+glo/soil/csdlv2/wet-r/15/glo_soil_csdlv2_wet-r_15.tif,pass,0.995,1000,11.0686,9.2065

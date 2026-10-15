@@ -1,0 +1,12 @@
+﻿gate,result,detail
+expected_layers,1595,layers listed in the delivery manifest
+disk_layers,1595,.tif files present in the delivery tree
+missing,0,manifest layers absent from disk
+extra_outside_manifest,0,disk layers absent from the manifest
+alignment_failures,0,CRS / resolution / extent / grid origin vs. standard grid
+over_china_mask_layers,0,layers with valid cells outside the China mask (mask valid cells = 9490310)
+naming_validator_errors,0,folder underscores / prefix-join / depth 4-7 / duplicate names / illegal suffixes
+derived_value_range_fails,0,derived values outside the base-layer range (G1)
+derived_empty_window_fails,0,derived values where the window held no valid base cell (G2)
+lulc_bound_fails,0,Shannon / edge / patch-density / patch-size theoretical bounds
+cell_by_cell_checks,"6 pass / 9","3 reference differences from bilinear reprojection at sharp gradients (see README)"

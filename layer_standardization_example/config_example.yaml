@@ -1,0 +1,42 @@
+# CHECO26 grid and standardization rules (example configuration)
+#
+# Trimmed copy of the production configuration (pipeline/config.yaml) that
+# drives every standardization example in this repository. All parameters are
+# fixed decisions; the code contains no magic numbers.
+
+grid:
+  # China Albers equal-area (identical parameters to the official CLCD projection)
+  resolution: 1000.0
+  # Extent = projected bounding rectangle of china.shp + 10 km buffer, rounded to 1 km
+  xmin: -2648000
+  ymin: 1867000
+  xmax: 2213000
+  ymax: 5929000
+  # -> 4861 columns x 4062 rows
+  crs_wkt: >-
+    PROJCS["China_Albers",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],
+    PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],
+    PROJECTION["Albers_Conic_Equal_Area"],PARAMETER["latitude_of_center",0],
+    PARAMETER["longitude_of_center",105],PARAMETER["standard_parallel_1",25],
+    PARAMETER["standard_parallel_2",47],PARAMETER["false_easting",0],
+    PARAMETER["false_northing",0],UNIT["metre",1]]
+
+mask:
+  # china.shp rasterized with all_touched=True (keeps islands and coastlines);
+  # every delivered layer is clipped to the national boundary
+  all_touched: true
+  apply_to_all_layers: true
+
+nodata:
+  float: -9999.0
+  uint8_categorical: 255
+
+resampling:
+  # fixed rules, selected by variable type -- never by convenience
+  categorical: nearest
+  continuous: bilinear
+  proportion: bilinear
+  distance: bilinear
+  # fine-resolution sources (30 m / 90 m) downscaled by a large factor:
+  downscale_continuous: average   # window mean
+  downscale_categorical: mode     # window majority
