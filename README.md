@@ -11,6 +11,7 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 </p>
 
 ## Spatial characteristics
+<img src="https://github.com/EldonQ/CHECO26/blob/main/figs/china_boundary.png" data-canonical-src="https://github.com/EldonQ/CHECO26/blob/main/figs/china_boundary.png" width="500"  />
 
 | Parameter  | Value |
 | ------------- | ------------- |
