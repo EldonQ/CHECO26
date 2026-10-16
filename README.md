@@ -2,7 +2,7 @@
 
 
 
-CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research in China, gathering 1,595 layers from 8 main environmental categories. CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as the environmental covariate base for species distribution modelling with [N-SDM 2.0](https://doi.org/10.1002/ecog.08547).
+CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research in China, gathering 1,595 layers from 8 main environmental categories. CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as a ready-to-use environmental covariate base for species distribution modelling and other cross-thematic ecological applications.
 
 The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_datalayers_details.csv) of every layer present in CHECO26 is available in this repository. The database is described in a data manuscript currently in preparation.
 
@@ -103,9 +103,6 @@ for the complete evidence chain.
 ## Citation
 
 A data manuscript describing CHECO26 is in preparation. Until it is available,
-please cite the database through this repository and the method lineage it
-follows:
+please cite the database through this repository:
 
-Külling, N., Adde, A., Fopp, F., Schweiger, A. K., Broennimann, O., Rey, P.-L., Giuliani, G., Goicolea, T., Petitpierre, B., Zimmermann, N. E., Pellissier, L., Altermatt, F., Lehmann, A., & Guisan, A. (2024). SWECO25: A cross-thematic raster database for ecological research in Switzerland. Scientific Data, 11(1), Article 1. https://doi.org/10.1038/s41597-023-02899-1
-
-Adde, A., Goicolea, T., Guisan, A., & Altermatt, F. (2026). N-SDM 2.0: a reengineered software with extended features for nested species distribution modelling. Ecography, e08547. https://doi.org/10.1002/ecog.08547
+CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research. https://github.com/EldonQ/CHECO26

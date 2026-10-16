@@ -1,10 +1,9 @@
 # Data integrity check and effects of resampling operations
 
 This directory contains the validation code, result dataframes and figures for
-the CHECO26 raster database. It mirrors the validation module of SWECO25
-(Külling et al. 2024, *Scientific Data*) and extends it with the derived-layer
-gates and source-defect forensics that a 1-km national database assembled from
-heterogeneous products requires.
+the CHECO26 raster database. It mirrors the validation module of SWECO25 and
+extends it with the derived-layer gates and source-defect forensics that a
+1-km national database assembled from heterogeneous products requires.
 
 # 1) Data integrity check
 
