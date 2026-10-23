@@ -1,12 +1,12 @@
 # R/tests/test_44_hlu.R -- hlu1km 单组合验证 + 波段号 + 历史段一致性
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-OUT <- "E:/CHECO26/N-SDM/scratch/r_hlu_test"
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_hlu_test")
 Sys.setenv(CHECO_OUT_ROOT = OUT)
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/07_derive_lulc_hlu1km.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/07_derive_lulc_hlu1km.R"), envir = .ing)
 
 cat("=== 源属性与波段描述 ===\n")
 src <- .ing$hlu_file("SSP1_RCP26")

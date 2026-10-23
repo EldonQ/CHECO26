@@ -3,8 +3,10 @@
 This directory provides a minimal, runnable example of the CHECO26
 standardization procedure: turning an arbitrary source raster into a layer
 that shares the CHECO26 grid, CRS, extent, naming and masking conventions. It
-mirrors the role of `layer_standardization_example/` in SWECO25, implemented
-with the CHECO26 production stack (Python / rasterio) instead of R / terra.
+reproduces the steps of the CHECO26 production stack
+([`pipeline_r/scripts/02_template.R`](../pipeline_r/scripts/02_template.R) and the
+ingest stages), run here through a standalone Python / rasterio demo so the
+example needs no R installation.
 
 ## The standardization workflow
 
@@ -40,7 +42,7 @@ configuration:
 
 Unit scales (e.g. CSDLv2 storage value x 0.01, footHII x 0.01, canopy height
 dm -> m) are applied in the same step in the production pipeline; see
-`pipeline/config.yaml` (`units_scale`).
+`pipeline_r/config.yaml` (`units_scale`).
 
 ## Running the example
 

@@ -1,10 +1,10 @@
 # R/tests/test_16_hfp.R -- hfp 单层端到端测试（Mollweide 1km -> Albers 1km）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/04_ingest_timeseries.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/04_ingest_timeseries.R"), envir = .ing)
 
 src <- file.path(PATH_ARCHIVE(), "hfp", "HFP-2000-2018", "16571064", "hfp2000", "hfp2000.tif")
 cat("=== 源属性 ===\n")

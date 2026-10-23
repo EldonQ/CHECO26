@@ -1,12 +1,12 @@
 # R/tests/test_52_future.R -- 未来链验证：清单完整性 + 抽样比对
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-OUT <- "E:/CHECO26/N-SDM/scratch/r_future_test"
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_future_test")
 Sys.setenv(CHECO_OUT_ROOT = OUT)
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/10_future_chains.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/10_future_chains.R"), envir = .ing)
 tasks <- .ing$build_manifest()
 
 cat("=== 未来链清单 ===\n")

@@ -2,7 +2,7 @@
 # R/_bootstrap.R  --  所有 R 脚本的统一引导
 #
 # 用法：在任何脚本开头写
-#     source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"))
+#     source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"))
 # 或（推荐，自动定位）
 #     source(file.path(dirname(sys.frame(1)$ofile %||% "."), "_bootstrap.R"))
 #
@@ -12,7 +12,7 @@
 # =============================================================================
 
 if (!nzchar(Sys.getenv("CHECO_ROOT", ""))) {
-  Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+  Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 }
 CHECO_ROOT <- Sys.getenv("CHECO_ROOT")
 

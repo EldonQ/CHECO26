@@ -8,7 +8,7 @@
 # 都必须在这里有一条对应断言——**做不到自动核的数字，就不该出现在论文里**。
 #
 # 用法：Rscript R/tools/check_trends.R
-ROOT  <- "E:/CHECO26/N-SDM"
+ROOT  <- Sys.getenv("CHECO_ROOT", getwd())
 COV   <- file.path(ROOT, "data", "covariates")
 PAPER <- file.path(ROOT, "00_docs", "PAPER_CHECO26_DATADESCRIPTOR.md")
 

@@ -2,8 +2,8 @@
 # 验证可分离实现的 focal 均值与「完整卷积」版本逐像元等价，并测速。
 # 原理：方形窗的 2D 盒滤波 = 行方向 1D 盒滤波 再 列方向 1D 盒滤波（O(k) 而非 O(k^2)）。
 # 分母（有效像元数）同样可分离。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 #' 可分离实现的等权焦点均值（与 focal_mean 语义一致）
 focal_mean_fast <- function(x, radius_cells) {

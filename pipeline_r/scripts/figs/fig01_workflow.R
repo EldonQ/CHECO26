@@ -1,7 +1,7 @@
 # R/figs/fig01_workflow.R
-# 图 1：CHECO26 建库工作流（对应 SWECO25 的 Fig. 1）
+# 图 1：CHECO26 建库工作流
 #
-# SWECO25 的 Fig. 1 是四步流程图：(1) 识别 → (2) 筛选 → (3) 标准化 → (4) 上传 Zenodo。
+# 四步流程图：(1) 识别 → (2) 筛选 → (3) 标准化 → (4) 发布。
 # 我们做同样四步，但每步都标注**本库实测的数字**，使图本身携带信息而不只是装饰：
 #   第 4 步不是"上传 Zenodo"，而是"发布"——附 SHA-256 清单、溯源表、变量字典、许可矩阵。
 #
@@ -9,8 +9,8 @@
 # 文字也没落位。改为基础图形（rect + text），定位以英寸为单位换算，可控且稳定。
 #
 # 用法：Rscript R/figs/fig01_workflow.R
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 FIGD <- file.path(PATH_DOCS(), "figures")
 

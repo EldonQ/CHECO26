@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 """Generate the public layer manifest ``CHECO26_datalayers_details.csv``.
 
-The manifest uses the same 14-column, semicolon-separated layout as
-``SWECO25_datalayers_details.csv``, so that both databases can be inventoried
-with the same tooling:
+The manifest uses a fixed 14-column, semicolon-separated layout:
 
     category;dataset;variable;period;scenario;sub_period;start_year;end_year;
     attribute;focal;variable_long;unit;path;valid

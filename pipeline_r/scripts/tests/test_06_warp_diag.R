@@ -4,9 +4,9 @@
 #   B) R bilinear vs Python bilinear -> 若不一致而 A 一致，则插值实现不同
 #   C) Python bilinear vs 既有交付层  -> 顺带验证既有层确实是 bilinear 产物
 
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
 
 read_clean <- function(path) {
   r <- terra::rast(path)

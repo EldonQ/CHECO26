@@ -1,7 +1,7 @@
 # R/tools/resampling_effect.R
-# SWECO25 式重采样效应分析（Technical Validation 的核心证据）
+# 重采样效应分析（Technical Validation 的核心证据）
 #
-# SWECO25 的做法：从源层与重采样层各抽 15,000 个随机点，报告两者差值的变异系数中位数。
+# 做法：从源层与重采样层各抽随机格，报告两者差值的变异系数中位数。
 # 我们的做法更强，分两部分：
 #   (a) 一致性：我们的 1 km 值是否等于源数据在该格内的面积加权均值（应≈0 差异）
 #   (b) 信息损失：源数据在每个 1 km 格内的变异系数（SD/mean），量化被平滑掉的细节
@@ -9,9 +9,9 @@
 # 只对**真正做过重采样**的主题做：(30 m 或 90 m 源)。1 km 源的重采样是恒等变换。
 #
 # 用法：Rscript R/tools/resampling_effect.R [n_cells]
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 
-ROOT <- "E:/CHECO26/N-SDM"
+ROOT <- Sys.getenv("CHECO_ROOT", getwd())
 COV  <- file.path(ROOT, "data/covariates")
 MASK <- file.path(ROOT, "data/mask_china.tif")
 

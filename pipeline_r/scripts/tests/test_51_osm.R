@@ -1,11 +1,11 @@
 # R/tests/test_51_osm.R -- 单独验证 osm_trail 距离面
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-Sys.setenv(CHECO_OUT_ROOT = "E:/CHECO26/N-SDM/scratch/r_dist_osm")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+Sys.setenv(CHECO_OUT_ROOT = file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_dist_osm"))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/09_derive_dist.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/09_derive_dist.R"), envir = .ing)
 
 cat("=== osm_trail 单独验证 ===\n")
 t0 <- Sys.time()

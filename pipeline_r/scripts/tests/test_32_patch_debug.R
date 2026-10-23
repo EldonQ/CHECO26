@@ -1,6 +1,6 @@
 # R/tests/test_32_patch_debug.R -- 逐步仪表化 patch_metric，定位有效域缺失
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 cfg <- CFG(); legend <- unlist(cfg$lulc_legend)
 legend <- legend[order(as.integer(names(legend)))]

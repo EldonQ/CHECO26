@@ -12,8 +12,8 @@
 # 用法：
 #   Rscript R/tools/fix_hlu_classnames.R dry     # 只统计，不改动
 #   Rscript R/tools/fix_hlu_classnames.R apply   # 实际改名
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 MAP <- c(mngforest = "grassshrub", forest = "sparse", grassshrub = "water",
          sparse = "mngforest", water = "forest")

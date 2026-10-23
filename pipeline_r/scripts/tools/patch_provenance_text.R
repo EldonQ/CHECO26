@@ -16,7 +16,7 @@
 # 用法：
 #   Rscript R/tools/patch_provenance_text.R dry    # 只报受影响的处数
 #   Rscript R/tools/patch_provenance_text.R apply  # 实际写入（自动备份）
-ROOT <- "E:/CHECO26/N-SDM"
+ROOT <- Sys.getenv("CHECO_ROOT", getwd())
 PROV <- file.path(ROOT, "00_docs", "provenance_table.csv")
 
 OLD <- paste0(

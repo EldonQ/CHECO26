@@ -1,8 +1,8 @@
 # R/tests/test_64_rename_pairing.R
 # 验证改名后「基底层」与「焦点层」仍配对正确：
 # 焦点层 X_prop_f1000 应当确实是 X_prop 的 3x3 均值
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 root <- file.path(PATH_COV(), "glo/lulc/hlu1km")
 FS <- FOCAL_SPEC()

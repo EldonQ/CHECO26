@@ -1,7 +1,7 @@
 # R/figs/fig06_data.R  --  阶段 1：算出 Fig.6 的全部数值并落 CSV
 # 计算与绘图分离：先把数算对并存盘，核对无误后再画图
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 DIR <- file.path(PATH_ARCHIVE(), "harmonised", "Harmonised-1960-2100")
 FILES <- c(ssp126 = "SSP1_RCP26_country-f.tif", ssp245 = "SSP2_RCP45_country-f.tif",

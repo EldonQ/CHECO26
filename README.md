@@ -67,7 +67,7 @@ method, see the worked examples in
 [`layer_standardization_example/`](layer_standardization_example/),
 [`focal_statistics_example/`](focal_statistics_example/) and
 [`distance_layers_example/`](distance_layers_example/). The complete production
-pipeline is in [`pipeline/`](pipeline/).
+pipeline is in [`pipeline_r/`](pipeline_r/).
 
 ## Data availability
 
@@ -79,7 +79,7 @@ understand, audit and reproduce the database:
 - the full layer manifest ([`data/CHECO26_datalayers_details.csv`](data/CHECO26_datalayers_details.csv), one row per layer with category, dataset, variable, period, scenario, year range, focal radius, unit and path),
 - the standard grid and China mask,
 - six representative sample layers under [`data/sample_layers/`](data/sample_layers/),
-- the production pipeline ([`pipeline/`](pipeline/)) and its configuration,
+- the production pipeline ([`pipeline_r/`](pipeline_r/)) and its configuration,
 - the validation code, result dataframes and figures ([`database_validation/`](database_validation/)).
 
 ## Data validation
@@ -124,7 +124,6 @@ unusable.
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
 | [`pipeline_r/`](pipeline_r/) | **v2.0 production pipeline (R)** — 20 stage scripts, 19 tools, 70 tests, configuration |
-| [`pipeline/`](pipeline/) | v1.0 pipeline (Python, 1,595 layers); superseded, kept for provenance |
 | [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports |
 | [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |

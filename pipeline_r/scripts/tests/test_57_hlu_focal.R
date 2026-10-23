@@ -1,10 +1,10 @@
 # R/tests/test_57_hlu_focal.R -- 验证 hlu1km 焦点路径（用已完成的组合）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 # 不设 CHECO_OUT_ROOT：基底查找与焦点写入都走正式交付树
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/07_derive_lulc_hlu1km.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/07_derive_lulc_hlu1km.R"), envir = .ing)
 
 # 找一个基底已存在的组合（1960 urban）
 base <- .ing$hlu_parts(1960L, NA_character_, "urban")

@@ -1,6 +1,6 @@
 # R/tests/test_37_segregate.R -- 测 terra::segregate 是否能替代 9x ifel
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 g <- GRID()
 src <- file.path(PATH_ARCHIVE(), "clcd-albert", "CLCD_v01_2020_albert.tif")

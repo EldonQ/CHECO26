@@ -1,6 +1,6 @@
 # R/tests/test_55_gap.R -- 采集交付树与实际进度的精确差值，供核验报告使用
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 prov <- read.csv(file.path(PATH_DOCS(), "provenance_table.csv"),
                  fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)

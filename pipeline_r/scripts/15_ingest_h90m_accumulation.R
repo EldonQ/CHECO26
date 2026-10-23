@@ -40,8 +40,8 @@
 # 用法：
 #   Rscript R/15_ingest_h90m_accumulation.R check   # 只检查瓦片与覆盖，不生成
 #   Rscript R/15_ingest_h90m_accumulation.R make    # 生成到 scratch（默认）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 suppressMessages(library(terra))
 
 SRC   <- "E:/h90m/China_Hydrography90m/Raw"

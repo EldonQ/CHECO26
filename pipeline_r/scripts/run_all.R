@@ -27,7 +27,7 @@
 # 因此可反复运行本脚本；要强制重建，设环境变量 CHECO_FORCE=1。
 # =============================================================================
 
-source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 STAGES <- list(

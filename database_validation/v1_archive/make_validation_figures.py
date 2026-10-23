@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Regenerate the database-validation figures from the result dataframes.
 
-Mirrors the validation figure set of SWECO25:
+The validation figure set:
 value-range and NA-count scatterplots per layer, the sampled cell-by-cell
 comparison against source products, and the per-theme layer inventory.
 

@@ -4,7 +4,7 @@
 
 Standardizes an arbitrary source raster onto the CHECO26 grid, following the
 fixed, type-driven rules of the production pipeline
-(`pipeline/scripts/common.py :: warp_to_template`):
+(`pipeline_r/scripts/01_common.R`):
 
   1. read the source raster (any CRS, any resolution);
   2. pick the resampling rule from the variable type

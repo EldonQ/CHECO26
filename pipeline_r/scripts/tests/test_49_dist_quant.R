@@ -1,10 +1,10 @@
 # R/tests/test_49_dist_quant.R -- 判定 terra::distance 与 scipy EDT 的差异性质（量化/近似）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 # 取 grip4 road 的参照层与 R 版（test_48 已写到 scratch）
 ref_p <- file.path(PATH_COV(), "glo/dist/grip4/road/glo_dist_grip4_road.tif")
-got_p <- file.path("E:/CHECO26/N-SDM/scratch/r_dist_test",
+got_p <- file.path(file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_dist_test"),
                    "glo/dist/grip4/road/glo_dist_grip4_road.tif")
 ref <- terra::rast(ref_p); got <- terra::rast(got_p)
 
@@ -34,8 +34,8 @@ for (f in list(round=round, floor=floor, ceiling=ceiling, trunc=trunc)) {
 
 # 暴力精确 EDT 在单个小窗口上验证 terra::distance 的真实精度
 cat("\n=== 小窗口暴力 ETD 对照（80x80）===\n")
-feat <- terra::rast(file.path("E:/CHECO26/N-SDM/scratch/r_dist_test","feat_road.tif"))
-if (file.exists(file.path("E:/CHECO26/N-SDM/scratch/r_dist_test","feat_road.tif"))) {
+feat <- terra::rast(file.path(file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_dist_test"),"feat_road.tif"))
+if (file.exists(file.path(file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_dist_test"),"feat_road.tif"))) {
   x0 <- terra::xFromCol(feat, 2200); x1 <- terra::xFromCol(feat, 2280)
   y1 <- terra::yFromRow(feat, 1500); y0 <- terra::yFromRow(feat, 1580)
   ww <- terra::ext(x0, x1, y0, y1)

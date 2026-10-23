@@ -1,4 +1,4 @@
-# CHECO26 N-SDM 数据汇编 —— 集中参数配置（唯一参数来源，代码零魔法数）
+# CHECO26 数据汇编 —— 集中参数配置（唯一参数来源，代码零魔法数）
 # 修改本文件即视为版本变更：必须重跑受影响的全部层，并在 logs/lineage.csv 留痕。
 
 grid:
@@ -51,7 +51,7 @@ hydro_stats_addon:
   maxonly: [spi, sti]
 
 focal:
-  radii_km: [1, 5, 10, 20]     # 与 SWECO25/N-SDM 惯例一致的固定窗口半径
+  radii_km: [1, 5, 10, 20]     # 固定窗口半径：1、5、10、20 km
   stat: mean                   # 等权均值窗口（terra focal 的 scipy 等价实现）
 
 derivations:                   # 派生指标固定定义（文献出处写死于此）
@@ -162,12 +162,12 @@ lulc_scenarios:                # 未来 LULC 原生快照（与气候 SSP 口径
   years: [2030, 2050, 2100]
 
 paths:
-  root: "E:/CHECO26/N-SDM"
-  covariates: "E:/CHECO26/N-SDM/data/covariates"
-  docs: "E:/CHECO26/N-SDM/00_docs"
-  logs: "E:/CHECO26/N-SDM/logs"
-  archive: "E:/CHECO26/N-SDM/archive"
-  scratch: "E:/CHECO26/N-SDM/scratch"
+  root: "."
+  covariates: "data/covariates"
+  docs: "00_docs"
+  logs: "logs"
+  archive: "archive"
+  scratch: "scratch"
   china_shp: "E:/CHECO26/china/china.shp"
   # ---- 源数据 ----
   bioclim: "E:/CHECO26/Bioclim/CHNECO26_Bioclim/bioclim"

@@ -3,7 +3,7 @@
 """Hard gates for DERIVED layers (focal windows and LULC landscape metrics).
 
 Self-contained re-implementation of the production derived-layer validator
-(N-SDM ``scripts/10_validate_derived.py``). It catches the two failure modes
+(the v1.0 ``scripts/10_validate_derived.py``). It catches the two failure modes
 that plain existence/alignment checks cannot see:
 
   G1  VALUE RANGE    a derived layer's [min, max] must lie inside its base

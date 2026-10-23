@@ -4,7 +4,7 @@
 
 Linear and areal features cannot enter a raster SDM stack as vectors; they are
 converted to distance surfaces. The production pipeline
-(`pipeline/scripts/05_derive_dist.py`) rasterizes the feature vectors onto the
+(`pipeline_r/scripts/09_derive_dist.R`) rasterizes the feature vectors onto the
 CHECO26 grid (`all_touched=True`) and applies a Euclidean distance transform,
 in metres:
 

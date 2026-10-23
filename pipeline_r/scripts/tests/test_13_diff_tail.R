@@ -2,8 +2,8 @@
 # 量化 R vs Python 差异的尾部结构，为判据提供依据：
 #   (1) 有效性不一致的像元有多少、占比多少、是否都贴着无效域边界
 #   (2) |d|/span 的分位数与超阈值计数
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 read_clean_mat <- function(path) {
   r <- terra::rast(path)

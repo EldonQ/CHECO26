@@ -5,7 +5,7 @@
 Computes the multi-scale focal-mean layers (`_f1000` ... `_f20000` suffixes)
 that provide landscape context around every cell, using the corrected
 equal-weight window implementation of the production pipeline
-(`pipeline/scripts/common.py :: focal_mean`).
+(`pipeline_r/scripts/01_common.R`).
 
 Window semantics on the 1-km grid (square windows, radius in cells):
 

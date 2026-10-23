@@ -17,7 +17,7 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(terra) })
-source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 # ---- 焦点任务：由基底层派生 ----

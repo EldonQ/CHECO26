@@ -18,8 +18,8 @@
 #   unverified —— 没有读到任何许可文本，标为待审
 #
 # 用法：Rscript R/tools/build_licence_registry.R [dry|write]
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 # ---------------------------------------------------------------------------
 # 许可登记：每个数据集一行。字段含义见文件头。

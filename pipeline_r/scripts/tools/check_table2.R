@@ -12,7 +12,7 @@
 #   自动解析在这些情形下会错配或漏配，所以这里把"论文行 -> 磁盘键"写死。
 #
 # 用法：Rscript R/tools/check_table2.R
-ROOT <- "E:/CHECO26/N-SDM"
+ROOT <- Sys.getenv("CHECO_ROOT", getwd())
 
 # 论文 Table 2 的行  ->  磁盘上的 theme/dataset 键（多个键表示论文里合并成一行）
 MAP <- list(

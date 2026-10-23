@@ -1,12 +1,12 @@
 # R/tests/test_31_patch_direct.R -- 只重算 2020 快照的 4 个 patch 层并比对（不重跑 prop）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-OUT <- "E:/CHECO26/N-SDM/scratch/r_lulc_full"
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_lulc_full")
 Sys.setenv(CHECO_OUT_ROOT = OUT)
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/05_derive_lulc.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/05_derive_lulc.R"), envir = .ing)
 snap <- .ing$SNAPSHOTS[[1]]
 cfg <- CFG(); legend <- unlist(cfg$lulc_legend)
 legend <- legend[order(as.integer(names(legend)))]

@@ -18,12 +18,12 @@
 # 用法：
 #   Rscript R/tools/start_clcd_focal_early.R check    # 只检查条件是否满足
 #   Rscript R/tools/start_clcd_focal_early.R start <nshard>
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 CLCD_DIR <- function() file.path(PATH_COV(), "glo", "lulc", "clcd")
 RSCRIPT  <- "D:/R/R-4.4.3/bin/Rscript.exe"
-COPY     <- "E:/CHECO26/N-SDM/R/06_derive_lulc_clcd_focal.R"
+COPY     <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/06_derive_lulc_clcd_focal.R")
 
 #' 完整年份数（9 层齐）
 n_complete_years <- function() {

@@ -2,8 +2,8 @@
 # 1) 小矩阵上与暴力 BFS 逐像元比对（分组是否正确）
 # 2) 中矩阵上与 terra::patches 比对（若 terra 能算）
 # 3) 全尺寸计时（4062 x 4861），urban 与 forest 两种稀疏度
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 # ---- 1) 与暴力实现比对（只看分组等价，不看标签数值）----
 cat("=== 1) 小矩阵 vs 暴力 BFS ===\n")

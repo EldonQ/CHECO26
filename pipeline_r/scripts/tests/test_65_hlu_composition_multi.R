@@ -1,8 +1,8 @@
 # R/tests/test_65_hlu_composition_multi.R
 # 改名后多组合的组成恒等式校验：8 个比例层之和应为 1
 # 抽样覆盖：历史段 3 年 + 未来情景 3 个（不同 SSP），每个都检查全图
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 CLS <- c("urban", "cropland", "pasture", "mngforest", "forest",
          "grassshrub", "sparse", "water")

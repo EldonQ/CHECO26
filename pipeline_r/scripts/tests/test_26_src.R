@@ -1,5 +1,5 @@
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 p <- file.path(P("lulc_raw"), "history_2020.tif")
 r <- terra::rast(p)
 cat("源:", ncol(r), "x", nrow(r), "\n")

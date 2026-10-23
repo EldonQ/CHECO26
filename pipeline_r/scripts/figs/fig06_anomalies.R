@@ -4,8 +4,8 @@
 #   (b) 城市类在 2020 之后冻结 —— 五个情景在 2100 年也几乎相同
 #
 # 全部从**源文件**用流式 terra::freq() 计算，不读交付层（避免满负荷时 bad_alloc）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 OUT <- file.path(PATH_DOCS(), "figures")
 dir.create(OUT, showWarnings = FALSE, recursive = TRUE)

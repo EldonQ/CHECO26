@@ -2,9 +2,8 @@
 
 This directory provides a minimal, runnable example of how linear and areal
 features are converted into distance surfaces for the raster SDM stack. It
-mirrors the role of `distance_toolbox/` in SWECO25 (Euclidean and path
-distance), implemented with the CHECO26 production stack
-(`pipeline/scripts/05_derive_dist.py`) instead of ArcGIS ModelBuilder.
+implements Euclidean and path distance with the CHECO26 production stack
+(`pipeline_r/scripts/09_derive_dist.R`).
 
 ## Method
 

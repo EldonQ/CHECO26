@@ -1,6 +1,6 @@
 # R/tests/test_02_crs.R -- 判定 config 的 WKT 与模板 CRS 是否语义等价
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
 
 tpl <- terra::rast(PATH_TEMPLATE())
 g <- GRID()

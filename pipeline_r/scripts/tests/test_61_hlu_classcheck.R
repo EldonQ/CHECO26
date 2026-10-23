@@ -1,8 +1,8 @@
 # R/tests/test_61_hlu_classcheck.R
 # 决定性核查：交付层的每个类别占中国面积的比例，是否等于源文件在**中国掩膜内**的对应比例
 # 若不等，说明 07_derive_lulc_hlu1km.R 的类别映射有错
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 DIR <- file.path(PATH_ARCHIVE(), "harmonised", "Harmonised-1960-2100")
 SRC <- file.path(DIR, "SSP1_RCP26_country-f.tif")

@@ -1,10 +1,10 @@
 # R/tests/test_30_patch_ref.R -- 检查参照 patch 层的值域与有效范围
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 REF <- file.path(PATH_COV(), "glo/lulc/glu1km/2020")
-OUT <- "E:/CHECO26/N-SDM/scratch/r_lulc_full/glo/lulc/glu1km/2020"
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_lulc_full/glo/lulc/glu1km/2020")
 
 files <- c("glo_lulc_glu1km_2020_patchdensity-all_f5000.tif",
            "glo_lulc_glu1km_2020_patchsize-all_f5000.tif",

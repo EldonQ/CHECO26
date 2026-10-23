@@ -6,8 +6,8 @@
 # 数据来源：
 #   (a) 交付层（中国掩膜，等面积网格均值），年份 1960/1970/.../2020
 #   (b) 1960-2020 同上；2020-2100 为源文件实测比例（五情景逐年相同）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 OUT <- file.path(PATH_DOCS(), "figures")
 
 # ---- (a) 由 R/tests/test_63_hlu_trend_fixed.R 实测（中国区面积占比，%）----

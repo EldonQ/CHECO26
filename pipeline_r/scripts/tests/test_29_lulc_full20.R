@@ -1,15 +1,15 @@
 # R/tests/test_29_lulc_full20.R -- 2020 快照四段全跑 + 15 层比对（含 patch）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-OUT <- "E:/CHECO26/N-SDM/scratch/r_lulc_full"
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_lulc_full")
 Sys.setenv(CHECO_OUT_ROOT = OUT)
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 REF <- file.path(PATH_COV(), "glo/lulc/glu1km/2020")
 #' shannon/edge/patch 层直接位于快照根；只有 *_prop 层按类别分子目录
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/05_derive_lulc.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/05_derive_lulc.R"), envir = .ing)
 snap <- .ing$SNAPSHOTS[[1]]
 
 cat(sprintf("输出根: %s\n快照: year=%s\n\n", OUT, snap$y))

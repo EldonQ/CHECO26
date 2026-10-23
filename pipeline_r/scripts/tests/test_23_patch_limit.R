@@ -1,6 +1,6 @@
 # R/tests/test_23_patch_limit.R -- 定位 terra::patches 的崩溃阈值
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 p <- file.path(PATH_COV(), "glo/lulc/glu1km/2020/urban/glo_lulc_glu1km_2020_urban_prop.tif")
 r <- terra::rast(p)

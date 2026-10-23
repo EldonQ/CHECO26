@@ -12,8 +12,8 @@
 #   ① 图例的 code 向量必须单调递增；或
 #   ② 代码在配对前已显式按 code 排序（hlu1km 采用这种方式）。
 # 只要有一条成立，配对就是安全的。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 ok <- 0L; bad <- 0L
 chk <- function(label, cond, detail = "") {
@@ -23,7 +23,7 @@ chk <- function(label, cond, detail = "") {
 
 cat("=== 1. clcd：图例 code 必须单调递增（天然安全的前提）===\n")
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/06_derive_lulc_clcd.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/06_derive_lulc_clcd.R"), envir = .ing)
 cd_codes <- as.integer(names(.ing$CLCD_LEGEND))
 cd_names <- unname(.ing$CLCD_LEGEND)
 cat(sprintf("  codes = %s\n", paste(cd_codes, collapse = ", ")))
@@ -38,7 +38,7 @@ chk("clcd code 与 provenance 目录名一一对应",
 
 cat("\n=== 2. hlu1km：代码必须显式按 code 排序后再配对（修复后的方式）===\n")
 .h <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/07_derive_lulc_hlu1km.R", envir = .h)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/07_derive_lulc_hlu1km.R"), envir = .h)
 h_codes <- .h$hlu_codes_sorted()
 h_names <- .h$hlu_cnames()
 cat(sprintf("  codes(sorted) = %s\n", paste(h_codes, collapse = ", ")))

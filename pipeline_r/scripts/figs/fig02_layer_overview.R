@@ -23,8 +23,8 @@ sf::sf_use_s2(FALSE)
 
 `%||%` <- function(a, b) if (is.null(a) || length(a) == 0L) b else a
 
-ROOT   <- "E:/CHECO26/N-SDM/data/covariates"
-OUT    <- "E:/CHECO26/N-SDM/00_docs/SUBMISSION/figures"
+ROOT   <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "data/covariates")
+OUT    <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "00_docs/SUBMISSION/figures")
 ASSETS <- "C:/Users/LQ/.agents/skills/geo-viz/assets/china"
 CACHE  <- file.path(tempdir(), "checo_fig02")
 dir.create(CACHE, recursive = TRUE, showWarnings = FALSE)

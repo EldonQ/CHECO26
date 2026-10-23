@@ -8,9 +8,9 @@
 #
 # 判据：有效性掩膜 0 差异；max|d| / span < 1e-6。
 
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
 
 read_clean <- function(path) {
   r <- terra::rast(path)

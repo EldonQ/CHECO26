@@ -14,8 +14,8 @@
 #   - 生成任务在跑时拒绝执行第 4 步（V1–V6 会被 Windows 静默杀死）
 #   - 任何一步判据不达标就停下并报告，不继续往下走
 #   - 所有步骤都是幂等的（可重复执行）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 TARGET <- 21110L
 RSCRIPT <- file.path("D:/R/R-4.4.3/bin", "Rscript.exe")

@@ -1,10 +1,10 @@
 # R/tests/test_10_mask_repro.R
 # 先把 R 生成的 mask/template 写到 scratch，与现有产物逐像元比对。
 # 只有完全一致（或差异已被解释）才允许 02_template.R 覆盖正式文件。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 suppressPackageStartupMessages({ library(terra) })
-source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
 
 g <- GRID()
 out <- file.path(PATH_SCRATCH(), "diag_template"); ensure_dir(out)

@@ -1,6 +1,6 @@
 # R/tests/test_22_ccl.R -- 找可用的连通域标记实现
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 cat("terra 命名空间里与连通域相关的函数:\n")
 print(grep("patch|clump|conn", ls(asNamespace("terra")), value = TRUE, ignore.case = TRUE))

@@ -1,8 +1,8 @@
 # R/tests/test_09_rules.R -- 三种真实使用的重采样规则的 R vs Python 差异全量统计
 # 判据：区分"系统偏差"(mean signed) 与"随机抖动"(mean abs)。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
 
 read_clean <- function(path) {
   r <- terra::rast(path)

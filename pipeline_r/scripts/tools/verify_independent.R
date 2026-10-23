@@ -9,9 +9,9 @@
 # 所以本脚本对每一项都强制输出"比较次数"，且断言里包含次数 > 0。
 #
 # 用法：Rscript R/tools/verify_independent.R
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 
-ROOT  <- "E:/CHECO26/N-SDM"
+ROOT  <- Sys.getenv("CHECO_ROOT", getwd())
 COV   <- file.path(ROOT, "data/covariates")
 DOCS  <- file.path(ROOT, "00_docs")
 TPL   <- file.path(ROOT, "data/template_albers1km.tif")

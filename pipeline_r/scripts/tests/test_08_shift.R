@@ -1,7 +1,7 @@
 # R/tests/test_08_shift.R -- 位移互相关：R 的 nearest 与 Python 的 nearest 差在何处
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
 
 diag <- file.path(PATH_SCRATCH(), "diag_warp")
 getmat <- function(p) {

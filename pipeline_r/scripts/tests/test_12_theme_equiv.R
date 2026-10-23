@@ -3,12 +3,12 @@
 # 逐主题抽样验证：用 03_ingest_static.R 的任务清单，把指定层用 R 重算到 scratch，
 # 与 Python 原层按 C1–C4 判据比对（判据依据见 _helpers.R 注释与 test_13）。
 
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/03_ingest_static.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/03_ingest_static.R"), envir = .ing)
 tasks <- .ing$build_manifest()
 
 pick <- c(

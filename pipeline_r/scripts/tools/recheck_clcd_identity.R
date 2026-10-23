@@ -13,8 +13,8 @@
 # 用法：
 #   Rscript R/tools/recheck_clcd_identity.R            # 全部 1,170 层
 #   Rscript R/tools/recheck_clcd_identity.R 2010       # 只查某一年（9 类）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 # CLCD 的九类与码（与 R/06_derive_lulc_clcd.R 的 CLCD_LEGEND 保持一致）
 CLCD_CLASSES <- c("cropland", "forest", "shrub", "grassland", "water",

@@ -22,7 +22,7 @@ suppressPackageStartupMessages({
     f <- normalizePath(sub("^--file=", "", hit), mustWork = FALSE)
     return(normalizePath(file.path(dirname(f), ".."), mustWork = FALSE))
   }
-  normalizePath("E:/CHECO26/N-SDM", mustWork = FALSE)
+  normalizePath(Sys.getenv("CHECO_ROOT", getwd()), mustWork = FALSE)
 }
 
 CHECO_ROOT <- .checo_root()

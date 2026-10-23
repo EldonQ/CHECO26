@@ -1,14 +1,13 @@
 # CHECO26 focal statistics
 
 This directory provides a minimal, runnable example of the multi-scale focal
-statistics that give every CHECO26 cell its landscape context. It mirrors the
-role of `focal_statistics_toolbox/` in SWECO25 (13 circular radii from 25 m to
-5 km), implemented with the CHECO26 production stack
-(`pipeline/scripts/common.py :: focal_mean`) instead of ArcGIS ModelBuilder.
+statistics that give every CHECO26 cell its landscape context. The production stack is
+`pipeline_r/scripts/01_common.R`, which builds four square windows of 3, 11,
+21 and 41 cells (1, 5, 10 and 20 km radii).
 
 ## Window semantics
 
-CHECO25 focal layers are named with a suffix that encodes the **window size in
+CHECO26 focal layers are named with a suffix that encodes the **window size in
 metres**; the window is a **square** of `2 * radius + 1` cells:
 
 | Suffix | Window | Coverage | Equivalent circle radius |

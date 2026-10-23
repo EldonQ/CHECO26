@@ -14,10 +14,10 @@
 #     2) 改成换行开头后，第二行仍是 '# -> 同样闭合
 #   多行 R 字符串里只要出现一个与定界符相同的引号就会崩，而函数体里到处都是引号。
 #   改成逐行插入后，每处改动都是单行短字符串，不再有这个问题。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 
 TARGET <- Sys.getenv("CHECO_PATCH_TARGET",
-                     "E:/CHECO26/N-SDM/R/06_derive_lulc_clcd.R")
+                     file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/06_derive_lulc_clcd.R"))
 
 main <- function(mode = c("dry", "apply")) {
   mode <- match.arg(mode)

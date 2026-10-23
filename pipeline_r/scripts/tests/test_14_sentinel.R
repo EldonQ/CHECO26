@@ -1,14 +1,14 @@
 # R/tests/test_14_sentinel.R -- 单独复测 channel_elv_up_cel（哨兵阈值修正后）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 # 清掉可能存在的旧缓存（阈值变更必须重算）
 cache <- file.path(PATH_SCRATCH(), "sentinel_masked")
 if (dir.exists(cache)) { file.remove(list.files(cache, full.names = TRUE)); cat("已清空哨兵缓存\n") }
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/03_ingest_static.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/03_ingest_static.R"), envir = .ing)
 tasks <- .ing$build_manifest()
 target <- "glo_hydro_h90m_channel-elv-up-cel.tif"
 k <- which(vapply(tasks, function(t) basename(layer_path(t$parts)), "") == target)

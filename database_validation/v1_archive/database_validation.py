@@ -3,7 +3,7 @@
 """Full-library integrity validation for the CHECO26 raster database.
 
 Self-contained re-implementation of the production acceptance gates
-(N-SDM ``scripts/08_validate.py``), driven only by the public artefacts in
+(the v1.0 ``scripts/08_validate.py``), driven only by the public artefacts in
 this repository:
 
   * ``data/CHECO26_datalayers_details.csv`` -- the layer manifest

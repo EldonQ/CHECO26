@@ -1,8 +1,8 @@
 # R/tests/test_58_hlu_trend.R
 # 生态合理性检验：hlu1km 历史段的城市/耕地比例趋势
 # 中国区等面积网格上，比例层像元值的算术平均 = 该类占中国陆地面积的比例
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 get_frac <- function(year, cls) {
   p <- layer_path(c("glo", "lulc", "hlu1km", as.character(year), cls), "_prop")

@@ -1,6 +1,6 @@
 # R/tests/test_34_naflag.R -- 最小复现：terra 写盘时 NAflag 如何落到文件头
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 out <- file.path(PATH_SCRATCH(), "naflag_test"); ensure_dir(out)
 
 mk <- function() {

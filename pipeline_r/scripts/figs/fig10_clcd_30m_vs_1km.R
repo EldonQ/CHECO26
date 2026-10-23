@@ -10,8 +10,8 @@
 # 它的"比例"只是类别指示。左右两面板放在一起就看得出差别。
 #
 # 不使用 geo-viz 引擎：它会重采样到 0.05° 显示网格，会毁掉 30 m 细节。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 suppressPackageStartupMessages({ library(ggplot2); library(patchwork) })
 
 # 取一个耕地比例中等的窗口（混合像元多，最能看出差异）

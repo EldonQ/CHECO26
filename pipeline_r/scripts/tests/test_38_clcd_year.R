@@ -1,12 +1,12 @@
 # R/tests/test_38_clcd_year.R -- 完整一年（2020）的 CLCD 基底比例 + 恒等式校验
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-OUT <- "E:/CHECO26/N-SDM/scratch/r_clcd_year"
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_clcd_year")
 Sys.setenv(CHECO_OUT_ROOT = OUT)
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source("E:/CHECO26/N-SDM/R/06_derive_lulc_clcd.R", envir = .ing)
+sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/06_derive_lulc_clcd.R"), envir = .ing)
 
 cnames <- unname(.ing$CLCD_LEGEND)
 cat("=== 单年 2020，9 类基底比例 ===\n")

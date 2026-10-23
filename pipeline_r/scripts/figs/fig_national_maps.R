@@ -17,8 +17,8 @@
 #
 # 用法：Rscript R/figs/fig_national_maps.R [which]
 #   which = all（默认）| clcd | anthro
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 suppressMessages({ library(sf); library(ggplot2) })
 

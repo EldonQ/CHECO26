@@ -10,8 +10,8 @@
 # 逐项断言，每项都打印比较次数，避免"跑完但什么都没查"。
 #
 # 用法：Rscript R/tools/check_h90m_accum.R
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 suppressMessages(library(terra))
 
 OUT <- file.path(PATH_SCRATCH(), "h90m_accum_candidate")

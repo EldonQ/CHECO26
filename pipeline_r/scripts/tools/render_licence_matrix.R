@@ -6,8 +6,8 @@
 # 本脚本只负责把它渲染成人读的 Markdown。
 #
 # 用法：Rscript R/tools/render_licence_matrix.R
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 reg <- read.csv(file.path(PATH_DOCS(), "LICENCE_REGISTRY.csv"),
                 fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)

@@ -8,7 +8,7 @@ downloading anything.
 
 | File | What it is |
 |---|---|
-| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,110 rows), in the SWECO25 column layout |
+| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,110 rows), in the shared 14-column semicolon layout |
 | `CHECO26-standardgrid.tif` | the template grid every layer is aligned to (China_Albers, 1000 m, 4861 x 4062, value 1) |
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
 | `sample_layers/glo/...` | six representative layers, byte-identical copies from the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
@@ -36,7 +36,7 @@ downloading anything.
 Soil depth codes: `0` = 0–5 cm, `5` = 5–15 cm, `15` = 15–30 cm,
 `30` = 30–60 cm, `60` = 60–100 cm, `100` = 100–200 cm; `profile` is the
 thickness-weighted whole-profile aggregate. The manifest is regenerated from
-the production dictionary by [`../pipeline/scripts/11_make_datalayers_details.py`](../pipeline/scripts/11_make_datalayers_details.py).
+the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](../pipeline_r/tools/make_datalayers_details.py).
 
 ## Sample layers
 

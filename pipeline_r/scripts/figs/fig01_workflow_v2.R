@@ -16,7 +16,7 @@
 #
 # The original fig01_workflow.* is left untouched; this is a separate deliverable.
 
-OUT <- "E:/CHECO26/N-SDM/00_docs/SUBMISSION/figures"
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "00_docs/SUBMISSION/figures")
 dir.create(OUT, showWarnings = FALSE, recursive = TRUE)
 
 ## ---------------------------------------------------------------- palette

@@ -1,8 +1,8 @@
 # R/figs/fig03_focal_panels.R
 # Fig. 3: 多尺度焦点层对比 —— 一个基底 + 四个半径，局部放大
 # 用 hlu1km 2020 urban 比例（空间纹理清晰，适合展示平滑效果）
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 suppressPackageStartupMessages(library(grDevices))
 
 OUT <- file.path(PATH_DOCS(), "figures")

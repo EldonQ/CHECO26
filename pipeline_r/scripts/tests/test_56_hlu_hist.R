@@ -1,8 +1,8 @@
 # R/tests/test_56_hlu_hist.R
 # 验证文档中的声称："历史段 1960-2020 在五个情景文件中逐像元相同"
 # 只在 China 窗口内比较，抽 6 个年份，五个文件两两对比。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 DIR <- file.path(PATH_ARCHIVE(), "harmonised", "Harmonised-1960-2100")
 FILES <- c("SSP1_RCP26_country-f.tif", "SSP2_RCP45_country-f.tif", "SSP3_RCP70_country-f.tif",
