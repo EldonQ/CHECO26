@@ -1,7 +1,7 @@
 # CHECO26 production pipeline
 
 The complete, idempotent pipeline that builds the CHECO26 delivery tree
-(1,595 standardized layers, 8 themes) from heterogeneous source products. This
+(21,110 standardized layers, 8 themes) from heterogeneous source products. This
 is a faithful copy of the production scripts that built the delivered database;
 the only addition is `scripts/11_make_datalayers_details.py`, which renders the public
 layer manifest ([`../data/CHECO26_datalayers_details.csv`](../data/CHECO26_datalayers_details.csv))

@@ -1,0 +1,49 @@
+{
+  "title": "CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research",
+  "description": "<p>A uniform-grid library of 21,110 environmental layers covering China at 1&nbsp;km in an equal-area Albers projection (WGS&nbsp;84, central meridian 105&deg;E, standard parallels 25&deg;N and 47&deg;N).</p><p>Twenty-one dataset entries drawn from nineteen source products across eight categories (bioclim, soil, lulc, anthro, hydro, vege, dist, topo) are standardised to one grid of 4,861&nbsp;&times;&nbsp;4,062 cells, one data type (float32) and one NoData convention (&minus;9999).</p><p>Besides the harmonised source layers the database delivers 16,286 focal-statistics layers at four radii (1, 5, 10 and 20&nbsp;km), 17 distance surfaces, and per-cell areal proportions for every categorical source. Land use and land cover is provided at three complementary depths: annual observed cover 2000&ndash;2025 (CLCD, 1,170 layers), a China-relevant projection (GLU1km, 540 layers) and a harmonised yearly reconstruction 1960&ndash;2100 under five SSP-RCP scenarios (18,440 layers).</p><p>Total volume is 169.4&nbsp;GB. The full layer manifest ships with the repository as one semicolon-separated row per layer.</p>",
+  "upload_type": "dataset",
+  "access_right": "open",
+  "license": "CC-BY-4.0",
+  "version": "2.0",
+  "publication_date": "2026-10-19",
+  "language": "eng",
+  "creators": [
+    {
+      "name": "CHECO26 contributors",
+      "affiliation": "to be completed before release"
+    }
+  ],
+  "keywords": [
+    "environmental covariates",
+    "cross-thematic raster database",
+    "China",
+    "1 km",
+    "Albers equal-area",
+    "land cover",
+    "soil properties",
+    "bioclimatic variables",
+    "human footprint",
+    "hydrography",
+    "CMIP6"
+  ],
+  "notes": "Per-layer licensing differs across the source products; see the layer manifest and the project repository for details before redistributing individual layers.",
+  "related_identifiers": [
+    { "relation": "isSupplementTo", "identifier": "https://github.com/EldonQ/CHECO26", "scheme": "url" },
+    { "relation": "isDerivedFrom", "identifier": "10.57760/sciencedb.13546", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.11888/Terre.tpdc.301235", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1029/2008eo100001", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.5194/essd-14-4525-2022", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1088/1748-9326/aabd42", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1038/nature20584", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.2905/A0DF7A6F-49DE-46EA-9BDE-563437A6E2BA", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1038/s41597-022-01284-8", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.5194/essd-13-3907-2021", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.5281/zenodo.18180184", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1038/s41597-023-02637-7", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.5281/zenodo.15017066", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1016/j.rse.2021.112844", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1080/15481603.2023.2203303", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1016/j.isprsjprs.2024.08.001", "scheme": "doi" },
+    { "relation": "isDerivedFrom", "identifier": "10.1016/j.rse.2019.111395", "scheme": "doi" }
+  ]
+}

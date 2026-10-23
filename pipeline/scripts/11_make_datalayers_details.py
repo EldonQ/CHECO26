@@ -3,21 +3,27 @@
 """Generate the public layer manifest ``CHECO26_datalayers_details.csv``.
 
 The manifest uses the same 14-column, semicolon-separated layout as
-``SWECO25_datalayers_details.csv``, so that
-both databases can be inventoried with the same tooling:
+``SWECO25_datalayers_details.csv``, so that both databases can be inventoried
+with the same tooling:
 
     category;dataset;variable;period;scenario;sub_period;start_year;end_year;
     attribute;focal;variable_long;unit;path;valid
 
-Input is the fact-driven per-layer dictionary produced by ``09_make_docs.py``
-(``00_docs/variable_dictionary.csv``), one row per delivered layer.
+Input is the fact-driven per-layer dictionary produced for the v2.0 delivery
+(``00_docs/variable_dictionary.csv``, one row per delivered layer). That file
+already carries ``theme`` and ``dataset``, so the dataset name is read rather
+than inferred from the path — the v1.0 generator hard-coded one dataset per
+theme, which no longer holds now that land use carries three products
+(``clcd``, ``glu1km``, ``hlu1km``) and two products appear under two themes
+(``smod`` in anthro and dist, ``h90m`` in hydro and dist).
 
 Usage:
     python 11_make_datalayers_details.py \
-        --input  ../../00_docs/variable_dictionary.csv \
+        --input  <delivery>/00_docs/variable_dictionary.csv \
         --output ../data/CHECO26_datalayers_details.csv
 """
 import argparse
+import collections
 import csv
 import os
 import re
@@ -47,10 +53,10 @@ BIO_LONG = {
     "bio17": "Precipitation of driest quarter",
     "bio18": "Precipitation of warmest quarter",
     "bio19": "Precipitation of coldest quarter",
-    "bio20": "Bioclimatic variable bio20",
-    "bio21": "Bioclimatic variable bio21",
-    "bio22": "Bioclimatic variable bio22",
-    "bio23": "Bioclimatic variable bio23",
+    "bio20": "Bioclimatic variable bio20 (source-defined)",
+    "bio21": "Bioclimatic variable bio21 (source-defined)",
+    "bio22": "Bioclimatic variable bio22 (source-defined)",
+    "bio23": "Bioclimatic variable bio23 (source-defined)",
     "prec": "Precipitation",
     "sunp": "Sunshine duration",
     "tave": "Mean temperature",
@@ -113,12 +119,14 @@ VEGE_LONG = {
 }
 
 ANTHRO_LONG = {
-    "hii": "Human Footprint Index",
-    "pop": "Population count",
+    "hfp": "Human Footprint",
+    "hii": "Human Footprint Index (WCS footHII, v1.0 only)",
+    "pop": "Population count (LandScan, v1.0 only)",
     "urbanprop": "Built-up area proportion",
 }
 
 HYDRO_LONG = {
+    "accumulation": "Flow accumulation",
     "spi": "Stream power index",
     "sti": "Sediment transport index",
     "channel-curv-cel": "Channel curvature (cell)",
@@ -170,12 +178,23 @@ DIST_LONG = {
 }
 
 LULC_CLASS_LONG = {
+    # CLCD observed classes (9)
     "cropland": "Cropland",
     "forest": "Forest",
     "grassland": "Grassland",
     "urban": "Urban",
     "barren": "Barren",
     "water": "Water",
+    "impervious": "Impervious surface",
+    "shrub": "Shrub",
+    "snowice": "Snow and ice",
+    "wetland": "Wetland",
+    # GLU1km projected classes (6)
+    # hlu1km harmonised classes (8)
+    "grassshrub": "Grassland and shrubland",
+    "mngforest": "Managed forest",
+    "pasture": "Pasture",
+    "sparse": "Sparse vegetation",
 }
 
 LULC_METRIC_LONG = {
@@ -196,9 +215,13 @@ DATASET_LONG = {
     "catcd": "CATCD 2025 tree canopy cover",
     "glassndvi": "GLASS NDVI",
     "h90m": "Hydrography90m",
+    "hydrosheds": "HydroSHEDS v1",
+    "clcd": "CLCD annual land cover 2000-2025",
     "glu1km": "Global LULC projection 1 km",
-    "foothii": "WCS footHII human footprint",
-    "landscan": "LandScan population",
+    "hlu1km": "Harmonised global LULC 1960-2100",
+    "hfp": "Human Footprint 2000-2024",
+    "foothii": "WCS footHII human footprint (v1.0 only)",
+    "landscan": "LandScan population (v1.0 only)",
     "smod": "GHS-SMOD built-up areas",
     "grip4": "GRIP4 roads",
     "gsw": "JRC Global Surface Water",
@@ -207,16 +230,21 @@ DATASET_LONG = {
 
 UNIT_EN = {
     "指数(0-59)": "index (0-59)",
+    "指数(0-50)": "index (0-50)",
     "人/像元": "people per cell",
     "比例(0-1)": "proportion (0-1)",
     "degC": "degC",
+    "°C·d": "degC day",
     "(-)": "(-)",
+    "变异系数(-)": "coefficient of variation (-)",
     "mm": "mm",
     "%": "%",
     "m": "m",
+    "1/m": "1/m",
     "类别编码": "class code",
     "个/100km2": "patches per 100 km2",
     "km2": "km2",
+    "上游 3 弧秒像元数（个）": "upstream 3-arc-second cells (count)",
     "mg/kg": "mg/kg",
     "g/cm3": "g/cm3",
     "me/100g": "me/100g",
@@ -257,7 +285,7 @@ def split_suffix(suffix):
     ``_prop_f5000`` -> ("prop", 5000); ``_patchdensity-all_f1000`` ->
     ("patchdensity-all", 1000); ``-`` -> ("", None); ``_min`` -> ("min", None).
     """
-    s = suffix.strip()
+    s = (suffix or "").strip()
     if s in ("", "-"):
         return "", None
     m = re.search(r"_f(\d+)$", s)
@@ -267,7 +295,7 @@ def split_suffix(suffix):
     return base, focal
 
 
-def variable_long(theme, variable, derivation, attribute, dataset):
+def variable_long(theme, variable, derivation, attribute):
     """English long name for the manifest."""
     if theme == "bioclim":
         return BIO_LONG.get(variable, variable)
@@ -301,12 +329,11 @@ def parse_row(row):
     """One dictionary row -> one manifest row (dict)."""
     rel = row["relpath"].replace("\\", "/")
     parts = rel.split("/")
-    theme = parts[1]
+    theme = row["theme"]
+    dataset = row["dataset"]
     derivation, focal = split_suffix(row.get("suffix", "-"))
     unit = UNIT_EN.get(row["unit"], row["unit"])
 
-    category = theme
-    dataset = NA
     variable = NA
     period = NA
     scenario = NA
@@ -316,7 +343,6 @@ def parse_row(row):
     attribute = NA
 
     if theme == "bioclim":
-        dataset = parts[2]
         if parts[3] == "present":
             variable = parts[4]
             period = "present"
@@ -326,74 +352,63 @@ def parse_row(row):
             variable = parts[6]
             period = "future"
             scenario = ssp
-            sub_period = year  # delivery folder = centre year; source range below
+            sub_period = year
             start_year, end_year = CLIMATE_PERIOD[year][1], CLIMATE_PERIOD[year][2]
         else:
             raise ValueError("unexpected bioclim path: %s" % rel)
     elif theme == "soil":
-        dataset = "csdlv2"
         variable = parts[3]
         period = "present"
-        if len(parts) > 5:  # depth-specific layer
+        if len(parts) >= 6:            # depth-specific layer
             attribute = parts[4]
-        elif derivation == "profile":
+        elif derivation == "profile":  # whole-profile aggregate
             attribute = "profile"
-    elif theme == "topo":
-        dataset = "chinadem"
+    elif theme in ("topo", "hydro", "dist"):
         variable = parts[3]
         period = "present"
     elif theme == "vege":
-        dataset = parts[2]
-        variable = parts[-2]  # folder directly above the file (agb / ch / treecover / ndvimax)
         period = "present"
-    elif theme == "hydro":
-        dataset = "h90m"
-        variable = parts[3]
-        period = "present"
-    elif theme == "dist":
-        dataset = parts[2]
-        variable = parts[3]
-        period = "present"
+        if dataset == "glassndvi":     # year-folder product
+            sub_period = parts[3]
+            start_year = end_year = parts[3]
+            variable = parts[4]
+        else:
+            variable = parts[3]
     elif theme == "anthro":
-        dataset = parts[2]
         year = parts[3]
         variable = parts[4]
         period = "present"
         sub_period = year
         start_year = end_year = year
     elif theme == "lulc":
-        dataset = "glu1km"
         if parts[3] == "scenario":
             year, ssp = parts[4], parts[5]
             rest = parts[6:]
             period = "future"
             scenario = ssp
-            sub_period = year
-            start_year = end_year = year
         else:
             year = parts[3]
             rest = parts[4:]
             period = "present"
-            sub_period = year
-            start_year = end_year = year
+        sub_period = year
+        start_year = end_year = year
         if rest and not rest[0].endswith(".tif"):
-            variable = rest[0]           # class-specific proportion layer
+            variable = rest[0]                 # class-specific proportion layer
             attribute = "prop"
         else:
-            # whole-landscape metric: shannon / edge / patchdensity / patchsize
-            head = derivation.split("-")[0]
+            head = derivation.split("-")[0]    # whole-landscape metric
             variable = head
-            if head in ("patchdensity", "patchsize"):
-                attribute = derivation.split("-")[1]
+            if "-" in derivation:
+                attribute = derivation.split("-", 1)[1]
     else:
-        raise ValueError("unexpected theme: %s" % rel)
+        raise ValueError("unexpected theme: %s (%s)" % (theme, rel))
 
     # window statistics for aggregated hydro / distance layers
     if derivation in ("min", "max"):
         attribute = derivation
 
     return {
-        "category": category,
+        "category": theme,
         "dataset": dataset,
         "variable": variable,
         "period": period,
@@ -403,7 +418,7 @@ def parse_row(row):
         "end_year": str(end_year),
         "attribute": str(attribute),
         "focal": str(focal) if focal is not None else NA,
-        "variable_long": variable_long(theme, variable, derivation, attribute, dataset),
+        "variable_long": variable_long(theme, variable, derivation, attribute),
         "unit": unit,
         "path": "./" + rel,
         "valid": "yes",
@@ -416,7 +431,7 @@ def main():
     ap.add_argument("--output", required=True, help="CHECO26_datalayers_details.csv")
     args = ap.parse_args()
 
-    with open(args.input, newline="", encoding="utf-8") as f:
+    with open(args.input, newline="", encoding="utf-8-sig") as f:
         rows = list(csv.DictReader(f))
     if not rows:
         sys.exit("no rows in %s" % args.input)
@@ -432,14 +447,23 @@ def main():
         w.writerows(manifest)
 
     # fact-driven sanity summary
-    import collections
     by_cat = collections.Counter(r["category"] for r in manifest)
+    by_ds = collections.Counter((r["category"], r["dataset"]) for r in manifest)
     print("manifest rows: %d" % len(manifest))
     for cat, n in sorted(by_cat.items()):
-        print("  %-8s %4d" % (cat, n))
+        print("  %-8s %6d" % (cat, n))
+    print("distinct (category, dataset): %d" % len(by_ds))
+
     bad = [r for r in manifest if r["variable"] == NA]
     if bad:
-        sys.exit("ERROR: %d rows without variable" % len(bad))
+        sys.exit("ERROR: %d rows without variable, e.g. %s"
+                 % (len(bad), bad[0]["path"]))
+    # a long name that fell back to the raw token signals a missing vocabulary entry
+    fallback = sorted({r["variable"] for r in manifest
+                       if r["variable_long"] == r["variable"]})
+    if fallback:
+        print("WARNING: %d variables fall back to the raw token: %s"
+              % (len(fallback), ", ".join(fallback)))
     print("written: %s" % args.output)
 
 

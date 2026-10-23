@@ -1,10 +1,10 @@
-## CHECO26 <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=Open+Access&color=#79C83D" alt="Open Access"></a> <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=FAIR&color=black" alt="FAIR"></a> <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=1%2C595+layers&color=#4E79A7" alt="Layers"></a>
+## CHECO26 <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=Open+Access&color=#79C83D" alt="Open Access"></a> <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=FAIR&color=black" alt="FAIR"></a> <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=21%2C110+layers&color=#4E79A7" alt="Layers"></a>
 
 
 
-CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research in China, gathering 1,595 layers from 8 main environmental categories. CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as a ready-to-use environmental covariate base for species distribution modelling and other cross-thematic ecological applications.
+CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research in China, gathering **21,110 layers** in **21 dataset entries** drawn from **19 distinct source products** across **eight environmental categories**. (GHS-SMOD and Hydrography90m each enter under two categories, so the entry count exceeds the product count.) CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as a ready-to-use environmental covariate base for species distribution modelling and other cross-thematic ecological applications.
 
-The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_datalayers_details.csv) of every layer present in CHECO26 is available in this repository. The database is described in a data manuscript currently in preparation.
+The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_datalayers_details.csv) of every layer present in CHECO26 is available in this repository — one semicolon-separated row per delivered layer, with category, dataset, variable, period, scenario, year range, focal radius, physical unit and path. The database is described in a data manuscript currently in preparation.
 
 <p align="center">
   <img src="https://github.com/EldonQ/CHECO26/blob/main/figs/china_overview.png" width="800" />
@@ -20,22 +20,28 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 | Grid                        | [CHECO26 standard grid](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26-standardgrid.tif) |
 | Spatial resolution (meters) | 1000, 1000  (x, y) |
 | Grid size                   | 4861 columns x 4062 rows |
-| Valid cells (China mask)    | 9,490,310 (1 cell = 1 km²) |
+| Valid cells (China mask)    | 9,490,310 of 19,745,382 (48.1%) |
 | Mask                        | [mask_china.tif](https://github.com/EldonQ/CHECO26/blob/main/data/mask_china.tif), `china.shp` rasterized `all_touched=True` (islands and coastlines kept) |
+| Data type                   | float32, every layer without exception |
+| NoData                      | -9999, every layer |
+| Storage                     | GeoTIFF, DEFLATE compressed, 256 x 256 tiles |
+| Volume                      | 169.4 GB (157.8 GiB) |
 
 ## Layer inventory
 
 | Category | Layers | Content |
 |---|---:|---|
-| bioclim | 532 | 28 present layers (1991–2020) + 504 future layers (2 climate chains x 3 SSPs x 3 periods x 28 variables) |
-| lulc | 540 | 10 land-cover snapshots x 54 continuous derivations (class proportions, Shannon diversity, edge density, patch density / mean patch size x 4 window scales) |
-| anthro | 237 | LandScan population (25 years), WCS footHII (20 years), GHS-SMOD built-up proportion (12 epochs), each with focal windows |
-| soil | 196 | CSDLv2, 28 attributes x (6 depth layers + 1 whole-profile aggregate) |
-| hydro | 39 | Hydrography90m continuous layers (stream power / transport indices, channel geometry, stream and outlet distances) plus selected window statistics |
-| vege | 30 | forest aboveground biomass, canopy height, tree canopy cover, GLASS NDVI (3 years), each with focal windows |
-| dist | 17 | distance to roads, major roads, trails, urban areas, surface water, and streams |
-| topo | 4 | elevation, slope, aspect, terrain ruggedness index |
-| **Total** | **1,595** | |
+| lulc | 20,150 | Three complementary products: **clcd** annual observed cover 2000–2025 (1,170 = 26 years x 9 classes x 5 scales) · **glu1km** China-relevant projection 2020 + 2030/2050/2100 under three SSPs (540) · **hlu1km** harmonised yearly reconstruction 1960–2020 plus 2021–2100 under five SSP-RCPs (18,440) |
+| bioclim | 532 | **cnclim1km** 28 present layers (1991–2020) plus two future chains — a 10-model CMIP6 ensemble mean and BCC-CSM2-MR — at 2030/2055/2085 under three SSPs (252 + 252) |
+| soil | 196 | **csdlv2** 28 attributes x (six standard depths + one whole-profile aggregate) |
+| anthro | 137 | **hfp** annual Human Footprint 2000–2024 x 5 scales (125) · **smod** built-up proportion 1975–2030 x 12 epochs (12) |
+| hydro | 44 | **h90m** 39 continuous Hydrography90m layers · **hydrosheds** 5 flow-accumulation layers |
+| vege | 30 | forest aboveground biomass (**agb2019**), forest canopy height (**ch2019**), tree canopy cover (**catcd**), GLASS NDVI 2020–2022 (**glassndvi**), each with focal windows |
+| dist | 17 | distance to roads and major roads (**grip4**), trails (**osm**), urban areas (**smod**), surface water (**gsw**), and four stream-distance surfaces (**h90m**) |
+| topo | 4 | elevation, slope, aspect, terrain ruggedness index (**chinadem**) |
+| **Total** | **21,110** | **21 dataset entries from 19 source products** |
+
+Of the 21,110 layers, 4,824 are delivered at the native 1-km resolution and 16,286 are focal variants — 4,064 at 1 km and 4,074 at each of 5, 10 and 20 km. 3,982 of the native-resolution layers are class proportions; the remaining 842 are source layers plus 18 multi-source extrema. 16,990 layers describe a future scenario and 4,120 describe the present. Every one of these counts is reproducible from the manifest's `focal`, `attribute` and `period` columns.
 
 <p align="center">
   <img src="https://github.com/EldonQ/CHECO26/blob/main/database_validation/figures/layers_per_theme.png" width="520" />
@@ -51,10 +57,10 @@ fixed, variable-type-driven standardization procedure:
 3. resampling to the common 1-km grid — `bilinear` for continuous, proportion and distance layers; `nearest` for categorical layers; `average` / `mode` window aggregation when downscaling fine-resolution sources (30 m / 90 m)
 4. transformation of discrete data to continuous ones — land-cover classes become class proportions, edge density, Shannon diversity, and patch density / mean patch size over square windows
 5. computation of distance statistics for linear and areal features (Euclidean distance, metres)
-6. computation of focal statistics — equal-weight means over four square windows (3 x 3 to 41 x 41 cells, i.e. 3 km to 41 km across)
-7. scaling to documented physical units (e.g. CSDLv2 storage values, footHII index, canopy height)
-8. clipping to the national boundary (no delivered layer holds cells outside China)
-9. saving the final raster layers as GeoTIFF files (DEFLATE, tiled)
+6. computation of focal statistics — equal-weight means over four square windows (3 x 3 to 41 x 41 cells, i.e. 1, 5, 10 and 20 km radii); a window containing no valid cell receives NoData rather than zero
+7. unification of the five NoData conventions found in the sources (0, 255, 65535, -9999, NaN) to -9999, setting class-0 source pixels to NoData before aggregation where 0 doubles as both a class value and the background
+8. clipping to the national boundary with an `all_touched` mask (no delivered layer holds valid cells outside China)
+9. saving the final raster layers as float32 GeoTIFF (DEFLATE, 256 x 256 tiled, atomic write)
 
 For the standardization rules, the focal-window semantics and the distance-surface
 method, see the worked examples in
@@ -65,36 +71,59 @@ pipeline is in [`pipeline/`](pipeline/).
 
 ## Data availability
 
-The CHECO26 database (~32 GB, 1,595 GeoTIFF layers on the China_Albers 1-km
-grid) is described in a data manuscript currently in preparation and is not yet
-publicly released. This repository provides everything needed to understand,
-audit and reproduce the database:
+The CHECO26 v2.0 database (169.4 GB, 21,110 float32 GeoTIFF layers on the
+China_Albers 1-km grid) is described in a data manuscript currently in preparation
+and is not yet publicly released. This repository provides everything needed to
+understand, audit and reproduce the database:
 
-- the full layer manifest ([`data/CHECO26_datalayers_details.csv`](data/CHECO26_datalayers_details.csv), one row per layer with category, dataset, variable, period, scenario, focal radius, unit and path),
+- the full layer manifest ([`data/CHECO26_datalayers_details.csv`](data/CHECO26_datalayers_details.csv), one row per layer with category, dataset, variable, period, scenario, year range, focal radius, unit and path),
 - the standard grid and China mask,
-- six representative sample layers (one per flagship theme) under [`data/sample_layers/`](data/sample_layers/),
-- the complete, idempotent production pipeline ([`pipeline/`](pipeline/)),
+- six representative sample layers under [`data/sample_layers/`](data/sample_layers/),
+- the production pipeline ([`pipeline/`](pipeline/)) and its configuration,
 - the validation code, result dataframes and figures ([`database_validation/`](database_validation/)).
 
 ## Data validation
 
-All 1,595 layers passed the full-library acceptance gates: expected = disk =
-1,595 layers, zero missing or extra layers, zero alignment failures against the
-standard grid, zero layers with cells outside the China mask, and zero naming
-errors. Derived layers additionally pass value-range and empty-window gates, and
-sampled cell-by-cell comparisons against the source products show match rates of
-0.90–1.00 (sub-threshold values are bilinear-reprojection differences at sharp
-gradients, documented per layer). Eight Hydrography90m layers were withdrawn
-from the delivery after the source products themselves proved numerically
-unusable. See [`database_validation/README.md`](database_validation/README.md)
-for the complete evidence chain.
+The v2.0 delivery was checked along three independent lines, each answering a
+different question.
+
+**Format and grid — exhaustive, header-only.** All 21,110 / 21,110 layers satisfy
+the grid invariants (CRS, cell size, extent, 4,861 x 4,062) and all
+21,110 / 21,110 satisfy the format checks. Every layer is float32 and every layer
+declares -9999.
+
+**Cell-level identities — sampled.** Areal proportions of every categorical source
+sum to 1 within 5.22 x 10⁻⁸ in all 12 composition groups, which is the float32
+representation limit; the group built on an integer-percent source closes to
+exactly zero. Focal maxima fall monotonically with window size
+(1.0000 → 1.0000 → 0.9989 → 0.9947 → 0.9836 across the five window sizes) and derived bioclimatic identities hold to
+9.54 x 10⁻⁶. Of 48 sampled layers, none held a valid value outside the China mask.
+
+**Independent recomputation.** A second implementation sharing no code with the
+pipeline re-derives 16 properties from the delivered files, including a full rerun
+of the composition identity on the 2008 reference year, and reports no failure.
+
+Resampling was quantified per theme: the 1-km product reproduces the area-weighted
+source mean with a median relative difference of 0.00% for canopy height, 2.40% for
+distance to rivers and 7.75% for flow accumulation, while the within-cell
+coefficient of variation of the sources is 77–277% — the 1-km value is an average
+over a heterogeneous neighbourhood, not a statement about every point inside it.
+
+Counting distinct SHA-256 digests, 14,047 of the 21,110 layers are byte-distinct
+(66.5%); the redundancy is confined to the projected land-use family, where the
+projected urban extent is frozen across scenarios.
+
+See [`database_validation/README.md`](database_validation/README.md) for the
+evidence chain and the list of known source-level limitations, including the eight
+Hydrography90m layers withdrawn after the source products proved numerically
+unusable.
 
 ## Repository layout
 
 | Directory | Content |
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
-| [`pipeline/`](pipeline/) | complete production pipeline (stages 01–11) and configuration |
+| [`pipeline/`](pipeline/) | production pipeline (stages 01–11) and configuration |
 | [`database_validation/`](database_validation/) | validation code, result dataframes, figures, forensics |
 | [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |

@@ -1,14 +1,14 @@
 # CHECO26 data artefacts
 
 Light-weight data assets that ship with the repository. The full database
-(~32 GB) is not yet publicly released (see the main
+(169.4 GB) is not yet publicly released (see the main
 [README](../README.md#data-availability)); these artefacts let you audit the
 inventory, build the exact grid, and inspect representative layers without
 downloading anything.
 
 | File | What it is |
 |---|---|
-| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (1,595 rows), in the SWECO25 column layout |
+| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,110 rows), in the SWECO25 column layout |
 | `CHECO26-standardgrid.tif` | the template grid every layer is aligned to (China_Albers, 1000 m, 4861 x 4062, value 1) |
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
 | `sample_layers/glo/...` | six representative layers, byte-identical copies from the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |

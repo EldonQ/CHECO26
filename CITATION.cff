@@ -1,0 +1,278 @@
+cff-version: 1.2.0
+message: >-
+  If you use CHECO26, please cite this database and the source products listed
+  under `references`. Per-layer licensing differs: not every layer is
+  redistributable under the same terms.
+title: "CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research"
+abstract: >-
+  A uniform-grid library of 21,110 environmental layers covering China at 1 km in
+  an equal-area Albers projection (WGS 84, central meridian 105 E, standard
+  parallels 25 N and 47 N). Twenty-one dataset entries drawn from nineteen source
+  products across eight categories (bioclim, soil, lulc, anthro, hydro, vege,
+  dist, topo) are standardised to one grid of 4,861 x 4,062 cells, one data type
+  (float32) and one NoData convention (-9999). Besides the harmonised source
+  layers the database delivers 16,286 focal-statistics layers at four radii
+  (1, 5, 10 and 20 km), 17 distance surfaces and per-cell areal proportions for
+  every categorical source. Land use and land cover is provided at three
+  complementary depths: annual observed cover 2000-2025 (CLCD, 1,170 layers), a
+  China-relevant projection (GLU1km, 540 layers) and a harmonised yearly
+  reconstruction 1960-2100 under five SSP-RCP scenarios (18,440 layers). Total
+  volume is 169.4 GB.
+version: "2.0"
+date-released: "2026-10-19"
+license: "CC-BY-4.0"
+license-url: "https://creativecommons.org/licenses/by/4.0/"
+type: dataset
+keywords:
+  - environmental covariates
+  - cross-thematic raster database
+  - China
+  - 1 km
+  - Albers equal-area
+  - land cover
+  - soil properties
+  - bioclimatic variables
+  - human footprint
+  - hydrography
+  - CMIP6
+identifiers:
+  - type: url
+    value: "https://github.com/EldonQ/CHECO26"
+    description: "Project repository"
+authors:
+  - name: "CHECO26 contributors"
+    affiliation: "to be completed before release"
+references:
+  - type: dataset
+    title: "A 1 km monthly dataset of historical and future climate changes over China (V8)"
+    authors:
+      - name: "Hu, X."
+      - name: "Shi, S."
+      - name: "Zhou, B."
+      - name: "Ni, J."
+    year: 2025
+    publisher:
+      name: "Science Data Bank"
+    doi: "10.57760/sciencedb.13546"
+  - type: dataset
+    title: "A China dataset of soil properties for land surface modelling (version 2, CSDLv2)"
+    authors:
+      - name: "Shi, G."
+      - name: "Shangguan, W."
+    year: 2024
+    publisher:
+      name: "National Tibetan Plateau Data Center"
+    doi: "10.11888/Terre.tpdc.301235"
+  - type: dataset
+    title: "Digital elevation model of China (1 km)"
+    authors:
+      - name: "Tang, G."
+    year: 2020
+    publisher:
+      name: "National Tibetan Plateau Data Center"
+    url: "https://data.tpdc.ac.cn/zh-hans/data/12e91073-0181-44bf-8308-c50e5bd9a734"
+  - type: article
+    title: "New global hydrography derived from spaceborne elevation data"
+    authors:
+      - name: "Lehner, B."
+      - name: "Verdin, K."
+      - name: "Jarvis, A."
+    year: 2008
+    journal: "Eos, Transactions American Geophysical Union"
+    volume: 89
+    start: 93
+    end: 94
+    doi: "10.1029/2008eo100001"
+  - type: article
+    title: "Hydrography90m: a new high-resolution global hydrographic dataset"
+    authors:
+      - name: "Amatulli, G."
+      - name: "Garcia Marquez, J."
+      - name: "Sethi, T."
+      - name: "Kiesel, J."
+      - name: "Grigoropoulou, A."
+      - name: "Üblacker, M. M."
+      - name: "Shen, L. Q."
+      - name: "Domisch, S."
+    year: 2022
+    journal: "Earth System Science Data"
+    volume: 14
+    start: 4525
+    end: 4550
+    doi: "10.5194/essd-14-4525-2022"
+  - type: article
+    title: "Global patterns of current and future road infrastructure"
+    authors:
+      - name: "Meijer, J. R."
+      - name: "Huijbregts, M. A. J."
+      - name: "Schotten, K. C. G. J."
+      - name: "Schipper, A. M."
+    year: 2018
+    journal: "Environmental Research Letters"
+    volume: 13
+    start: 64006
+    doi: "10.1088/1748-9326/aabd42"
+  - type: article
+    title: "High-resolution mapping of global surface water and its long-term changes"
+    authors:
+      - name: "Pekel, J.-F."
+      - name: "Cottam, A."
+      - name: "Gorelick, N."
+      - name: "Belward, A. S."
+    year: 2016
+    journal: "Nature"
+    volume: 540
+    start: 418
+    end: 422
+    doi: "10.1038/nature20584"
+  - type: dataset
+    title: "OpenStreetMap (ODbL 1.0)"
+    authors:
+      - name: "OpenStreetMap contributors"
+    year: 2026
+    url: "https://www.openstreetmap.org"
+  - type: dataset
+    title: >-
+      GHS-SMOD R2023A - GHS settlement layers, application of the Degree of
+      Urbanisation methodology (stage I) to GHS-POP R2023A and GHS-BUILT-S R2023A
+    authors:
+      - name: "Schiavina, M."
+      - name: "Melchiorri, M."
+      - name: "Pesaresi, M."
+    year: 2023
+    publisher:
+      name: "European Commission, Joint Research Centre"
+    doi: "10.2905/A0DF7A6F-49DE-46EA-9BDE-563437A6E2BA"
+  - type: article
+    title: "A global record of annual terrestrial Human Footprint dataset from 2000 to 2018"
+    authors:
+      - name: "Mu, H."
+      - name: "Li, X."
+      - name: "Wen, Y."
+      - name: "Huang, J."
+      - name: "Du, P."
+      - name: "Su, W."
+      - name: "Miao, S."
+      - name: "Geng, M."
+    year: 2022
+    journal: "Scientific Data"
+    volume: 9
+    start: 176
+    doi: "10.1038/s41597-022-01284-8"
+  - type: article
+    title: "The 30 m annual land cover dataset and its dynamics in China from 1990 to 2019"
+    authors:
+      - name: "Yang, J."
+      - name: "Huang, X."
+    year: 2021
+    journal: "Earth System Science Data"
+    volume: 13
+    start: 3907
+    end: 3925
+    doi: "10.5194/essd-13-3907-2021"
+  - type: dataset
+    title: "The 30 m annual land cover datasets and its dynamics in China from 1985 to 2025"
+    authors:
+      - name: "Yang, J."
+      - name: "Huang, X."
+    year: 2026
+    publisher:
+      name: "Zenodo"
+    doi: "10.5281/zenodo.18180184"
+  - type: article
+    title: >-
+      Mapping the spatial heterogeneity of global land use and land cover from 2020
+      to 2100 at a 1 km resolution
+    authors:
+      - name: "Zhang, T."
+      - name: "Cheng, C."
+      - name: "Wu, X."
+    year: 2023
+    journal: "Scientific Data"
+    volume: 10
+    start: 748
+    doi: "10.1038/s41597-023-02637-7"
+  - type: dataset
+    title: "Harmonised global land use and land cover maps between 1960 and 2100"
+    authors:
+      - name: "Woodman, T. L."
+      - name: "Arendarczyk, B."
+      - name: "Winkler, K."
+      - name: "Henry, R. C."
+      - name: "Eigenbrod, F."
+      - name: "Burslem, D. F. R. P."
+      - name: "Alexander, P."
+      - name: "Travis, J. M. J."
+    year: 2025
+    publisher:
+      name: "Zenodo"
+    doi: "10.5281/zenodo.15017066"
+  - type: article
+    title: >-
+      Neural network guided interpolation for mapping canopy height of China's
+      forests by integrating GEDI and ICESat-2 data
+    authors:
+      - name: "Liu, X."
+      - name: "Su, Y."
+      - name: "Hu, T."
+      - name: "Yang, Q."
+      - name: "Liu, B."
+      - name: "Deng, Y."
+      - name: "Tang, H."
+      - name: "Tang, Z."
+      - name: "Fang, J."
+      - name: "Guo, Q."
+    year: 2022
+    journal: "Remote Sensing of Environment"
+    volume: 269
+    start: 112844
+    doi: "10.1016/j.rse.2021.112844"
+  - type: article
+    title: >-
+      Mapping high-resolution forest aboveground biomass of China using
+      multisource remote sensing data
+    authors:
+      - name: "Yang, Q."
+      - name: "Niu, C."
+      - name: "Liu, X."
+      - name: "Feng, Y."
+      - name: "Ma, Q."
+      - name: "Wang, X."
+      - name: "Tang, H."
+      - name: "Guo, Q."
+    year: 2023
+    journal: "GIScience & Remote Sensing"
+    volume: 60
+    start: 2203303
+    doi: "10.1080/15481603.2023.2203303"
+  - type: article
+    title: >-
+      Unveiling spatiotemporal tree cover patterns in China: the first 30 m annual
+      tree cover mapping from 1985 to 2023
+    authors:
+      - name: "Cai, Y."
+      - name: "Xu, X."
+      - name: "Nie, S."
+      - name: "Wang, C."
+      - name: "Zhu, P."
+      - name: "Xiong, Y."
+      - name: "Liu, X."
+    year: 2024
+    journal: "ISPRS Journal of Photogrammetry and Remote Sensing"
+    volume: 216
+    start: 240
+    end: 258
+    doi: "10.1016/j.isprsjprs.2024.08.001"
+  - type: article
+    title: >-
+      Divergent shifts in peak photosynthesis timing of temperate and alpine
+      grasslands in China
+    authors:
+      - name: "Yang, J."
+      - name: "Dong, J."
+      - name: "Xiao, X."
+    year: 2019
+    journal: "Remote Sensing of Environment"
+    volume: 233
+    start: 111395
+    doi: "10.1016/j.rse.2019.111395"
