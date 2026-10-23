@@ -1,173 +1,170 @@
-# Data integrity check and effects of resampling operations
+# Database validation — CHECO26 v2.0
 
-This directory contains the validation code, result dataframes and figures for
-the CHECO26 raster database. It mirrors the validation module of SWECO25 and
-extends it with the derived-layer gates and source-defect forensics that a
-1-km national database assembled from heterogeneous products requires.
+This folder holds the evidence that the delivered archive is what it claims to be:
+the checks that were run, their results, the code that produced them, and the
+anomalies that were found and resolved along the way.
 
-# 1) Data integrity check
+The full v2.0 verification report is [`V2_VERIFICATION_REPORT.md`](V2_VERIFICATION_REPORT.md)
+and the independent recomputation is [`INDEPENDENT_VERIFICATION.md`](INDEPENDENT_VERIFICATION.md).
+This README is the summary; where the two disagree, the reports win.
 
-The goal of this analysis is to ensure the consistency and quality of every
-CHECO26 layer. The full-library validator
-([`script/database_validation.py`](script/database_validation.py)) is driven
-only by public artefacts: the layer manifest
-([`data/CHECO26_datalayers_details.csv`](../data/CHECO26_datalayers_details.csv)),
-the standard grid ([`data/CHECO26-standardgrid.tif`](../data/CHECO26-standardgrid.tif))
-and the China mask ([`data/mask_china.tif`](../data/mask_china.tif)).
+**Read the coverage column before the result column.** Two of the six checks open
+every layer and four do not. A "pass" from a sampled check is not evidence about
+the layers it never touched, and the numbers below never present it as such.
 
-## Gates and results
+## What was checked
 
-All gates are hard; the delivered tree passes all of them
-([`result_dataframe/validation_summary.csv`](result_dataframe/validation_summary.csv)):
+| Check | Coverage | What it verifies | Result |
+|---|---|---|---|
+| **V1** | **21,110 / 21,110 — all layers** | CRS, extent, 1,000 m cell size, 4,062 × 4,861 grid | **21,110 pass** |
+| **V2** | **21,110 / 21,110 — all layers** | float32, declared NoData −9999, tiling, compression | **21,110 pass** |
+| V3 | 48 sampled | no valid cell outside the China mask | 48 / 48 |
+| V4 | 48 sampled | NoData encoding agrees with the declared value | 48 / 48 |
+| V5 | 12 groups, stratified by theme and dataset | class proportions sum to 1 | 12 / 12 |
+| V6 | 18 sampled | focal values lie inside their parent's range | 18 / 18 |
 
-| Gate | Check | Result |
-|---|---|---|
-| Existence | every manifest layer on disk; no extra `.tif` | expected = disk = 1,595; missing = 0; extra = 0 |
-| Alignment | CRS, resolution, extent, grid origin vs. standard grid | 0 failures (1,595 / 1,595) |
-| China mask | no layer holds valid cells outside the national boundary | 0 layers (mask = 9,490,310 cells) |
-| Naming | folder names carry no underscore; file name = folder names joined by underscores plus an allowed suffix; depth 4–7; globally unique file names | 0 errors |
-| Values | per-layer dtype, nodata, valid-cell count, NA fraction, min, max | recorded in `p5_validation_report.csv` |
+V1 and V2 read file headers only, which is why they can cover the whole archive.
+V3–V6 read pixels, and a full pass would take hours; they are sampled by design.
 
-Per-layer statistics are available in
-[`result_dataframe/p5_validation_report.csv`](result_dataframe/p5_validation_report.csv)
-(1,595 rows: `relpath`, `aligned`, `dtype`, `nodata`, `n_valid`, `na_frac`,
-`vmin`, `vmax`, `error`).
+## Composition identities (V5)
 
-## Value ranges and NoData counts
+A categorical source, one-hot encoded and area-weighted, must sum to 1 in every
+valid cell. The residual should therefore come only from float32 representation.
 
-| ![Value range](figures/scatterplot_range.png) | ![NoData count](figures/scatterplot_NAcount.png) |
-|:---:|:---:|
+| Product | Classes | Years checked | max \|Σ − 1\| |
+|---|---:|---|---:|
+| `clcd` (observed, aggregated from 30 m) | 9 | 2000, 2001, 2003, 2004 | 5.03–5.22 × 10⁻⁸ |
+| `glu1km` (projected, 1 km source) | 6 | four scenario snapshots | 0.000 (exact) |
+| `hlu1km` (projected, 0.01° source) | 8 | 1961, 1962, 1966, 1967 | 4.470 × 10⁻⁸ |
 
-Extreme value ranges and NoData counts were investigated individually and are
-all justified by the nature of the data:
+`glu1km` closes exactly because its source is published as integer percentages, so
+no float aggregation happens. The other two sit at the float32 representation
+limit. Two independently built products converging on the same error magnitude,
+one of them exact, points to the representation layer rather than the code.
 
-- **Hydrography90m long tails.** `spi_max` reaches 8.7 × 10^8 and `sti` /
-  `spi` means reach ~5 × 10^7: the stream-power and sediment-transport indices
-  carry long right tails in the source product, which are preserved faithfully
-  (documented source characteristics, not processing defects).
-- **Network index layers.** `segment` and `sub-catchment` use large integer
-  identifiers (up to 7.3 × 10^8); these are indices, not continuous gradients,
-  and are flagged in the manifest (`sdm_note`) as unsuitable as ordinary SDM
-  predictors.
-- **`patchsize-all`** reaches 9.4 × 10^6 km², the whole-country patch of the
-  41 × 41-cell window in homogeneous regions; the bound gate caps it at the
-  mask area (9,490,310 km²).
-- **`outlet`** is a sparse basin-outlet marker layer (18,551 valid cells, all
-  equal to 1.0): 99.9 % NoData is expected and the layer is flagged as not a
-  modelling covariate.
-- **Forest-specific patch metrics** (`patchdensity-forest`, `patchsize-forest`)
-  are NoData wherever the window contains no forest patch anchor; under the
-  most forest-poor future scenarios (SSP585, 2100) this reaches ~86 % of
-  cells, consistent with the anchor approximation documented in the pipeline
-  configuration.
+## Independent recomputation
 
-Median valid-cell shortfall against the China mask is 0.00–0.54 % per theme,
-reflecting within-China NoData of the source products (e.g. CNClim1km invalid
-patches); no layer exceeds the mask.
+[`script/verify_independent.R`](script/verify_independent.R) re-derives 16
+properties using only `terra` and base R, calling no project helper: **16 pass, 0 fail**.
 
-# 2) Effects of resampling operations
+| Group | Comparison | Comparisons | Result |
+|---|---|---:|---|
+| A | layer count equals 21,110 | 1 | pass |
+| A | manifest versus disk, both directions | 21,110 | 0 extra on either side |
+| B | 60 random layers against the template (extent, dims, resolution) | 60 | 0 mismatches |
+| C | 60 layers declare −9999 | 60 | all |
+| C | `terra::NAflag()` returns NaN for float layers | 60 | all |
+| C | NoData cell count equals the mask's zero count | 19,745,382 | 10,255,072 = 10,255,072 |
+| D | mask valid / invalid cells | 2 | 9,490,310 / 10,255,072 |
+| E | 10 random layers, recompute min/max/n_valid | 10 | 0 mismatches |
+| F | 8 random layers, re-hash SHA-256 | 8 | 0 mismatches |
+| G | CLCD composition identity on 2008 | 9,471,991 | 5.215 × 10⁻⁸ |
 
-We assessed the fidelity of the warp-to-template step by comparing 1,000
-randomly sampled valid cells of delivered layers against the corresponding
-source products (source values read at the target cell centres in the source
-CRS, after applying the documented unit scale). A cell counts as matching when
-the absolute difference stays within 5 % of the source maximum; a layer passes
-at ≥ 95 % matching cells
-([`script/database_validation.py`](script/database_validation.py), sampled
-cell check; results in
-[`result_dataframe/cell_by_cell_checks.csv`](result_dataframe/cell_by_cell_checks.csv)).
+## Resampling effect
 
-| Layer | Match rate | n | Max abs. diff | Verdict |
-|---|---:|---:|---:|---|
-| `glo_bioclim_cnclim1km_present_bio09` | 0.986 | 1000 | 2.91 | pass |
-| `glo_bioclim_cnclim1km-ensmean_scenario_2055_ssp245_bio13` | 1.000 | 1000 | 20.83 | pass |
-| `glo_bioclim_cnclim1km-ensmean_scenario_2030_ssp126_bio14` | 0.999 | 1000 | 7.47 | pass |
-| `glo_bioclim_cnclim1km-ensmean_scenario_2030_ssp585_bio14` | 0.999 | 1000 | 7.16 | pass |
-| `glo_anthro_landscan_2022_pop` | 0.974 | 1000 | 2697.66 | pass |
-| `glo_soil_csdlv2_wet-r_15` | 0.995 | 1000 | 11.07 | pass |
-| `glo_soil_csdlv2_clay_30` | 0.903 | 1000 | 6.52 | reference difference |
-| `glo_anthro_foothii_2015_hii` | 0.924 | 992 | 14.90 | reference difference |
-| `glo_anthro_foothii_2019_hii` | 0.908 | 992 | 14.66 | reference difference |
+Each layer contributes 200 random 1 km cells. For each, the cell polygon is
+transformed to the source CRS, the source raster clipped to it, and the
+area-weighted source mean compared with the delivered value. The within-cell
+coefficient of variation is reported alongside because it says how much
+sub-kilometre structure a 1 km value absorbs.
 
-![Cell-by-cell comparison](figures/scatterplot_cellcheck.png)
+| Layer | Median source cells per 1 km cell | Median absolute difference | Median relative difference | Relative difference under 1% | Within-cell CV (median) |
+|---|---:|---:|---:|---:|---:|
+| vege / canopy height (30 m) | 1,300 | 0.000 m | 0.00% | 75.5% | 90.0% |
+| dist / river distance (90 m) | 144 | 4.21 m | 2.40% | 29.5% | 77.0% |
+| hydro / flow accumulation (90 m) | 144 | 2.02 | 7.75% | 13.0% | 277.4% |
 
-The three sub-threshold layers are **reference differences, not defects**: they
-compare a bilinear reprojection against the source product's own resampling at
-sharp gradients (footHII index discontinuities, clay content boundaries), where
-the two interpolation paths legitimately disagree. The hard acceptance gates
-(existence, alignment, mask, naming, value range) all pass, and every layer was
-additionally audited cell-by-cell against its source during production without
-finding data defects.
+Canopy height reproduces the source mean exactly at the median. Flow accumulation
+has the largest relative difference because the variable spans eight orders of
+magnitude, so an absolute difference of about 2 becomes a large relative
+difference wherever the cell mean is small.
 
-# 3) Derived-layer gates
+The within-cell CV is the number that matters for use: it is why the land-cover
+family ships nine per-cell areal proportions rather than a single dominant class.
 
-Focal-window and landscape-metric layers carry two failure modes that
-existence and alignment checks cannot see, tested by
-[`script/validate_derived_layers.py`](script/validate_derived_layers.py):
+## Byte-level uniqueness
 
-- **G1 — value range.** A derived layer's `[min, max]` must lie inside its base
-  layer's range; a window mean cannot leave the input range.
-- **G2 — empty window.** No derived cell may hold a value where its window
-  contained zero valid base cells; a focal mean must be NoData there.
+Counting distinct SHA-256 digests over the whole archive: **14,047 of 21,110 layers
+are byte-distinct (66.5%)**, so the layer count overstates the amount of distinct
+information by about a third. Six of the eight themes contain no duplicates at all;
+the redundancy is confined to the projected land-use family, where the projected
+urban extent is frozen across all five SSP-RCP scenarios and therefore repeats.
 
-Theoretical bounds are additionally enforced for the LULC metrics that are not
-focal means of a single base: Shannon diversity ≤ ln(6), edge density ∈ [0, 1],
-patch density ≥ 0, patch size ≤ mask area.
+## Distribution and licensing
 
-These gates were added after a real defect was found: the empty-window test
-originally relied on a floating-point validity mean whose rounding residue
-(~10^-17) is non-zero, so fully empty windows produced garbage values (242
-focal layers carried values up to 4,384 against a base range of 0–63.7). The
-corrected integer-count criterion was verified against exact counts for all
-four window sizes, and **524 derived layers were rebuilt** on 2026-10-06
-(203,407 garbage cells → 0; per-layer before/after evidence in
-[`result_dataframe/focal_repair_record.csv`](result_dataframe/focal_repair_record.csv)).
-Layers with at least one valid cell in the window are bit-identical to the
-previous implementation.
+| Group | Layers |
+|---|---:|
+| Open licence (CC BY 4.0, ODbL 1.0, Copernicus) | 21,025 |
+| Non-commercial (CC BY-NC 4.0, of which 4 are CC BY-NC-SA 4.0) | 80 |
+| Withheld (HydroSHEDS v1 flow accumulation) | 5 |
+| **Total** | **21,110** |
 
-# 4) Withdrawn layers (source defects)
+Per-layer records are in [`result_dataframe/per_layer_stats.csv`](result_dataframe/per_layer_stats.csv)
+(licence class and release status per row) and in `RESTRICTED_LAYERS.csv`.
 
-On 2026-10-06, eight Hydrography90m layers were withdrawn from the delivery
-tree (1,603 → 1,595) because the **source product values are unusable**, not
-because of any processing defect:
-[`result_dataframe/withdrawn_layers_manifest.csv`](result_dataframe/withdrawn_layers_manifest.csv).
+## Withdrawn layers
 
-| Layer | Source-side evidence |
-|---|---|
-| `cti` | int32 range [−5.7 × 10^8, 1.9 × 10^9]; ln(a/tanβ) cannot reach that magnitude; 99.7 % of cells negative |
-| `channel_grad_{dw_seg,up_cel,up_seg}` | median ~9 × 10^4 cm/m, max 1.4 × 10^9; physical upper bound ~100 cm/m |
-| `slope_curv_{max,min}_dw_cel` | symmetric saturation at ±384,900 |
-| `accumulation` (+ `_max`) | contains negative values although the unit is km² |
+Eight Hydrography90m layers were withdrawn from the delivery after the source
+products themselves proved numerically unusable — negative flow accumulation down
+to −244,806 km², and a composite terrain index spanning ±1.8 × 10⁹. The delivered
+values were verified cell by cell to be a faithful downscaling of those sources,
+so a rerun cannot repair them. They remain in the provenance table with
+`status = withdrawn` so the removal is auditable rather than silent.
 
-For each withdrawn layer, the delivered raster was re-projected from the source
-with the identical pipeline rule (average downscaling) and compared
-cell-by-cell: the value-range upper bounds agree to float32 bit level and zero
-cells differ by more than 1 % — the delivered layers are faithful downscalings
-of defective sources, so re-running cannot repair them. They are archived with
-a one-command rollback path.
+## Six defects found in the validator itself
 
-# 5) Reproducing
+This is the most useful section of the folder. Early in the campaign the checks
+reported pass because they were doing nothing:
 
-```console
-# full-library integrity check (existence / alignment / mask / naming / values)
-python script/database_validation.py \
-    --root      path/to/delivery_tree \
-    --manifest  ../../data/CHECO26_datalayers_details.csv \
-    --grid      ../../data/CHECO26-standardgrid.tif \
-    --mask      ../../data/mask_china.tif \
-    --output    validation_report.csv
+| # | Defect | Symptom | Fix |
+|---|---|---|---|
+| 1 | V4 used `terra::NAflag()` | returns NaN for float rasters, so the whole check was skipped | read `NoData Value=` from the GDAL metadata block |
+| 2 | V5 grouped by `dirname()` | classes live in sibling directories, so every group had one file and was skipped | group on the two levels above the file |
+| 3 | `limit` truncated the whole file list | `full 40` silently restricted V3–V6 to 40 layers | `limit` now only bounds V1/V2 |
+| 4 | V5 used `global(min)` after the rewrite | cells outside the mask are 0, so `dev = 1` and correct data failed | evaluate only where Σ > 0 |
+| 5 | V5 took the 12 oldest groups by mtime | systematically excluded the newest data — none of the 12 was CLCD | stratify by theme/dataset and rotate |
+| 6 | the first independent script prefixed paths wrongly | compared 0 layers and reported pass | fixed the prefix, and every check now prints its comparison count |
 
-# derived-layer gates (value range + empty window + LULC bounds)
-python script/validate_derived_layers.py \
-    --root  path/to/delivery_tree \
-    --mask  ../../data/mask_china.tif \
-    --output derived_validation_report.csv
+The lasting guard is the last row: every check reports how many comparisons it
+made, so a check that did nothing cannot masquerade as a check that passed.
 
-# regenerate the figures from the result dataframes
+## What could not be verified
+
+- **Source integrity.** Ingest checksums were not retained, so the source files can
+  no longer be re-verified against the delivered archive.
+- **Comparison with the v1.0 Python delivery.** That delivery was replaced in
+  place, so a like-for-like comparison is impossible. Two diagnostic rasters do
+  survive and answer the question for both resampling rules: bilinear gives a mean
+  absolute difference of 0.0146 °C but only 2.85% bit-identical cells, while
+  nearest gives 94.48% bit-identical cells but differences up to 9.71 °C in the
+  rest. v2.0 is therefore not a drop-in numerical replacement for v1.0, and users
+  needing continuity must recompute derived quantities from v2.0.
+
+## Reproducing
+
+```bash
+Rscript pipeline_r/scripts/11_validate.R header      # V1/V2 over all 21,110 layers
+Rscript script/verify_independent.R                   # 16 independent checks
+Rscript script/check_table2.R                         # per-dataset counts sum to 21,110
+Rscript script/check_docs_consistency.R               # documentation numbers versus disk
+Rscript script/check_trends.R                         # temporal consistency of annual series
+Rscript script/resampling_effect.R                    # source-versus-resampled comparison
+python script/make_result_dataframes.py --delivery <delivery-root> --outdir result_dataframe
 python script/make_validation_figures.py
 ```
 
-The production pipeline that builds the database from source products is in
-[`../pipeline/`](../pipeline/); the validation scripts here are self-contained
-re-implementations of its acceptance gates (production modules `08` and `10`),
-driven only by the public artefacts of this repository.
+The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
+`data/covariates/`, `scripts/config.yaml` and `00_docs/`.
+
+## Layout
+
+| Path | Content |
+|---|---|
+| `V2_VERIFICATION_REPORT.md` | full v2.0 verification report |
+| `INDEPENDENT_VERIFICATION.md` | the independent recomputation, written up separately |
+| `result_dataframe/per_layer_stats.csv` | one row per layer: theme, dataset, unit, n_valid, na_frac, min, max, bytes, SHA-256, licence class, release status |
+| `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
+| `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
+| `figures/` | value range per layer, NoData count per layer, theme inventory |
+| `script/` | the checks and the scripts that regenerate the tables and figures |
+| `v1_archive/` | the v1.0 validation campaign, kept for provenance only |

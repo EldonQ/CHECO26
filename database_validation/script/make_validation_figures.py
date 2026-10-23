@@ -2,18 +2,21 @@
 # -*- coding: utf-8 -*-
 """Regenerate the database-validation figures from the result dataframes.
 
-Mirrors the validation figure set of SWECO25:
-value-range and NA-count scatterplots per layer, the sampled cell-by-cell
-comparison against source products, and the per-theme layer inventory.
+Input (default: ../result_dataframe/per_layer_stats.csv), one row per delivered
+layer with theme, n_valid, na_frac, vmin and vmax.
 
-Inputs (default: alongside this script):
-    result_dataframe/p5_validation_report.csv   per-layer stats (1,595 rows)
-    result_dataframe/cell_by_cell_checks.csv    sampled source comparisons
-Outputs (default: alongside this script):
-    figures/scatterplot_range.png
-    figures/scatterplot_NAcount.png
-    figures/scatterplot_cellcheck.png
-    figures/layers_per_theme.png
+Outputs (default: ../figures/):
+    scatterplot_range.png     value range per layer, log scale, by theme
+    scatterplot_NAcount.png   NoData cell count per layer against the mask floor
+    layers_per_theme.png      layer inventory split into present and scenario
+
+The sampled cell-by-cell comparison figure of the v1.0 campaign has no v2.0
+counterpart: the v2.0 evidence for values is the composition-identity and
+independent-recomputation set, reported as tables rather than a per-layer bar
+chart. The v1.0 figure is kept under ``v1_archive/``.
+
+Usage:
+    python make_validation_figures.py [--stats ...] [--outdir ...]
 """
 from __future__ import annotations
 
@@ -51,54 +54,49 @@ plt.rcParams.update({
 })
 
 
-def theme_of(rel):
-    return rel.split("/")[1]
-
-
-def load_p5(path):
+def load_stats(path):
     rows = []
     with open(path, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["vmin"] in ("", None):
+            if r["vmin"] in ("", None, "NA"):
                 continue
-            rows.append(dict(relpath=r["relpath"], theme=theme_of(r["relpath"]),
-                             vmin=float(r["vmin"]), vmax=float(r["vmax"]),
-                             n_valid=int(r["n_valid"]),
+            try:
+                vmin, vmax = float(r["vmin"]), float(r["vmax"])
+            except ValueError:
+                continue
+            rows.append(dict(relpath=r["relpath"], theme=r["theme"],
+                             vmin=vmin, vmax=vmax,
+                             n_valid=int(float(r["n_valid"])),
                              na_frac=float(r["na_frac"])))
     return rows
 
 
-def load_cellchecks(path):
-    with open(path, newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-def fig_range(rows, out):
-    fig, ax = plt.subplots(figsize=(10, 5.2))
+def fig_range(rows, out, n_all):
     order = {t: i for i, t in enumerate(THEMES)}
-    rows = sorted(rows, key=lambda r: (order[r["theme"]], r["relpath"]))
+    rows = sorted(rows, key=lambda r: (order.get(r["theme"], 99), r["relpath"]))
     x = np.arange(len(rows))
     y = np.array([abs(r["vmin"]) + abs(r["vmax"]) for r in rows])
     y[y <= 0] = np.nan
+    fig, ax = plt.subplots(figsize=(10, 5.2))
     for t in THEMES:
         sel = [i for i, r in enumerate(rows) if r["theme"] == t]
-        ax.scatter(x[sel], y[sel], s=7, alpha=0.75, color=THEME_COLOR[t],
-                   label=t, linewidths=0)
+        if sel:
+            ax.scatter(x[sel], y[sel], s=4, alpha=0.55, color=THEME_COLOR[t],
+                       label=t, linewidths=0)
     ax.set_yscale("log")
     ax.set_xlabel("Layer (grouped by theme)")
     ax.set_ylabel("Value range  |min| + |max|  (log scale)")
-    ax.set_title("Value range per layer (1,595 layers)", fontsize=12,
-                 fontweight="bold")
-    ax.legend(title="theme", markerscale=2, fontsize=9, title_fontsize=9,
+    ax.set_title("Value range per layer (%s layers, %s plotted)"
+                 % (format(n_all, ","), format(len(rows), ",")),
+                 fontsize=12, fontweight="bold")
+    ax.legend(title="theme", markerscale=3, fontsize=9, title_fontsize=9,
               loc="upper left", frameon=False)
     ax.grid(axis="y", alpha=0.25, linewidth=0.5)
-    # annotate the three most extreme layers
     idx = np.argsort(np.where(np.isnan(y), -np.inf, y))[-3:]
     for i in idx:
         if np.isnan(y[i]):
             continue
-        short = os.path.basename(rows[i]["relpath"])[:-4]
-        short = short.replace("glo_", "").replace(".tif", "")
+        short = os.path.basename(rows[i]["relpath"])[:-4].replace("glo_", "")
         ax.annotate(short, (x[i], y[i]), textcoords="offset points",
                     xytext=(4, 4), fontsize=7.5, color="#555555")
     fig.tight_layout()
@@ -107,16 +105,17 @@ def fig_range(rows, out):
     print("wrote", out)
 
 
-def fig_na(rows, out):
-    fig, ax = plt.subplots(figsize=(10, 5.2))
+def fig_na(rows, out, n_all):
     order = {t: i for i, t in enumerate(THEMES)}
-    rows = sorted(rows, key=lambda r: (order[r["theme"]], r["relpath"]))
+    rows = sorted(rows, key=lambda r: (order.get(r["theme"], 99), r["relpath"]))
     x = np.arange(len(rows))
     y = np.array([r["na_frac"] * TOTAL_CELLS for r in rows])
+    fig, ax = plt.subplots(figsize=(10, 5.2))
     for t in THEMES:
         sel = [i for i, r in enumerate(rows) if r["theme"] == t]
-        ax.scatter(x[sel], y[sel], s=7, alpha=0.75, color=THEME_COLOR[t],
-                   label=t, linewidths=0)
+        if sel:
+            ax.scatter(x[sel], y[sel], s=4, alpha=0.55, color=THEME_COLOR[t],
+                       label=t, linewidths=0)
     ax.set_yscale("log")
     floor = TOTAL_CELLS - MASK_CELLS
     ax.axhline(floor, color="#888888", linestyle="--", linewidth=1)
@@ -125,9 +124,9 @@ def fig_na(rows, out):
             ha="right", fontsize=8.5, color="#555555")
     ax.set_xlabel("Layer (grouped by theme)")
     ax.set_ylabel("NoData cells (log scale)")
-    ax.set_title("NoData count per layer (1,595 layers)", fontsize=12,
-                 fontweight="bold")
-    ax.legend(title="theme", markerscale=2, fontsize=9, title_fontsize=9,
+    ax.set_title("NoData count per layer (%s layers)" % format(n_all, ","),
+                 fontsize=12, fontweight="bold")
+    ax.legend(title="theme", markerscale=3, fontsize=9, title_fontsize=9,
               loc="upper left", frameon=False)
     ax.grid(axis="y", alpha=0.25, linewidth=0.5)
     fig.tight_layout()
@@ -136,40 +135,7 @@ def fig_na(rows, out):
     print("wrote", out)
 
 
-def fig_cellcheck(checks, out):
-    checks = sorted(checks, key=lambda c: float(c["match"]))
-    labels = [os.path.basename(c["relpath"])[:-4].replace("glo_", "")
-              for c in checks]
-    vals = [float(c["match"]) for c in checks]
-    colors = ["#4E79A7" if c["verdict"] == "pass" else "#F28E2B"
-              for c in checks]
-    fig, ax = plt.subplots(figsize=(10, 5.6))
-    y = np.arange(len(checks))
-    ax.barh(y, vals, color=colors, height=0.62)
-    ax.set_yticks(y)
-    ax.set_yticklabels(labels, fontsize=8)
-    ax.set_xlim(0.85, 1.005)
-    ax.axvline(0.95, color="#888888", linestyle="--", linewidth=1)
-    ax.text(0.9505, len(checks) - 0.4, "acceptance threshold 0.95",
-            fontsize=8.5, color="#555555")
-    for yi, v, c in zip(y, vals, checks):
-        ax.text(v + 0.001, yi, "%.3f" % v, va="center", fontsize=8,
-                color="#333333")
-    ax.set_xlabel("Cell-by-cell match rate vs. source product (1,000 sampled cells)")
-    ax.set_title("Sampled cell-by-cell comparison against source products",
-                 fontsize=12, fontweight="bold")
-    handles = [plt.Rectangle((0, 0), 1, 1, color="#4E79A7"),
-               plt.Rectangle((0, 0), 1, 1, color="#F28E2B")]
-    ax.legend(handles, ["pass", "reference difference (resampling)"],
-              loc="lower right", fontsize=9, frameon=False)
-    ax.grid(axis="x", alpha=0.25, linewidth=0.5)
-    fig.tight_layout()
-    fig.savefig(out, dpi=150)
-    plt.close(fig)
-    print("wrote", out)
-
-
-def fig_theme_counts(rows, out):
+def fig_theme_counts(rows, out, n_all):
     present, future = {}, {}
     for r in rows:
         t = r["theme"]
@@ -178,8 +144,8 @@ def fig_theme_counts(rows, out):
         else:
             present[t] = present.get(t, 0) + 1
     themes = [t for t in THEMES if present.get(t, 0) + future.get(t, 0) > 0]
-    pres = [present.get(t, 0) for t in themes]
-    fut = [future.get(t, 0) for t in themes]
+    pres = np.array([present.get(t, 0) for t in themes])
+    fut = np.array([future.get(t, 0) for t in themes])
     y = np.arange(len(themes))
     fig, ax = plt.subplots(figsize=(8, 4.6))
     ax.barh(y, pres, color="#4E79A7", height=0.6, label="present")
@@ -187,14 +153,14 @@ def fig_theme_counts(rows, out):
     ax.set_yticks(y)
     ax.set_yticklabels(themes, fontsize=10)
     for yi, (p, f) in enumerate(zip(pres, fut)):
-        ax.text(p + f + 6, yi, "%d" % (p + f), va="center", fontsize=9,
-                color="#333333")
+        ax.text(p + f + max(pres + fut) * 0.012, yi, format(int(p + f), ","),
+                va="center", fontsize=9, color="#333333")
     ax.set_xlabel("Number of layers")
-    ax.set_title("CHECO26 layer inventory by theme (1,595 layers)",
+    ax.set_title("CHECO26 layer inventory by theme (%s layers)" % format(n_all, ","),
                  fontsize=12, fontweight="bold")
     ax.legend(fontsize=9, frameon=False, loc="lower right")
     ax.grid(axis="x", alpha=0.25, linewidth=0.5)
-    ax.set_xlim(0, max(np.array(pres) + np.array(fut)) * 1.14)
+    ax.set_xlim(0, max(pres + fut) * 1.16)
     fig.tight_layout()
     fig.savefig(out, dpi=150)
     plt.close(fig)
@@ -204,22 +170,18 @@ def fig_theme_counts(rows, out):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--p5", default=os.path.join(HERE, "..", "result_dataframe",
-                                                 "p5_validation_report.csv"))
-    ap.add_argument("--cellchecks", default=os.path.join(
-        HERE, "..", "result_dataframe", "cell_by_cell_checks.csv"))
+    ap.add_argument("--stats", default=os.path.join(HERE, "..", "result_dataframe",
+                                                    "per_layer_stats.csv"))
     ap.add_argument("--outdir", default=os.path.join(HERE, "..", "figures"))
     args = ap.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
 
-    rows = load_p5(args.p5)
-    print("p5 rows: %d" % len(rows))
-    fig_range(rows, os.path.join(args.outdir, "scatterplot_range.png"))
-    fig_na(rows, os.path.join(args.outdir, "scatterplot_NAcount.png"))
-    fig_theme_counts(rows, os.path.join(args.outdir, "layers_per_theme.png"))
-    checks = load_cellchecks(args.cellchecks)
-    print("cell checks: %d" % len(checks))
-    fig_cellcheck(checks, os.path.join(args.outdir, "scatterplot_cellcheck.png"))
+    all_rows = load_stats(args.stats)
+    n_all = sum(1 for _ in csv.DictReader(open(args.stats, encoding="utf-8")))
+    print("stats rows: %d ; plottable: %d" % (n_all, len(all_rows)))
+    fig_range(all_rows, os.path.join(args.outdir, "scatterplot_range.png"), n_all)
+    fig_na(all_rows, os.path.join(args.outdir, "scatterplot_NAcount.png"), n_all)
+    fig_theme_counts(all_rows, os.path.join(args.outdir, "layers_per_theme.png"), n_all)
 
 
 if __name__ == "__main__":

@@ -3,8 +3,9 @@
 The complete, idempotent pipeline that builds the CHECO26 delivery tree
 (21,110 standardized layers, 8 themes) from heterogeneous source products. This
 is a faithful copy of the production scripts that built the delivered database;
-the only addition is `scripts/11_make_datalayers_details.py`, which renders the public
-layer manifest ([`../data/CHECO26_datalayers_details.csv`](../data/CHECO26_datalayers_details.csv))
+the only addition was `scripts/11_make_datalayers_details.py`, which rendered the public
+layer manifest; that generator now lives in the v2.0 tree as
+[`../pipeline_r/tools/make_datalayers_details.py`](../pipeline_r/tools/make_datalayers_details.py) ([`../data/CHECO26_datalayers_details.csv`](../data/CHECO26_datalayers_details.csv))
 from the per-layer dictionary.
 
 ## Stages
@@ -25,7 +26,7 @@ Run in order; every stage is idempotent (existing outputs are skipped unless
 | 08 | `08_validate.py` | full-library acceptance gates (existence / alignment / mask / naming / values / cell-by-cell) |
 | 09 | `09_make_docs.py` | fact-driven documentation: `variable_dictionary.csv`, scope statements, validation report |
 | 10 | `10_validate_derived.py` | derived-layer gates: value range vs. base layer, empty-window NoData, LULC theoretical bounds |
-| 11 | `scripts/11_make_datalayers_details.py` | public layer manifest in SWECO25 column layout (added for this repository) |
+| 11 | moved to [`pipeline_r/tools/make_datalayers_details.py`](../pipeline_r/tools/make_datalayers_details.py) | public layer manifest; regenerated for v2.0 |
 | — | `p0_lulc_qc.py` | LULC source QC before ingestion |
 | — | `repair_focal_layers.py` | 2026-10-06 focal empty-window repair (524 layers rebuilt) |
 | — | `withdraw_hydro_layers.py` | 2026-10-06 withdrawal of 8 defective-source hydro layers |

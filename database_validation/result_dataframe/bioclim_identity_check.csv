@@ -1,0 +1,5 @@
+"identity","n_compared","max_abs_dev","pct_satisfying"
+"bio07 = bio05 - bio06",9409716,9.5367431640625e-06,100
+"bio03 = 100*bio02/bio07",9409716,0.0899716991124819,99.8824619148973
+"bio06 <= bio01 <= bio05",9409716,NA,100
+"tmin <= tave <= tmax",9460009,NA,100

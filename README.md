@@ -123,12 +123,18 @@ unusable.
 | Directory | Content |
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
-| [`pipeline/`](pipeline/) | production pipeline (stages 01–11) and configuration |
-| [`database_validation/`](database_validation/) | validation code, result dataframes, figures, forensics |
+| [`pipeline_r/`](pipeline_r/) | **v2.0 production pipeline (R)** — 20 stage scripts, 19 tools, 70 tests, configuration |
+| [`pipeline/`](pipeline/) | v1.0 pipeline (Python, 1,595 layers); superseded, kept for provenance |
+| [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports |
 | [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |
 | [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example |
 | [`figs/`](figs/) | README figures |
+
+The delivered rasters are not in this repository: 169.4 GB cannot live in git.
+What ships here is the layer manifest, the grid definition, the pipeline that
+produced the layers, and the validation evidence — enough to understand, audit
+and reproduce the database without holding a copy of it.
 
 ## Citation
 
