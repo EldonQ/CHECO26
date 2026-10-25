@@ -1,6 +1,9 @@
-## CHECO26 <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=Open+Access&color=#79C83D" alt="Open Access"></a> <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=FAIR&color=black" alt="FAIR"></a> <a href="https://"><img src="https://img.shields.io/static/v1?label=&message=21%2C110+layers&color=#4E79A7" alt="Layers"></a>
+# CHECO26
 
-
+<a href="LICENSE"><img src="https://img.shields.io/badge/licence-CC%20BY%204.0-79C83D.svg" alt="Licence"></a>
+<a href="data/CHECO26_datalayers_details.csv"><img src="https://img.shields.io/badge/layers-21%2C110-4E79A7.svg" alt="Layers"></a>
+<a href="database_validation/DATA_QUALITY_AUDIT.md"><img src="https://img.shields.io/badge/audited-21%2C110%20%2F%2021%2C110-brightgreen.svg" alt="Audited"></a>
+<a href="database_validation/"><img src="https://img.shields.io/badge/FAIR-black.svg" alt="FAIR"></a>
 
 CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research in China, gathering **21,110 layers** in **21 dataset entries** drawn from **19 distinct source products** across **eight environmental categories**. (GHS-SMOD and Hydrography90m each enter under two categories, so the entry count exceeds the product count.) CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as a ready-to-use environmental covariate base for species distribution modelling and other cross-thematic ecological applications.
 
