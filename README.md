@@ -74,7 +74,7 @@ pipeline is in [`pipeline_r/`](pipeline_r/).
 
 ## Data availability
 
-The CHECO26 v2.0 database (169.4 GB, 21,110 float32 GeoTIFF layers on the
+CHECO26 is a database of 169.4 GB, 21,110 float32 GeoTIFF layers on the
 China_Albers 1-km grid) is described in a data manuscript currently in preparation
 and is not yet publicly released. This repository provides everything needed to
 understand, audit and reproduce the database:
@@ -87,7 +87,7 @@ understand, audit and reproduce the database:
 
 ## Data validation
 
-The v2.0 delivery was checked along four independent lines, each answering a
+The delivery was checked along four independent lines, each answering a
 different question. Tables and code are in [`database_validation/`](database_validation/).
 
 **Full-archive audit — exhaustive, every pixel, second toolchain.** 21,110 / 21,110
@@ -132,7 +132,7 @@ unusable.
 | Directory | Content |
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
-| [`pipeline_r/`](pipeline_r/) | **v2.0 production pipeline (R)** — 20 stage scripts, 19 tools, 70 tests, configuration |
+| [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — 20 stage scripts, 19 tools, 70 tests, configuration |
 | [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports, and the [layer-by-layer data quality audit](database_validation/DATA_QUALITY_AUDIT.md) |
 | [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Build the v2.0 database-validation result dataframes from the delivery.
+"""Build the database-validation result dataframes from the delivery.
 
 The delivered archive ships three fact tables that together describe every
 layer without re-reading 169 GB of rasters:

@@ -1,10 +1,10 @@
-# Database validation — CHECO26 v2.0
+# Database validation — CHECO26
 
 This folder holds the evidence that the delivered archive is what it claims to be:
 the checks that were run, their results, the code that produced them, and the
 anomalies that were found and resolved along the way.
 
-The full v2.0 verification report is [`V2_VERIFICATION_REPORT.md`](V2_VERIFICATION_REPORT.md),
+The full verification report is [`VERIFICATION_REPORT.md`](VERIFICATION_REPORT.md),
 the independent recomputation is [`INDEPENDENT_VERIFICATION.md`](INDEPENDENT_VERIFICATION.md),
 and the layer-by-layer audit is [`DATA_QUALITY_AUDIT.md`](DATA_QUALITY_AUDIT.md).
 This README is the summary; where they disagree, the underlying reports win.
@@ -48,11 +48,23 @@ pixel. Tables are in [`result_dataframe/`](result_dataframe/), the report is
 | agrees with `variable_dictionary.csv` (min, max, n_valid) | **21,110 / 21,110** |
 | agrees with `MANIFEST.csv` SHA-256 | **21,110 / 21,110** |
 
-**No layer failed any check.** The same audit extended two checks beyond the
-sampling above: it re-derived the composition identity for all **497** base
-proportion groups (3,982 layers, against 12 sampled in V5), and it compared five
-cross-theme layers point by point against their original sources at 3,000 random
-cells (r = 0.983–0.9999, mean bias ≈ 0).
+**No layer failed any check.** Three further passes go beyond the sampling above:
+
+- **Content fixity, re-derived.** Every one of the 21,110 files was read back and
+  hashed again and compared with `MANIFEST.csv`: **21,110 / 21,110 match**, no file
+  missing, no byte changed. Table: `result_dataframe/manifest_reverify.csv`.
+- **Composition identity, exhaustive.** All **497** base proportion groups (3,982
+  layers, against 12 sampled in V5) were re-derived; max |Σ − 1| is 5.215 × 10⁻⁸
+  (clcd), 4.843 × 10⁻⁸ (hlu1km) and exactly 0 (glu1km).
+- **Provenance cross-checked.** Thirteen checks join `provenance_table.csv` to the
+  layers, the dictionary, the licence registry and the code: paths exist, withdrawn
+  rows do not, `actual_range` and its valid-cell count match the audit, expected
+  ranges bracket the measured values, licence and licence class match the registry,
+  the cited script exists, units are non-empty, and no field carries stray
+  whitespace. **13 / 13 pass, 0 failures.** Table:
+  `result_dataframe/provenance_verification.csv`.
+- **Source fidelity.** Five cross-theme layers compared point by point against
+  their original sources at 3,000 random cells: r = 0.983–0.9999, mean bias ≈ 0.
 
 Two toolchains now agree on every claim, so none of these numbers depends on the
 implementation that produced it. The audit report reproduces the delivery-side
@@ -170,13 +182,14 @@ made, so a check that did nothing cannot masquerade as a check that passed.
 
 - **Source integrity.** Ingest checksums were not retained, so the source files can
   no longer be re-verified against the delivered archive.
-- **Comparison with the v1.0 Python delivery.** That delivery was replaced in
+- **Comparison with the earlier Python delivery.** That delivery was replaced in
   place, so a like-for-like comparison is impossible. Two diagnostic rasters do
   survive and answer the question for both resampling rules: bilinear gives a mean
   absolute difference of 0.0146 °C but only 2.85% bit-identical cells, while
   nearest gives 94.48% bit-identical cells but differences up to 9.71 °C in the
-  rest. v2.0 is therefore not a drop-in numerical replacement for v1.0, and users
-  needing continuity must recompute derived quantities from v2.0.
+  rest. The current delivery is therefore not a drop-in numerical replacement for
+  the earlier one, and users needing continuity must recompute derived quantities
+  from it.
 
 ## Reproducing
 
@@ -198,11 +211,11 @@ The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
 
 | Path | Content |
 |---|---|
-| `V2_VERIFICATION_REPORT.md` | full v2.0 verification report |
+| `VERIFICATION_REPORT.md` | full delivery verification report |
 | `INDEPENDENT_VERIFICATION.md` | the independent recomputation, written up separately |
 | `result_dataframe/per_layer_stats.csv` | one row per layer: theme, dataset, unit, n_valid, na_frac, min, max, bytes, SHA-256, licence class, release status |
 | `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
 | `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
 | `figures/` | value range per layer, NoData count per layer, theme inventory |
 | `script/` | the checks and the scripts that regenerate the tables and figures |
-| `v1_archive/` | the v1.0 validation campaign, kept for provenance only |
+| `earlier_campaign/` | the earlier validation campaign, kept for provenance only |

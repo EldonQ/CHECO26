@@ -1,4 +1,4 @@
-# 独立复核报告 — CHEco26 v2.0
+# 独立复核报告 — CHECO26
 
 生成时间：2026-10-21 11:12
 脚本：`R/tools/verify_independent.R`

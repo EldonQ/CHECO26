@@ -66,7 +66,7 @@ disk_ok <- function(min_gb = 5) {
 main <- function(mode = c("dry", "run"), only = NULL) {
   mode <- match.arg(mode)
   cat("================================================================\n")
-  cat(" CHEco26 v2.0 收尾\n")
+  cat(" CHECO26 收尾\n")
   cat(sprintf(" %s  (模式: %s)\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), mode))
   cat("================================================================\n")
 

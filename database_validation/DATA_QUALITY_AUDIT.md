@@ -1,4 +1,4 @@
-# CHECO26 v2.0 数据质量审计
+# CHECO26 数据质量审计
 
 本文件由 `scripts/audit/audit_report.py` 从 `audit/` 下的审计表生成，文中每个数字都可在对应 CSV 中查到，没有任何一个数字是手写的。重跑 `audit_data_quality.py`、`audit_composition.py`、`audit_fidelity.py` 与 `audit_summarize.py` 即可完整复现。
 

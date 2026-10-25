@@ -7,7 +7,7 @@ The manifest uses a fixed 14-column, semicolon-separated layout:
     category;dataset;variable;period;scenario;sub_period;start_year;end_year;
     attribute;focal;variable_long;unit;path;valid
 
-Input is the fact-driven per-layer dictionary produced for the v2.0 delivery
+Input is the fact-driven per-layer dictionary produced for the delivery
 (``00_docs/variable_dictionary.csv``, one row per delivered layer). That file
 already carries ``theme`` and ``dataset``, so the dataset name is read rather
 than inferred from the path — the v1.0 generator hard-coded one dataset per

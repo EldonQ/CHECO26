@@ -10,10 +10,10 @@ Outputs (default: ../figures/):
     scatterplot_NAcount.png   NoData cell count per layer against the mask floor
     layers_per_theme.png      layer inventory split into present and scenario
 
-The sampled cell-by-cell comparison figure of the v1.0 campaign has no v2.0
-counterpart: the v2.0 evidence for values is the composition-identity and
+The sampled cell-by-cell comparison figure from the earlier validation campaign
+has no counterpart here: the evidence for values is the composition-identity and
 independent-recomputation set, reported as tables rather than a per-layer bar
-chart. The v1.0 figure is kept under ``v1_archive/``.
+chart. The earlier figure is kept under ``earlier_campaign/``.
 
 Usage:
     python make_validation_figures.py [--stats ...] [--outdir ...]

@@ -1,11 +1,12 @@
-# CHECO26 v2.0 pipeline (R)
+# CHECO26 pipeline (R)
 
-This is the pipeline that produced the delivered v2.0 archive: 21,110 layers,
-169.4 GB, float32 on the China_Albers 1-km grid.
+This is the pipeline that produced the delivered archive: 21,110 layers, 169.4 GB,
+float32 on the China_Albers 1-km grid.
 
-It supersedes the Python pipeline in [`../pipeline/`](../pipeline/), which produced
-the v1.0 delivery (1,595 layers) and is retained here for provenance only. The
-numbers in this repository all refer to v2.0.
+It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That
+pipeline is not included here; the delivery documentation records which layers it
+produced, per layer, in the `script_function` column of the provenance table. The
+numbers in this repository all refer to the current delivery.
 
 ## Layout
 

@@ -17,7 +17,7 @@ fmt <- function(x) format(x, big.mark = ",", scientific = FALSE)
 L <- character(0)
 add <- function(...) L <<- c(L, ...)
 
-add("# 许可证矩阵与分发风险（v2.0，2026-10-21 重建）", "",
+add("# 许可证矩阵与分发风险（2026-10-21 重建）", "",
     "本文件**由 `R/tools/render_licence_matrix.R` 从 `LICENCE_REGISTRY.csv` 自动生成**，",
     "请勿手工编辑。机器可读版本即该 CSV（逐数据集 19 个字段）。", "",
     "每层的许可信息也已写入 `provenance_table.csv` 的 4 个许可列

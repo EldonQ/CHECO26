@@ -3,7 +3,7 @@
 #
 # 对应 Python: scripts/03_ingest_timeseries.py
 #
-# v2.0 变更（相对 Python 版）：
+# 相对早期 Python 版的变更：
 #   * footHII（100 层）**不再生成**，改由 anthro/hfp（Mu 版 HFP 2000-2024，125 层）承担
 #     —— 依据：footHII 非开源可再分发风险 + 两套 HFP 标度并存；见 LICENCE_MATRIX.md
 #   * 新增 hfp：Mollweide 1km float32 -> 1km Albers，average，无缩放

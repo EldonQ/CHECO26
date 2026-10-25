@@ -111,7 +111,7 @@ main <- function(fill_stats = TRUE) {
 
   # ---- 层数索引 ----
   tab <- table(paste(out$theme, out$dataset, sep = "/"))
-  md <- c("# Layer index by theme / dataset (CHECO26 v2.0)",
+  md <- c("# Layer index by theme / dataset (CHECO26)",
           "",
           sprintf("Total layers: **%d**. Grid: 1 km China_Albers, 4861 x 4062.", nrow(out)),
           "",

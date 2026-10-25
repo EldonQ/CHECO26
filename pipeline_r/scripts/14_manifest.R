@@ -14,7 +14,7 @@
 #   RESTRICTED  禁止再分发（机构订阅 / FGDC 明确限制）
 #   UNVERIFIED  许可证文本尚未读到——不得对外发布
 #
-# 关键变更（v2.0）：
+# 关键变更：
 #   * anthro/landscan 125 层 → RESTRICTED（移入 archive，不进交付）
 #   * anthro/foothii  100 层 → 撤销（被 anthro/hfp 替代，移入 archive）
 #   * anthro/hfp      125 层 → OPEN（CC BY 4.0）
@@ -39,7 +39,7 @@ LICENCE <- list(
   "anthro/smod"                   = c("OPEN",   "GHS-SMOD R2023A, CC BY 4.0 (copyright.txt verified)"),
   "anthro/hfp"                    = c("OPEN",   "Mu et al. annual HFP, CC BY 4.0, DOI 10.6084/m9.figshare.16571064.v8 (verified)"),
   "anthro/landscan"               = c("RESTRICTED", "LandScan Global is distributed by ORNL/East View under an institutional subscription licence that prohibits electronic redistribution"),
-  "anthro/foothii"                = c("UNVERIFIED", "WCS Human Footprint licence text has not been read; superseded by anthro/hfp in v2.0"),
+  "anthro/foothii"                = c("UNVERIFIED", "WCS Human Footprint licence text has not been read; superseded by anthro/hfp"),
   "vege/agb2019"                  = c("UNVERIFIED", "Source licence text has not been read"),
   "vege/ch2019"                   = c("UNVERIFIED", "Source licence text has not been read"),
   "vege/catcd"                    = c("UNVERIFIED", "Source licence text has not been read"),
