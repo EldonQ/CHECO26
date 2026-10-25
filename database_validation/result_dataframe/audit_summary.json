@@ -1,0 +1,60 @@
+{
+  "layers_expected": 21110,
+  "layers_audited": 21110,
+  "layers_complete": true,
+  "themes": 8,
+  "themes_expected": 8,
+  "layers_failing": 0,
+  "layers_passing": 21110,
+  "checks": {
+    "open": 21110,
+    "float32": 21110,
+    "nodata_minus9999": 21110,
+    "grid_invariants": 21110,
+    "storage": 21110,
+    "no_valid_outside_mask": 21110,
+    "no_non_finite": 21110,
+    "within_expected_range": 21110,
+    "dictionary_agrees": 21110,
+    "manifest_agrees": 21110
+  },
+  "failure_kinds": {},
+  "duplicate_hash_groups": 1167,
+  "layers_sharing_a_hash": 7063,
+  "distinct_hashes": 14047,
+  "bytes_total": 169401430367,
+  "per_theme": {
+    "anthro": {
+      "n": 137,
+      "fail": 0
+    },
+    "bioclim": {
+      "n": 532,
+      "fail": 0
+    },
+    "dist": {
+      "n": 17,
+      "fail": 0
+    },
+    "hydro": {
+      "n": 44,
+      "fail": 0
+    },
+    "lulc": {
+      "n": 20150,
+      "fail": 0
+    },
+    "soil": {
+      "n": 196,
+      "fail": 0
+    },
+    "topo": {
+      "n": 4,
+      "fail": 0
+    },
+    "vege": {
+      "n": 30,
+      "fail": 0
+    }
+  }
+}

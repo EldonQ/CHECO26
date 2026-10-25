@@ -4,9 +4,10 @@ This folder holds the evidence that the delivered archive is what it claims to b
 the checks that were run, their results, the code that produced them, and the
 anomalies that were found and resolved along the way.
 
-The full v2.0 verification report is [`V2_VERIFICATION_REPORT.md`](V2_VERIFICATION_REPORT.md)
-and the independent recomputation is [`INDEPENDENT_VERIFICATION.md`](INDEPENDENT_VERIFICATION.md).
-This README is the summary; where the two disagree, the reports win.
+The full v2.0 verification report is [`V2_VERIFICATION_REPORT.md`](V2_VERIFICATION_REPORT.md),
+the independent recomputation is [`INDEPENDENT_VERIFICATION.md`](INDEPENDENT_VERIFICATION.md),
+and the layer-by-layer audit is [`DATA_QUALITY_AUDIT.md`](DATA_QUALITY_AUDIT.md).
+This README is the summary; where they disagree, the underlying reports win.
 
 **Read the coverage column before the result column.** Two of the six checks open
 every layer and four do not. A "pass" from a sampled check is not evidence about
@@ -26,6 +27,41 @@ the layers it never touched, and the numbers below never present it as such.
 V1 and V2 read file headers only, which is why they can cover the whole archive.
 V3–V6 read pixels, and a full pass would take hours; they are sampled by design.
 
+## Full-archive audit on an independent toolchain
+
+V1 and V2 come from the production validator, so a defect there would be invisible
+above. The whole archive was therefore audited a second time with a separate stack
+— Python 3 with rasterio 1.4, no terra — opening every GeoTIFF and reading every
+pixel. Tables are in [`result_dataframe/`](result_dataframe/), the report is
+[`DATA_QUALITY_AUDIT.md`](DATA_QUALITY_AUDIT.md), the code is `script/audit_*.py`.
+
+| Check | Result |
+|---|---:|
+| opens, single band | **21,110 / 21,110** |
+| float32 | **21,110 / 21,110** |
+| NoData −9999 declared | **21,110 / 21,110** |
+| grid invariants (CRS, transform, 4,861 × 4,062) | **21,110 / 21,110** |
+| DEFLATE, tiled 256 × 256 | **21,110 / 21,110** |
+| no valid cell outside the China mask | **21,110 / 21,110** |
+| no Inf/NaN among valid cells | **21,110 / 21,110** |
+| values inside the documented range | **21,110 / 21,110** |
+| agrees with `variable_dictionary.csv` (min, max, n_valid) | **21,110 / 21,110** |
+| agrees with `MANIFEST.csv` SHA-256 | **21,110 / 21,110** |
+
+**No layer failed any check.** The same audit extended two checks beyond the
+sampling above: it re-derived the composition identity for all **497** base
+proportion groups (3,982 layers, against 12 sampled in V5), and it compared five
+cross-theme layers point by point against their original sources at 3,000 random
+cells (r = 0.983–0.9999, mean bias ≈ 0).
+
+Two toolchains now agree on every claim, so none of these numbers depends on the
+implementation that produced it. The audit report reproduces the delivery-side
+paths (`audit/*.csv`, `scripts/audit/*.py`); in this repository those files are
+`result_dataframe/*` and `script/audit_*.py`. The audit also records what is *not* a failure but
+still matters to a user — see §5 of the audit report, which covers the constant
+`outlet` layer, the class-restricted patch metrics, the 7,063 byte-identical
+layers, and the five climate variables whose source definitions are not WorldClim's.
+
 ## Composition identities (V5)
 
 A categorical source, one-hot encoded and area-weighted, must sum to 1 in every
@@ -38,7 +74,9 @@ valid cell. The residual should therefore come only from float32 representation.
 | `hlu1km` (projected, 0.01° source) | 8 | 1961, 1962, 1966, 1967 | 4.470 × 10⁻⁸ |
 
 `glu1km` closes exactly because its source is published as integer percentages, so
-no float aggregation happens. The other two sit at the float32 representation
+no float aggregation happens. The full audit re-ran this for every base group:
+**497 / 497 pass**, with max |Σ − 1| of 5.215 × 10⁻⁸ (clcd), 4.843 × 10⁻⁸ (hlu1km)
+and exactly 0 (glu1km). The other two sit at the float32 representation
 limit. Two independently built products converging on the same error magnitude,
 one of them exact, points to the representation layer rather than the code.
 

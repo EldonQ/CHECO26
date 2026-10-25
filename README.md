@@ -84,20 +84,26 @@ understand, audit and reproduce the database:
 
 ## Data validation
 
-The v2.0 delivery was checked along three independent lines, each answering a
-different question.
+The v2.0 delivery was checked along four independent lines, each answering a
+different question. Tables and code are in [`database_validation/`](database_validation/).
 
-**Format and grid — exhaustive, header-only.** All 21,110 / 21,110 layers satisfy
-the grid invariants (CRS, cell size, extent, 4,861 x 4,062) and all
-21,110 / 21,110 satisfy the format checks. Every layer is float32 and every layer
-declares -9999.
+**Full-archive audit — exhaustive, every pixel, second toolchain.** 21,110 / 21,110
+layers pass ten checks: opens with one band, float32, NoData −9999, grid invariants
+(CRS, transform, 4,861 x 4,062), DEFLATE with 256 x 256 tiles, no valid cell outside
+the China mask, no Inf/NaN among valid cells, values inside the documented range,
+agreement with `variable_dictionary.csv`, and agreement with the `MANIFEST.csv`
+SHA-256. **Zero layers failed.** The audit ran on Python + rasterio, while the
+production validator is R + terra, so the result is not a property of one
+implementation. Report: [`DATA_QUALITY_AUDIT.md`](database_validation/DATA_QUALITY_AUDIT.md).
 
-**Cell-level identities — sampled.** Areal proportions of every categorical source
-sum to 1 within 5.22 x 10⁻⁸ in all 12 composition groups, which is the float32
-representation limit; the group built on an integer-percent source closes to
-exactly zero. Focal maxima fall monotonically with window size
-(1.0000 → 1.0000 → 0.9989 → 0.9947 → 0.9836 across the five window sizes) and derived bioclimatic identities hold to
-9.54 x 10⁻⁶. Of 48 sampled layers, none held a valid value outside the China mask.
+**Composition identities — exhaustive.** All **497** base proportion groups (3,982
+layers) sum to 1: max |Σ − 1| is 5.215 x 10⁻⁸ for clcd, 4.843 x 10⁻⁸ for hlu1km, and
+exactly 0 for the product built on integer percentages. Focal maxima fall
+monotonically with window size (1.0000 → 1.0000 → 0.9989 → 0.9947 → 0.9836).
+
+**Source fidelity — sampled cells.** Five cross-theme layers were compared point by
+point with their original sources at 3,000 random cells: r = 0.983–0.9999, mean
+bias ≈ 0.
 
 **Independent recomputation.** A second implementation sharing no code with the
 pipeline re-derives 16 properties from the delivered files, including a full rerun
@@ -124,7 +130,7 @@ unusable.
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
 | [`pipeline_r/`](pipeline_r/) | **v2.0 production pipeline (R)** — 20 stage scripts, 19 tools, 70 tests, configuration |
-| [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports |
+| [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports, and the [layer-by-layer data quality audit](database_validation/DATA_QUALITY_AUDIT.md) |
 | [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |
 | [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example |
