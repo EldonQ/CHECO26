@@ -1,7 +1,7 @@
 # =============================================================================
 # R/10_future_chains.R  --  bioclim 未来情景链（504 层）
 #
-# 对应 Python: scripts/07_future_chains.py
+# 与早期 Python 版 07_future_chains.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 目录口径（下游模型要求）：
 #   glo/bioclim/cnclim1km-<chain>/scenario/<cyear>/<ssp>/<var>/

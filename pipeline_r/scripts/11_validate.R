@@ -1,7 +1,7 @@
 # =============================================================================
 # R/11_validate.R  --  全库校验
 #
-# 对应 Python: scripts/08_validate.py
+# 与早期 Python 版 08_validate.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 校验项：
 #   V1 网格不变量     CRS / 分辨率 / extent / 尺寸 必须与模板一致

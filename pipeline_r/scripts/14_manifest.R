@@ -1,7 +1,7 @@
 # =============================================================================
 # R/14_manifest.R  --  SHA-256 完整性清单 + 公开发布清单 + 受限层清单
 #
-# 对应 Python: qa2/r16_manifest.py、r18_public_release.py
+# 与早期 qa2 工作区的 r16_manifest.py、r18_public_release.py 对齐（两脚本不在交付树内）
 #
 # 产出（均在 00_docs/）：
 #   MANIFEST.csv                  data/ 下每个文件的 relpath / bytes / sha256 / mtime

@@ -1,7 +1,7 @@
 # =============================================================================
 # R/09_derive_dist.R  --  距离面（到最近要素的欧氏距离，米）
 #
-# 对应 Python: scripts/05_derive_dist.py
+# 与早期 Python 版 05_derive_dist.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 产出 5 层：
 #   dist/grip4/road       全部道路

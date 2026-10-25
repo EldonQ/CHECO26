@@ -1,7 +1,7 @@
 # =============================================================================
 # R/01_common.R  --  通用工具：模板、掩膜、重投影、焦点、原子写、四查
 #
-# 与 Python 版 common.py 的对应关系（逐函数）：
+# 与早期 common.py 的对应关系（该脚本已归档）（逐函数）：
 #   grid_spec      -> GRID()             （00_config.R）
 #   china_mask     -> china_mask()
 #   apply_china_mask -> apply_china_mask()

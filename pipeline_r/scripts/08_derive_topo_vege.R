@@ -1,7 +1,7 @@
 # =============================================================================
 # R/08_derive_topo_vege.R  --  topo 坡向/TRI + 土壤剖面加权
 #
-# 对应 Python: scripts/06_derive_topo_vege.py
+# 与早期 Python 版 06_derive_topo_vege.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 产出（30 层）：
 #   topo/chinadem/aspect   1 层   Horn (1981) 坡向，度 0-360（北=0，顺时针）

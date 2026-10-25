@@ -1,7 +1,7 @@
 # =============================================================================
 # R/13_make_provenance.R  --  溯源表生成
 #
-# 对应 Python: scripts/make_provenance_table.py
+# 与早期 Python 版 make_provenance_table.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 设计（与 Python 版不同，更稳）：
 #   现有 00_docs/provenance_table.csv 的 1,608 行**已逐行人工校对通过**，

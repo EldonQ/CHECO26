@@ -1,7 +1,7 @@
 # =============================================================================
 # R/03_ingest_static.R  --  静态主题入库
 #
-# 对应 Python: scripts/02_ingest_static.py
+# 与早期 Python 版 02_ingest_static.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #   本脚本负责的基底（不含焦点、不含派生统计）：
 #     bioclim 28  (0.01° WGS84 -> 1km Albers, bilinear)
 #     soil   168  (28 属性 x 6 深度, 1km, int16, scale 见 units_scale)

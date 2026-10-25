@@ -1,7 +1,7 @@
 # =============================================================================
 # R/02b_hydro_stats.R  --  hydro 精选统计增补（窗口极值）
 #
-# 对应 Python: scripts/02b_hydro_stats_addon.py
+# 与早期 Python 版 02b_hydro_stats_addon.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 产出 18 层（config hydro_stats_addon，撤出变量已排除）：
 #   minmax 组  8 变量 x (min,max) = 16

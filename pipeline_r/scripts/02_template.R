@@ -1,7 +1,7 @@
 # =============================================================================
 # R/02_template.R  --  生成 template_albers1km.tif 与 mask_china.tif
 #
-# 对应 Python: scripts/01_template.py
+# 与早期 Python 版 01_template.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #   template: 与模板网格同几何、全 1
 #   mask    : china.shp 按 all_touched 口径栅格化（1=境内）
 # 两者均为 uint8 且**不设 nodata**（与 Python 版一致；Python 传 nodata=None）

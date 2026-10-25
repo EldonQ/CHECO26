@@ -1,7 +1,7 @@
 # =============================================================================
 # R/05_derive_lulc.R  --  LULC 派生（第一阶段：GLULC / glu1km 540 层）
 #
-# 对应 Python: scripts/04_derive_lulc.py
+# 与早期 Python 版 04_derive_lulc.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 每个快照 54 层：
 #   6 类比例  x (1 + 4 focal)            = 30

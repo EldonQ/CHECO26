@@ -1,7 +1,7 @@
 # =============================================================================
 # R/04_ingest_timeseries.R  --  时序主题入库 + 全部焦点窗口
 #
-# 对应 Python: scripts/03_ingest_timeseries.py
+# 与早期 Python 版 03_ingest_timeseries.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 相对早期 Python 版的变更：
 #   * footHII（100 层）**不再生成**，改由 anthro/hfp（Mu 版 HFP 2000-2024，125 层）承担

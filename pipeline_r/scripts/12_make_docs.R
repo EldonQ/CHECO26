@@ -1,7 +1,7 @@
 # =============================================================================
 # R/12_make_docs.R  --  变量字典与交付文档
 #
-# 对应 Python: scripts/09_make_docs.py
+# 与早期 Python 版 09_make_docs.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 策略（与 13_make_provenance.R 一致）：现有 1,600 行的 unit/note 已人工校对，
 # 不重推，而是保留已有行、剔除撤出数据集、为新数据集生成行。
