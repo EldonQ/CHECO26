@@ -19,10 +19,10 @@
     "manifest_agrees": 21110
   },
   "failure_kinds": {},
-  "duplicate_hash_groups": 1167,
-  "layers_sharing_a_hash": 7063,
-  "distinct_hashes": 14047,
-  "bytes_total": 169401430367,
+  "duplicate_hash_groups": 1164,
+  "layers_sharing_a_hash": 7060,
+  "distinct_hashes": 14050,
+  "bytes_total": 170937302191,
   "per_theme": {
     "anthro": {
       "n": 137,

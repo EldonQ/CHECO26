@@ -12,8 +12,8 @@
 | 实际审计层数 | **21,110** |
 | 主题数 | 8 |
 | 未通过任何检查的层 | **0** |
-| 交付字节总数 | 169,401,430,367（169.4 GB） |
-| 不同 SHA-256 | 14,047（重复组 1,167，重复层 7,063） |
+| 交付字节总数 | 170,937,302,191（170.9 GB） |
+| 不同 SHA-256 | 14,050（重复组 1,164，重复层 7,060） |
 
 **结论：21,110 层全部通过下面十项检查，没有一层失败。**
 
@@ -71,10 +71,10 @@
 | 层 | 有效格 | 占掩膜 |
 |---|---:|---:|
 | `glo/hydro/h90m/outlet/glo_hydro_h90m_outlet.tif` | 18,551 | 0.20% |
-| `glo/lulc/glu1km/scenario/2100/ssp585/glo_lulc_glu1km_scenario_2100_ssp585_patchdensity-forest_f1000.tif` | 2,685,053 | 28.29% |
-| `glo/lulc/glu1km/scenario/2100/ssp585/glo_lulc_glu1km_scenario_2100_ssp585_patchsize-forest_f1000.tif` | 2,685,053 | 28.29% |
-| `glo/lulc/glu1km/scenario/2050/ssp585/glo_lulc_glu1km_scenario_2050_ssp585_patchdensity-forest_f1000.tif` | 2,740,179 | 28.87% |
-| `glo/lulc/glu1km/scenario/2050/ssp585/glo_lulc_glu1km_scenario_2050_ssp585_patchsize-forest_f1000.tif` | 2,740,179 | 28.87% |
+| `glo/lulc/glu1km/scenario/2100/ssp585/glo_lulc_glu1km_scenario_2100_ssp585_patchdensity-forest_f1000.tif` | 2,685,567 | 28.30% |
+| `glo/lulc/glu1km/scenario/2100/ssp585/glo_lulc_glu1km_scenario_2100_ssp585_patchsize-forest_f1000.tif` | 2,685,567 | 28.30% |
+| `glo/lulc/glu1km/scenario/2050/ssp585/glo_lulc_glu1km_scenario_2050_ssp585_patchdensity-forest_f1000.tif` | 2,740,557 | 28.88% |
+| `glo/lulc/glu1km/scenario/2050/ssp585/glo_lulc_glu1km_scenario_2050_ssp585_patchsize-forest_f1000.tif` | 2,740,557 | 28.88% |
 
 最少的那一层是水文网络的出口标记，本身是稀疏标记层；其余多为 `glu1km` 的森林斑块指标——斑块统计只在森林存在的格上有定义，所以有效格随森林面积变化。这不是缺失，是定义域。
 
@@ -88,7 +88,7 @@
 
 ### 5.3 字节重复
 
-7,063 层共享 14,047 个不同的哈希，即只有 14,047 层是逐字节不同的（66.5%）。重复集中在投影类土地利用：城市范围在五个 SSP-RCP 情景中被冻结，因此同一城市基底在多个情景文件里逐字节相同。这是源产品的性质，不是重复导出。
+21,110 个文件只有 14,050 个不同的哈希（66.6%），其余 7,060 层是重复副本。重复集中在投影类土地利用：城市范围在五个 SSP-RCP 情景中被冻结，因此同一城市基底在多个情景文件里逐字节相同。这是源产品的性质，不是重复导出。
 
 ### 5.4 气候产品中非 WorldClim 口径的变量
 

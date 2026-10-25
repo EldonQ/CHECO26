@@ -28,7 +28,7 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 | Data type                   | float32, every layer without exception |
 | NoData                      | -9999, every layer |
 | Storage                     | GeoTIFF, DEFLATE compressed, 256 x 256 tiles |
-| Volume                      | 169.4 GB (157.8 GiB) |
+| Volume                      | 170.9 GB (159.2 GiB) |
 
 ## Layer inventory
 
@@ -74,7 +74,7 @@ pipeline is in [`pipeline_r/`](pipeline_r/).
 
 ## Data availability
 
-CHECO26 is a database of 169.4 GB, 21,110 float32 GeoTIFF layers on the
+CHECO26 is a database of 170.9 GB, 21,110 float32 GeoTIFF layers on the
 China_Albers 1-km grid) is described in a data manuscript currently in preparation
 and is not yet publicly released. This repository provides everything needed to
 understand, audit and reproduce the database:
@@ -118,8 +118,8 @@ distance to rivers and 7.75% for flow accumulation, while the within-cell
 coefficient of variation of the sources is 77–277% — the 1-km value is an average
 over a heterogeneous neighbourhood, not a statement about every point inside it.
 
-Counting distinct SHA-256 digests, 14,047 of the 21,110 layers are byte-distinct
-(66.5%); the redundancy is confined to the projected land-use family, where the
+Counting distinct SHA-256 digests, 14,050 of the 21,110 layers are byte-distinct
+(66.6%); the redundancy is confined to the projected land-use family, where the
 projected urban extent is frozen across scenarios.
 
 See [`database_validation/README.md`](database_validation/README.md) for the
@@ -132,14 +132,14 @@ unusable.
 | Directory | Content |
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
-| [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — 20 stage scripts, 19 tools, 70 tests, configuration |
+| [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — 20 stage scripts, 20 tools, 70 tests, configuration |
 | [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports, and the [layer-by-layer data quality audit](database_validation/DATA_QUALITY_AUDIT.md) |
 | [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |
 | [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example |
 | [`figs/`](figs/) | README figures |
 
-The delivered rasters are not in this repository: 169.4 GB cannot live in git.
+The delivered rasters are not in this repository: 170.9 GB cannot live in git.
 What ships here is the layer manifest, the grid definition, the pipeline that
 produced the layers, and the validation evidence — enough to understand, audit
 and reproduce the database without holding a copy of it.

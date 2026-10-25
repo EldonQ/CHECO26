@@ -1,6 +1,6 @@
 # CHECO26 pipeline (R)
 
-This is the pipeline that produced the delivered archive: 21,110 layers, 169.4 GB,
+This is the pipeline that produced the delivered archive: 21,110 layers, 170.9 GB,
 float32 on the China_Albers 1-km grid.
 
 It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That
@@ -35,7 +35,7 @@ pipeline_r/
 │   ├── 14_manifest.R                SHA-256 manifest
 │   ├── 15_ingest_h90m_accumulation.R  HydroSHEDS flow accumulation
 │   ├── run_all.R                    runs the stages in order
-│   ├── tools/               19 verification and reporting utilities
+│   ├── tools/               20 verification and reporting utilities
 │   ├── tests/               70 unit and integration tests
 │   └── figs/                11 figure scripts used by the manuscript
 └── tools/

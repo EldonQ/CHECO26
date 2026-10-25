@@ -71,7 +71,7 @@ implementation that produced it. The audit report reproduces the delivery-side
 paths (`audit/*.csv`, `scripts/audit/*.py`); in this repository those files are
 `result_dataframe/*` and `script/audit_*.py`. The audit also records what is *not* a failure but
 still matters to a user — see §5 of the audit report, which covers the constant
-`outlet` layer, the class-restricted patch metrics, the 7,063 byte-identical
+`outlet` layer, the class-restricted patch metrics, the 7,060 byte-identical
 layers, and the five climate variables whose source definitions are not WorldClim's.
 
 ## Composition identities (V5)
@@ -134,8 +134,8 @@ family ships nine per-cell areal proportions rather than a single dominant class
 
 ## Byte-level uniqueness
 
-Counting distinct SHA-256 digests over the whole archive: **14,047 of 21,110 layers
-are byte-distinct (66.5%)**, so the layer count overstates the amount of distinct
+Counting distinct SHA-256 digests over the whole archive: **14,050 of 21,110 layers
+are byte-distinct (66.6%)**, so the layer count overstates the amount of distinct
 information by about a third. Six of the eight themes contain no duplicates at all;
 the redundancy is confined to the projected land-use family, where the projected
 urban extent is frozen across all five SSP-RCP scenarios and therefore repeats.
