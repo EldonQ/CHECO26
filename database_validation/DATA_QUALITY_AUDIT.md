@@ -115,4 +115,4 @@ python scripts/audit/audit_fidelity.py                    # 源—交付保真�
 python scripts/audit/audit_report.py                      # 生成本文件
 ```
 
-审计表位于 `audit/`：`layer_audit.csv`（逐层 21110 行 × 36 列）、`audit_summary.json`、`audit_failures.csv`、`theme_summary.csv`、`composition_identity.csv`、`source_fidelity.csv`。
+审计表位于 `audit/`：`layer_audit.csv`（逐层 21110 行 × 37 列）、`audit_summary.json`、`audit_failures.csv`、`theme_summary.csv`、`composition_identity.csv`、`source_fidelity.csv`。

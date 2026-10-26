@@ -16,9 +16,9 @@ section,check,examined,failed,detail,examples
 1 画像,列 processing_steps,21118,0,"不同值 20, 最长 1000",1) read the source raster listed in sour
 1 画像,列 derivation_formula,21118,0,"不同值 48, 最长 380",GHS-SMOD classes 21/22/23 one-hot encode
 1 画像,列 missing_boundary_rule,21118,0,"不同值 4, 最长 487",Source NoData is excluded before the agg
-1 画像,列 script_function,21118,0,"不同值 20, 最长 113",R/04_ingest_timeseries.R : warp_to_templ
-1 画像,列 expected_range,21118,0,"不同值 1079, 最长 45","[0.0, 1.0]"
-1 画像,列 actual_range,21118,0,"不同值 1755, 最长 49","[0, 1] over 9490310 valid cells"
+1 画像,列 script_function,21118,0,"不同值 20, 最长 80",R/04_ingest_timeseries.R : warp_to_templ
+1 画像,列 expected_range,21118,0,"不同值 1165, 最长 26","[0, 1.01]"
+1 画像,列 actual_range,21118,0,"不同值 1568, 最长 64","[0, 1] over 9490310 valid cells"
 1 画像,列 notes,21118,3364,"不同值 51, 最长 1178",Future climatology derived from CMIP6 si
 1 画像,列 licence,21118,0,"不同值 7, 最长 15",CC-BY-4.0
 1 画像,列 licence_url,21118,0,"不同值 7, 最长 52",https://creativecommons.org/licenses/by/

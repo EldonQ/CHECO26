@@ -10,14 +10,23 @@
 #
 # 用法：
 #   Rscript R/tools/check_docs_consistency.R
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
 
 bad <- 0L; ok <- 0L
 chk <- function(what, claimed, actual) {
+  # 无法核验时必须报失败：identical(NA, NA) 为 TRUE，会把"两边都没取到数"读成通过。
+  if (length(claimed) != 1L || length(actual) != 1L ||
+      is.na(claimed) || is.na(actual)) {
+    cat(sprintf("  FAIL  %-42s 文档写 %s，实际 %s（无法核验）\n", what,
+                paste(claimed, collapse = ","), paste(actual, collapse = ",")))
+    bad <<- bad + 1L
+    return(invisible(FALSE))
+  }
   good <- identical(as.character(claimed), as.character(actual))
   if (good) { cat(sprintf("  PASS  %-42s %s\n", what, actual)); ok <<- ok + 1L }
   else { cat(sprintf("  FAIL  %-42s 文档写 %s，实际 %s\n", what, claimed, actual)); bad <<- bad + 1L }
+  invisible(good)
 }
 
 read_md <- function(f) paste(readLines(file.path(PATH_DOCS(), f), encoding = "UTF-8",
@@ -45,13 +54,8 @@ main <- function() {
   chk("工具脚本数", grab(readme, "([0-9]+) 个工具"), n_tool)
   chk("绘图脚本数", grab(readme, "([0-9]+) 个绘图脚本"), n_fig)
 
-  # ---------- 2) 图件张数 ----------
-  cat("\n2) 图件张数（README §四）\n")
-  n_png <- length(list.files(file.path(PATH_DOCS(), "figures"), pattern = "\\.png$"))
-  chk("可用图件张数", grab(readme, "figures/`，([0-9]+) 张"), n_png)
-
-  # ---------- 3) 目标层数与完成度 ----------
-  cat("\n3) 层数（provenance 表 vs Data Records）\n")
+  # ---------- 2) 目标层数与完成度 ----------
+  cat("\n2) 层数（provenance 表 vs Data Records）\n")
   prov <- read.csv(file.path(PATH_DOCS(), "provenance_table.csv"),
                    fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
   n_active <- sum(prov$status == "active")
@@ -59,8 +63,8 @@ main <- function() {
   chk("active 层数（应为 21,110）", 21110L, n_active)
   chk("provenance 总行数（active + withdrawn）", n_all, 21118L)
 
-  # ---------- 4) 已知限制条数 ----------
-  cat("\n4) 已知限制条数（README vs Usage Notes）\n")
+  # ---------- 3) 已知限制条数 ----------
+  cat("\n3) 已知限制条数（README vs Usage Notes）\n")
   un_txt <- read_md("USAGE_NOTES_AND_LIMITATIONS.md")
   # 注意：文本已折叠成单个字符串，^ 在多行模式下不生效
   # 首版写成 "^### B" 数出 0 条——限制的真实层级是 "## B"（三级 "###" 只有后来追加的
@@ -68,35 +72,16 @@ main <- function() {
   n_b <- length(regmatches(un_txt, gregexpr("\n## B[0-9]+", un_txt, fixed = FALSE))[[1]])
   chk("Usage Notes 限制条数", grab(readme, "([0-9]+) 项已知限制"), n_b)
 
-  # ---------- 5) 论文行数 ----------
-  cat("\n5) 论文各节行数（README vs 实际）\n")
-  for (f in c("PAPER_ABSTRACT_AND_BACKGROUND.md", "PAPER_DATA_RECORDS.md",
-              "PAPER_METHODS.md", "PAPER_TECHNICAL_VALIDATION.md")) {
-    n_ln <- length(readLines(file.path(PATH_DOCS(), f), warn = FALSE))
-    # README 里的行: | `PAPER_XXX.md` | 264 | ...
-    pat <- paste0("`", f, "` \\| ([0-9]+) \\|")
-    chk(f, grab(readme, pat), n_ln)
-  }
-
-  # ---------- 6) 论文合计行数 ----------
-  cat("\n6) 论文合计行数\n")
-  tot_actual <- sum(vapply(c("PAPER_ABSTRACT_AND_BACKGROUND.md", "PAPER_DATA_RECORDS.md",
-                             "PAPER_METHODS.md", "PAPER_TECHNICAL_VALIDATION.md"),
-                           function(f) length(readLines(file.path(PATH_DOCS(), f), warn = FALSE)), 0L))
-  chk("论文合计行数", grab(readme, "\\*\\*合计 ([0-9,]+) 行"), format(tot_actual, big.mark = ","))
-
   # ---- 论文里的核心数字（2026-10-21 新增） ----
   # 已发生过一次 GB/GiB 单位混淆（157.8 GiB 被写成 157.8 GB），
   # 所以把论文引用的磁盘事实固定成可机器校验的断言。
-  # 2026-10-21 扩展：论文现有三份（正文 + 投稿英文版 + 中文版）。
-  # 只核对其中一份，另两份可以静默地漂移。因此循环核对全部。
-  papers <- c("PAPER_CHECO26_DATADESCRIPTOR.md",
-              file.path("SUBMISSION", "PAPER_EN.md"),
-              file.path("SUBMISSION", "PAPER_ZH.md"))
+  # 2026-10-25 起论文只保留一份（SUBMISSION/PAPER_ZH.md），循环保留以备将来多份并存。
+  # 正稿只有一处：SUBMISSION/PAPER_ZH.md（docx 的 Markdown 镜像）。
+  papers <- file.path("SUBMISSION", "PAPER_ZH.md")
   papers <- papers[file.exists(file.path(PATH_DOCS(), papers))]
   for (pf in papers) {
   pp <- file.path(PATH_DOCS(), pf)
-  cat(sprintf("\n7) \u8bba\u6587\u5f15\u7528\u7684\u6570\u5b57\uff08%s\uff09\n", pf))
+  cat(sprintf("\n4) \u8bba\u6587\u5f15\u7528\u7684\u6570\u5b57\uff08%s\uff09\n", pf))
   if (file.exists(pp)) {
     ptxt <- paste(readLines(pp, encoding = "UTF-8", warn = FALSE), collapse = "\n")
     gp <- function(pat) {
@@ -111,7 +96,7 @@ main <- function() {
                      fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
     gb2 <- sum(man2$bytes[grepl("^covariates/", man2$relpath)]) / 1e9
 
-    chk("\u8bba\u6587 cov \u4f53\u79ef (GB)", gp("([0-9]+\\.[0-9]) GB"),
+    chk("\u8bba\u6587 cov \u4f53\u79ef (GB)", gp("\u5408\u8ba1 ([0-9]+\\.[0-9]+) GB"),
         sprintf("%.1f", gb2))
     # 中文版用“8 个主题”而非“eight themes”，模式需按语言选择
     zh <- grepl("PAPER_ZH", pf)

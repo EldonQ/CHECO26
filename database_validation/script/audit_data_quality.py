@@ -102,7 +102,7 @@ def audit_one(job):
         "n_valid": "", "na_frac": "",
         "vmin": "", "vmax": "", "vmean": "", "vsd": "",
         "n_nonfinite": "", "n_outside_mask": "",
-        "range_lo": "", "range_hi": "", "n_below": "", "n_above": "",
+        "range_lo": "", "range_hi": "", "n_below": "", "n_above": "", "range_ok": "",
         "dict_vmin": dict_rec.get("value_min", ""),
         "dict_vmax": dict_rec.get("value_max", ""),
         "dict_nvalid": dict_rec.get("n_valid", ""),
@@ -153,9 +153,16 @@ def audit_one(job):
                     r["range_lo"], r["range_hi"] = lo, hi
                     r["n_below"] = int(np.count_nonzero(v < lo))
                     r["n_above"] = int(np.count_nonzero(v > hi))
+                    r["range_ok"] = "True"
+                else:
+                    # No usable range in the provenance table. Previously this left
+                    # n_below/n_above blank, which the summary read as zero and passed:
+                    # a layer with no documented range was silently "in range".
+                    r["range_ok"] = "no_range"
             else:
                 r["n_nonfinite"] = 0
                 r["n_outside_mask"] = 0
+                r["range_ok"] = "no_valid_cells"
     except Exception as e:
         r["open_ok"] = False
         r["error"] = "%s: %s" % (type(e).__name__, str(e)[:160])

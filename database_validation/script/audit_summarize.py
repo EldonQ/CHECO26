@@ -54,14 +54,24 @@ def check_layer(r):
     if r["storage_ok"] != "True":
         fails.append("storage compress=%s tiled=%s block=%s"
                      % (r["compress"], r["tiled"], r["block"]))
-    if num(r["n_nonfinite"], 0) > 0:
-        fails.append("non_finite=%s" % r["n_nonfinite"])
-    if num(r["n_outside_mask"], 0) > 0:
-        fails.append("valid_cells_outside_mask=%s" % r["n_outside_mask"])
-    if num(r["n_below"], 0) > 0:
-        fails.append("below_range=%s (<%s)" % (r["n_below"], r["range_lo"]))
-    if num(r["n_above"], 0) > 0:
-        fails.append("above_range=%s (>%s)" % (r["n_above"], r["range_hi"]))
+    # A blank count means the audit could not evaluate the check. Reading it as zero
+    # would turn "not checked" into "passed", so a blank is a failure of its own.
+    for key, label in (("n_nonfinite", "non_finite"),
+                       ("n_outside_mask", "valid_cells_outside_mask"),
+                       ("n_below", "below_range"),
+                       ("n_above", "above_range")):
+        c = num(r.get(key), None)
+        if c is None:
+            fails.append("%s=unreadable" % label)
+        elif c > 0:
+            if key == "n_below":
+                fails.append("%s=%s (<%s)" % (label, r[key], r["range_lo"]))
+            elif key == "n_above":
+                fails.append("%s=%s (>%s)" % (label, r[key], r["range_hi"]))
+            else:
+                fails.append("%s=%s" % (label, r[key]))
+    if r.get("range_ok", "") != "True":
+        fails.append("range_unverifiable=%s" % (r.get("range_ok") or "blank"))
     if r["stats_match"] not in ("True",):
         fails.append("dictionary_mismatch min %s/%s max %s/%s n %s/%s"
                      % (r["vmin"], r["dict_vmin"], r["vmax"],
@@ -115,10 +125,12 @@ def main():
                                    and r["crs_ok"] == "True"),
             "storage": sum(1 for r in rows if r["storage_ok"] == "True"),
             "no_valid_outside_mask": sum(1 for r in rows
-                                         if num(r["n_outside_mask"], 0) == 0),
-            "no_non_finite": sum(1 for r in rows if num(r["n_nonfinite"], 0) == 0),
+                                         if num(r.get("n_outside_mask"), None) == 0),
+            "no_non_finite": sum(1 for r in rows
+                                 if num(r.get("n_nonfinite"), None) == 0),
             "within_expected_range": sum(1 for r in rows
-                                         if num(r["n_below"], 0) == 0
+                                         if r.get("range_ok") == "True"
+                                         and num(r["n_below"], 0) == 0
                                          and num(r["n_above"], 0) == 0),
             "dictionary_agrees": sum(1 for r in rows if r["stats_match"] == "True"),
             "manifest_agrees": sum(1 for r in rows if r["sha_match"] == "yes"),

@@ -47,7 +47,10 @@ def main():
 
     by_ds = collections.defaultdict(list)
     for r in comp:
-        by_ds[r["dataset"]].append(float(r["max_abs_dev"]) if r["max_abs_dev"] else 0.0)
+        # A group with no inspectable cell has a blank max_abs_dev; counting it as 0
+        # would report a perfect group. Keep it out of the maximum.
+        if r["max_abs_dev"] not in ("", None):
+            by_ds[r["dataset"]].append(float(r["max_abs_dev"]))
     comp_bad = [r for r in comp if r["n_off_1e-3"] not in ("", "0")]
 
     L = []
@@ -181,14 +184,13 @@ def main():
     A("")
     A("### 5.3 字节重复")
     A("")
-    A("%s 层共享 %s 个不同的哈希，即只有 %s 层是逐字节不同的（%.1f%%）。"
+    A("21,110 个文件只有 %s 个不同的哈希（%.1f%%），其余 %s 层是重复副本。"
       "重复集中在投影类土地利用：城市范围在五个 SSP-RCP 情景中被冻结，"
       "因此同一城市基底在多个情景文件里逐字节相同。这是源产品的性质，"
       "不是重复导出。"
-      % (format(summary["layers_sharing_a_hash"], ","),
-         format(summary["distinct_hashes"], ","),
-         format(summary["distinct_hashes"], ","),
-         100.0 * summary["distinct_hashes"] / n))
+      % (format(summary["distinct_hashes"], ","),
+         100.0 * summary["distinct_hashes"] / n,
+         format(summary["layers_sharing_a_hash"], ",")))
     A("")
     A("### 5.4 气候产品中非 WorldClim 口径的变量")
     A("")

@@ -178,6 +178,27 @@ reported pass because they were doing nothing:
 The lasting guard is the last row: every check reports how many comparisons it
 made, so a check that did nothing cannot masquerade as a check that passed.
 
+## Testing the tests (2026-10-26)
+
+The six defects above were found by reading the code. The follow-up round stopped
+trusting reading: `script/test_audit_scripts.py` builds a throw-away delivery root,
+plants one known defect per layer, runs the real scripts against it through
+`CHECO_ROOT`, and asserts that each defect is reported. Twenty cases cover non-finite
+values, valid cells outside the mask, values above the range, wrong dtype, wrong
+no-data, a shifted grid, missing compression, wrong dimensions, a truncated file, a
+SHA mismatch, a dictionary mismatch, a missing expected range, an all-no-data layer, a
+proportion group that does not close, a group with nothing to inspect, and the three
+focal-within-base outcomes. `pipeline_r/scripts/tools/test_checkers.R` does the same
+for the R helpers `chk()` and `say()`, by parsing the real scripts and evaluating only
+the helper definitions.
+
+It found live holes rather than hypothetical ones: a layer with no `expected_range`
+passed the range check because the counts were blank and the summary read blank as
+zero; a proportion group with no inspectable cell reported `max|sum-1| = 0`; the
+climate comparison returned success after comparing nothing; `chk()` passed when both
+sides were `NA`. All four are fixed, and the strengthened audit still clears all
+21,110 layers. Details and the remaining limits are in `AUDIT_OF_AUDITS.md`.
+
 ## What could not be verified
 
 - **Source integrity.** Ingest checksums were not retained, so the source files can

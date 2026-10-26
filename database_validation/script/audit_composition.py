@@ -56,12 +56,6 @@ def group_key(rel):
     return None
 
 
-def audit_group(key):
-    ds, year, ssp = key
-    paths = audit_group.paths if hasattr(audit_group, "paths") else None
-    return None
-
-
 def work(job):
     key, rels = job
     ds, year, ssp = key
@@ -91,7 +85,15 @@ def work(job):
     dev = acc - 1.0
     inside = acc > 0                     # cells where at least one class is present
     n_cells = int(inside.sum())
-    d = np.abs(dev[inside]) if n_cells else np.array([0.0])
+    if n_cells == 0:
+        # A group with no inspectable cell used to report max|sum-1| = 0, which reads
+        # as a perfect group. Nothing was checked, so nothing may be reported as fine.
+        return {"dataset": ds, "year": year, "scenario": ssp,
+                "n_layers": n_layers, "n_classes": len(rels), "n_cells": 0,
+                "max_abs_dev": "", "p99_abs_dev": "", "n_off_1e-6": "",
+                "n_off_1e-3": "", "sum_mean": "",
+                "error": "no_cells_inspected"}
+    d = np.abs(dev[inside])
     return {
         "dataset": ds, "year": year, "scenario": ssp,
         "n_layers": n_layers, "n_classes": len(rels),

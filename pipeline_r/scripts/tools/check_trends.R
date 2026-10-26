@@ -8,9 +8,12 @@
 # 都必须在这里有一条对应断言——**做不到自动核的数字，就不该出现在论文里**。
 #
 # 用法：Rscript R/tools/check_trends.R
-ROOT  <- Sys.getenv("CHECO_ROOT", getwd())
+ROOT  <- "E:/CHECO26/N-SDM"
 COV   <- file.path(ROOT, "data", "covariates")
-PAPER <- file.path(ROOT, "00_docs", "PAPER_CHECO26_DATADESCRIPTOR.md")
+# 正稿只有一份：Markdown 镜像由 export_paper_md.py 从 docx 内容导出。
+# 分节草稿（PAPER_*.md）已在 2026-10-25 清理中删除，不再作为核验对象。
+PAPER <- file.path(ROOT, "00_docs", "SUBMISSION", "PAPER_ZH.md")
+if (!file.exists(PAPER)) stop("找不到正稿: ", PAPER)
 
 txt <- paste(readLines(PAPER, encoding = "UTF-8", warn = FALSE), collapse = "\n")
 ok <- 0L; bad <- 0L; fails <- character(0)
@@ -18,7 +21,14 @@ ok <- 0L; bad <- 0L; fails <- character(0)
 say <- function(label, claimed, actual, tol = 0.005) {
   # 注意：all.equal 的 tolerance 是**相对**的。论文把 pp 变化写成两位小数，
   # 用相对容差会把 0.10 vs 0.1048 判为失败（相对差 4.8%）。这里要的是绝对容差。
-  good <- abs(as.numeric(claimed) - as.numeric(actual)) <= tol
+  c1 <- suppressWarnings(as.numeric(claimed)); c2 <- suppressWarnings(as.numeric(actual))
+  if (length(c1) != 1L || length(c2) != 1L || !is.finite(c1) || !is.finite(c2)) {
+    bad <<- bad + 1L; fails <<- c(fails, label)
+    cat(sprintf("  FAIL  %-44s 论文写 %s，磁盘算出 %s（无法核验）\n", label,
+                paste(claimed, collapse = ","), paste(format(actual), collapse = ",")))
+    return(invisible(FALSE))
+  }
+  good <- abs(c1 - c2) <= tol
   if (good) { ok <<- ok + 1L; cat(sprintf("  PASS  %-44s %s\n", label, format(actual))) }
   else { bad <<- bad + 1L; fails <<- c(fails, label)
          cat(sprintf("  FAIL  %-44s 论文写 %s，磁盘算出 %s\n", label, claimed, format(actual))) }
