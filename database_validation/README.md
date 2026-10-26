@@ -226,6 +226,7 @@ Rscript script/check_trends.R                         # temporal consistency of 
 Rscript script/resampling_effect.R                    # source-versus-resampled comparison
 python script/make_result_dataframes.py --delivery <delivery-root> --outdir result_dataframe
 python script/make_validation_figures.py
+python script/check_cross_source_numbers.py          # numbers in the manuscripts and this repository versus the delivery
 ```
 
 The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
@@ -241,5 +242,7 @@ The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
 | `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
 | `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
 | `figures/` | value range per layer, NoData count per layer, theme inventory |
-| `script/` | the checks and the scripts that regenerate the tables and figures |
+| `script/` | the checks and the scripts that regenerate the tables and figures; `check_cross_source_numbers.py`
+recomputes the headline numbers from the delivery and flags any place — manuscript or repository — that still
+carries a retired value, which is how the manifest row-count and size mismatch was found |
 | `earlier_campaign/` | the earlier validation campaign, kept for provenance only |
