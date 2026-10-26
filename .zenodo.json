@@ -1,11 +1,11 @@
 {
   "title": "CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research",
-  "description": "<p>A uniform-grid library of 21,110 environmental layers covering China at 1&nbsp;km in an equal-area Albers projection (WGS&nbsp;84, central meridian 105&deg;E, standard parallels 25&deg;N and 47&deg;N).</p><p>Twenty-one dataset entries drawn from nineteen source products across eight categories (bioclim, soil, lulc, anthro, hydro, vege, dist, topo) are standardised to one grid of 4,861&nbsp;&times;&nbsp;4,062 cells, one data type (float32) and one NoData convention (&minus;9999).</p><p>Besides the harmonised source layers the database delivers 16,286 focal-statistics layers at four radii (1, 5, 10 and 20&nbsp;km), 17 distance surfaces, and per-cell areal proportions for every categorical source. Land use and land cover is provided at three complementary depths: annual observed cover 2000&ndash;2025 (CLCD, 1,170 layers), a China-relevant projection (GLU1km, 540 layers) and a harmonised yearly reconstruction 1960&ndash;2100 under five SSP-RCP scenarios (18,440 layers).</p><p>Total volume is 169.4&nbsp;GB. The full layer manifest ships with the repository as one semicolon-separated row per layer.</p>",
+  "description": "<p>A uniform-grid library of 21,110 environmental layers covering China at 1&nbsp;km in an equal-area Albers projection (WGS&nbsp;84, central meridian 105&deg;E, standard parallels 25&deg;N and 47&deg;N).</p><p>Twenty-one dataset entries drawn from nineteen source products across eight categories (bioclim, soil, lulc, anthro, hydro, vege, dist, topo) are standardised to one grid of 4,861&nbsp;&times;&nbsp;4,062 cells, one data type (float32) and one NoData convention (&minus;9999).</p><p>Besides the harmonised source layers the database delivers 16,286 focal-statistics layers at four radii (1, 5, 10 and 20&nbsp;km), 17 distance surfaces, and per-cell areal proportions for every categorical source. Land use and land cover is provided at three complementary depths: annual observed cover 2000&ndash;2025 (CLCD, 1,170 layers), a China-relevant projection (GLU1km, 540 layers) and a harmonised yearly reconstruction 1960&ndash;2100 under five SSP-RCP scenarios (18,440 layers).</p><p>Total volume is 170.9&nbsp;GB. The full layer manifest ships with the repository as one semicolon-separated row per layer.</p><p>Licensing is per layer rather than per deposit: of the 21,105 published layers, 21,023 are CC&nbsp;BY&nbsp;4.0, 76 CC&nbsp;BY-NC&nbsp;4.0, 4 CC&nbsp;BY-NC-SA&nbsp;4.0, 1 Copernicus and 1 ODbL&nbsp;1.0. Five HydroSHEDS accumulation layers are withheld from publication for licence reasons.</p>",
   "upload_type": "dataset",
   "access_right": "open",
-  "license": "CC-BY-4.0",
-  "version": "2.0",
-  "publication_date": "2026-10-19",
+  "license": "other-open",
+  "version": "1.0",
+  "publication_date": "2026-10-26",
   "language": "eng",
   "creators": [
     {

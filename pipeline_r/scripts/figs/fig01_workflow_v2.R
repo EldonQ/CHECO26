@@ -241,7 +241,7 @@ draw <- function() {
   band_bot <- 2.0
   rect(X_HDR_L, band_bot, X_HDR_R, band_top, col = BLACK, border = NA)
   text(52, (band_top + band_bot) / 2 + 2.0,
-       "8 themes \u00b7 21 datasets \u00b7 21,110 layers \u00b7 169.4 GB",
+       "8 themes \u00b7 21 datasets \u00b7 21,110 layers \u00b7 170.9 GB",
        cex = 1.30, font = 2, col = WHITE, family = FONT)
   text(52, (band_top + band_bot) / 2 - 2.2,
        "China_Albers \u00b7 1,000 m \u00b7 4,861 \u00d7 4,062 \u00b7 9,490,310 cells inside China (48.1%)",

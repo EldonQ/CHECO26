@@ -1,7 +1,7 @@
 # CHECO26 data artefacts
 
 Light-weight data assets that ship with the repository. The full database
-(169.4 GB) is not yet publicly released (see the main
+(170.9 GB) is not yet publicly released (see the main
 [README](../README.md#data-availability)); these artefacts let you audit the
 inventory, build the exact grid, and inspect representative layers without
 downloading anything.

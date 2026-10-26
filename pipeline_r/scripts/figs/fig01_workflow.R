@@ -20,7 +20,7 @@ N_THEMES   <- 8L
 N_DATASETS <- 21L
 N_VALID    <- 9490310L
 N_MANIFEST <- 21118L
-SIZE_GB    <- 169.4
+SIZE_GB    <- 170.9
 N_UNIQUE   <- 14047L
 THEMES <- data.frame(
   theme = c("lulc", "bioclim", "soil", "anthro", "hydro", "vege", "dist", "topo"),
