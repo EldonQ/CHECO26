@@ -253,6 +253,7 @@ Rscript script/resampling_effect.R                    # source-versus-resampled 
 python script/make_result_dataframes.py --delivery <delivery-root> --outdir result_dataframe
 python script/make_validation_figures.py
 python script/check_cross_source_numbers.py          # numbers in the manuscripts and this repository versus the delivery
+python script/check_docx_quality.py                  # page geometry, fonts, table and figure widths, Markdown leftovers
 ```
 
 Every script reads `CHECO_ROOT` and falls back to a default path when it is unset; the
@@ -274,7 +275,9 @@ in neither the repository nor the delivery.
 | `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
 | `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
 | `figures/` | value range per layer, NoData count per layer, theme inventory |
-| `script/` | the checks and the scripts that regenerate the tables and figures; `check_cross_source_numbers.py`
+| `script/` | the checks and the scripts that regenerate the tables and figures. `check_cross_source_numbers.py`
 recomputes the headline numbers from the delivery and flags any place — manuscript or repository — that still
-carries a retired value, which is how the manifest row-count and size mismatch was found |
+carries a retired value, which is how the manifest row-count and size mismatch was found; `check_docx_quality.py`
+inspects the generated Word files rather than their source, and is what caught the Markdown backticks that had
+survived into ten paragraphs of the English manuscript |
 | `earlier_campaign/` | the earlier validation campaign, kept for provenance only |
