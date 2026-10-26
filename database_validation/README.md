@@ -202,6 +202,32 @@ climate comparison returned success after comparing nothing; `chk()` passed when
 sides were `NA`. All four are fixed, and the strengthened audit still clears all
 21,110 layers. Details and the remaining limits are in `AUDIT_OF_AUDITS.md`.
 
+## Ten errors found in our own description of the archive
+
+The defects above concern the checks. These concern what we wrote about the data,
+and they matter for a different reason: a reader has no way to audit a sentence.
+Some were caught by the new cross-source audit (`script/check_cross_source_numbers.py`),
+which recomputes the headline numbers from the delivery and then asks each document
+whether it carries the current value and whether it still carries a retired one; the
+rest came from reading the producing code against the text.
+
+| # | What we wrote | What the data says | How it surfaced |
+|---|---|---|---|
+| 1 | "all 4 topo layers are reprojected sources" | `aspect` and `tri` are produced by `08_derive_topo_vege.R` with Horn (1981) and Riley et al. (1999); only elevation and slope are reprojected | an external review read the two sentences against each other |
+| 2 | 796 direct (3.77%) / 20,314 derived (96.23%) | 794 / 20,316, once the two derived topo layers are counted as derived | follows from #1 |
+| 3 | "7 coordinate reference systems" | 4, after collapsing synonyms: EPSG:4326 (19,271 layers), China_Albers (1,174), World Mercator (540), World Mollweide (125) | recomputed from `source_crs` |
+| 4 | "17 no-data conventions" | 13 distinct conventions from 18 declarations (NaN, 0, none, -3.4e38, -32768, NaN with -inf, -9999, 32767, -200, -128, 65535, UInt32 sentinel, not applicable) | recomputed from `source_nodata` |
+| 5 | "a SHA-256 manifest of 21,118 entries covering 170.91 GB" | 21,118 rows are 172.46 GB; the 21,110 active layers are 170.91 GB and the 8 withdrawn records add 1.54 GB | the cross-source audit, by summing the manifest by basename |
+| 6 | "a random 48 layers" | `11_validate.R` draws them at even intervals along the production chronology, not at random | reading the sampling code |
+| 7 | resampling "quantified per theme" | three representative layers, one per source type, of 21,110 (0.014%) | an external review counted the rows in the table |
+| 8 | "a second toolchain sharing no code" | true of `audit_data_quality.py` (Python/rasterio, 10 checks), but the sentence never said which of the two independent scripts it meant | an external review asked which one |
+| 9 | "CLCD is described from 1985 onwards" | the cited paper covers 1990-2019; the release delivered here covers 2000-2025 | the citation contradicted the sentence |
+| 10 | figures 3-7 named `fig02_*` to `fig06_*`, with no `fig07` | after renaming, `fig01`-`fig08` match legend numbers 1-8 | a directory listing |
+
+Two of these (#5, #6) are the kind that survive every check that only asks "does the
+number appear?", which is why the cross-source audit compares recomputed values rather
+than grepping for strings, and why it also tests for retired values.
+
 ## What could not be verified
 
 - **Source integrity.** Ingest checksums were not retained, so the source files can
