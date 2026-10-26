@@ -264,6 +264,7 @@ The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
 |---|---|
 | `VERIFICATION_REPORT.md` | full delivery verification report |
 | `INDEPENDENT_VERIFICATION.md` | the independent recomputation, written up separately |
+| `MANUSCRIPT_REVIEW.md` | the simulated three-seat review of the manuscript: what was accepted and fixed, what was rejected with evidence, and what would need new data |
 | `result_dataframe/per_layer_stats.csv` | one row per layer: theme, dataset, unit, n_valid, na_frac, min, max, bytes, SHA-256, licence class, release status |
 | `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
 | `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
