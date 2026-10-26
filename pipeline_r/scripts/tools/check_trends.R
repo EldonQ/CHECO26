@@ -8,7 +8,15 @@
 # 都必须在这里有一条对应断言——**做不到自动核的数字，就不该出现在论文里**。
 #
 # 用法：Rscript R/tools/check_trends.R
-ROOT  <- "E:/CHECO26/N-SDM"
+.root <- Sys.getenv("CHECO_ROOT", "")
+if (!nzchar(.root)) {
+  .a <- grep("^--file=", commandArgs(FALSE), value = TRUE)
+  .d <- if (length(.a)) dirname(normalizePath(sub("^--file=", "", .a[1]))) else getwd()
+  while (!file.exists(file.path(.d, "R", "_bootstrap.R")) && dirname(.d) != .d) .d <- dirname(.d)
+  .root <- .d
+}
+Sys.setenv(CHECO_ROOT = .root)
+ROOT <- .root
 COV   <- file.path(ROOT, "data", "covariates")
 # 正稿只有一份：Markdown 镜像由 export_paper_md.py 从 docx 内容导出。
 # 分节草稿（PAPER_*.md）已在 2026-10-25 清理中删除，不再作为核验对象。

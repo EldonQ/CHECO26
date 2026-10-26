@@ -61,7 +61,7 @@ fixed, variable-type-driven standardization procedure:
 4. transformation of discrete data to continuous ones — land-cover classes become class proportions, edge density, Shannon diversity, and patch density / mean patch size over square windows
 5. computation of distance statistics for linear and areal features (Euclidean distance, metres)
 6. computation of focal statistics — equal-weight means over four square windows (3 x 3 to 41 x 41 cells, i.e. 1, 5, 10 and 20 km radii); a window containing no valid cell receives NoData rather than zero
-7. unification of the five NoData conventions found in the sources (0, 255, 65535, -9999, NaN) to -9999, setting class-0 source pixels to NoData before aggregation where 0 doubles as both a class value and the background
+7. unification of the 13 NoData conventions found in the sources (18 declarations, including 0, 255, 65535, -9999, NaN and ±inf) to -9999, setting class-0 source pixels to NoData before aggregation where 0 doubles as both a class value and the background
 8. clipping to the national boundary with an `all_touched` mask (no delivered layer holds valid cells outside China)
 9. saving the final raster layers as float32 GeoTIFF (DEFLATE, 256 x 256 tiled, atomic write)
 
@@ -74,9 +74,9 @@ pipeline is in [`pipeline_r/`](pipeline_r/).
 
 ## Data availability
 
-CHECO26 is a database of 170.9 GB, 21,110 float32 GeoTIFF layers on the
-China_Albers 1-km grid) is described in a data manuscript currently in preparation
-and is not yet publicly released. This repository provides everything needed to
+CHECO26 is a database of 170.9 GB and 21,110 float32 GeoTIFF layers on the China_Albers
+1-km grid. It is described in a data manuscript currently in preparation and is not yet
+publicly released. This repository provides everything needed to
 understand, audit and reproduce the database:
 
 - the full layer manifest ([`data/CHECO26_datalayers_details.csv`](data/CHECO26_datalayers_details.csv), one row per layer with category, dataset, variable, period, scenario, year range, focal radius, unit and path),
@@ -127,12 +127,39 @@ evidence chain and the list of known source-level limitations, including the eig
 Hydrography90m layers withdrawn after the source products proved numerically
 unusable.
 
+## Running the code
+
+Two things run without the 170.9 GB archive:
+
+- **The three worked examples** in `layer_standardization_example/`, `focal_statistics_example/`
+  and `distance_layers_example/`. They need Python 3 with `rasterio`, `numpy` and `PyYAML`,
+  accept any GeoTIFF as input and write a layer onto the CHECO26 grid. Each directory carries
+  its own README with the exact command. Verified on rasterio 1.4.4: the standardization
+  example reproduces the archive's 9,490,310 in-mask cells on a sample layer.
+- **The figure scripts** in `pipeline_r/scripts/figs/`, which need `terra` and the delivered
+  layers.
+
+The production pipeline in `pipeline_r/scripts/` is distributed for inspection. Running it
+requires the delivery tree, because the stage scripts expect `CHECO_ROOT` to hold `R/` and
+`data/`:
+
+```
+export CHECO_ROOT=/path/to/delivery        # Windows: set CHECO_ROOT=E:\path\to\delivery
+cp -r pipeline_r/scripts   $CHECO_ROOT/R
+cp    pipeline_r/config.yaml $CHECO_ROOT/scripts/config.yaml
+Rscript $CHECO_ROOT/R/run_all.R            # idempotent; CHECO_FORCE=1 rebuilds
+```
+
+Requirements: R 4.4.3, terra 1.8.54 (GDAL 3.10.1), `sf`, `exactextractr`. A full rerun needs
+about 210 GB for the layers and 500 GB of scratch space, with the temporary directory on a
+data disk rather than the system disk.
+
 ## Repository layout
 
 | Directory | Content |
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
-| [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — 20 stage scripts, 20 tools, 70 tests, configuration |
+| [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — 20 stage scripts, 16 tools, 70 tests, 8 figure scripts, configuration |
 | [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports, and the [layer-by-layer data quality audit](database_validation/DATA_QUALITY_AUDIT.md) |
 | [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |

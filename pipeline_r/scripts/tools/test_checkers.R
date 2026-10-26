@@ -11,8 +11,15 @@
 #
 # Usage: Rscript R/tools/test_checkers.R
 
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+.root <- Sys.getenv("CHECO_ROOT", "")
+if (!nzchar(.root)) {
+  .a <- grep("^--file=", commandArgs(FALSE), value = TRUE)
+  .d <- if (length(.a)) dirname(normalizePath(sub("^--file=", "", .a[1]))) else getwd()
+  while (!file.exists(file.path(.d, "R", "_bootstrap.R")) && dirname(.d) != .d) .d <- dirname(.d)
+  .root <- .d
+}
+Sys.setenv(CHECO_ROOT = .root)
+source(file.path(.root, "R", "_bootstrap.R"), encoding = "UTF-8")
 
 # Evaluate a script only as far as the expression that defines `what`, then return the
 # environment it left behind. Running the whole file would execute against real data.

@@ -15,9 +15,16 @@
 # rejected - channel peaks came out 6.2x too low for reasons never established -
 # and those 5 layers are excluded from the public release anyway.
 
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+.root <- Sys.getenv("CHECO_ROOT", "")
+if (!nzchar(.root)) {
+  .a <- grep("^--file=", commandArgs(FALSE), value = TRUE)
+  .d <- if (length(.a)) dirname(normalizePath(sub("^--file=", "", .a[1]))) else getwd()
+  while (!file.exists(file.path(.d, "R", "_bootstrap.R")) && dirname(.d) != .d) .d <- dirname(.d)
+  .root <- .d
+}
+Sys.setenv(CHECO_ROOT = .root)
 Sys.setenv(CHECO_FORCE = "1")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+source(file.path(.root, "R", "_bootstrap.R"), encoding = "UTF-8")
 
 args <- commandArgs(trailingOnly = TRUE)
 if (!length(args)) stop("usage: rerun_r_only.R <04|08|05> [only|snap_idx]")
