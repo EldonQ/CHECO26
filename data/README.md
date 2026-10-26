@@ -11,6 +11,8 @@ downloading anything.
 | `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,110 rows), in the shared 14-column semicolon layout |
 | `CHECO26-standardgrid.tif` | the template grid every layer is aligned to (China_Albers, 1000 m, 4861 x 4062, value 1) |
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
+| `table2_dataset_layer_counts.csv` | machine-readable version of Table 1 in the manuscript: layer counts per dataset entry |
+| `table3_resampling_effect.csv` | machine-readable version of Table 2: the resampling check on three representative layers |
 | `sample_layers/glo/...` | six representative layers, byte-identical copies from the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
 
 ## Manifest columns
