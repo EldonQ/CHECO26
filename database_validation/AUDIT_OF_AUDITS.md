@@ -102,7 +102,8 @@ Rscript R/tools/test_checkers.R                # 6 项
 2. **无有效像元的层**现在会失败（`no_valid_cells`）。这是有意的：空层没有交付价值。
 3. **`scripts/audit/` 里的历史一次性脚本**（`audit_table.py`、`final_audit.py`、
    `verdict_scan.py`、`check_review_points.py`、`check_unit_scale.py`、`check_time_variance.py`、
-   `scan_all_layers.py`、`audit_manifest.py`）不在当前证据链里，未做变异测试；
-   它们的结果不进入任何交付结论。
+   `scan_all_layers.py`、`audit_manifest.py`、`verify_provenance.py`）**已于 2026-10-26 删除**：
+   它们不在当前证据链里，结果不进入任何交付结论。清单见 `../audit/deleted_20261026.csv`。
+   注意 `USAGE_NOTES_AND_LIMITATIONS.md` 附录里依赖这些脚本的复现说明因此降级为历史记录。
 4. **`verify_independent.R` 的抽样层数固定**（60 层网格、10 层统计、8 层 SHA），
    抽样不能替代全量；全量结论来自 `audit_data_quality.py` 的 21,110 层。
