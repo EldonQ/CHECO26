@@ -63,6 +63,9 @@ pixel. Tables are in [`result_dataframe/`](result_dataframe/), the report is
   the cited script exists, units are non-empty, and no field carries stray
   whitespace. **13 / 13 pass, 0 failures.** Table:
   `result_dataframe/provenance_verification.csv`.
+  The delivery tree pruned its one-off audit scripts on 2026-10-26; this repository
+  keeps `script/verify_provenance.py` because it generates the table above, while the
+  superset checker `script/verify_provenance_final.py` (29 checks) ships in both.
 - **Source fidelity.** Five cross-theme layers compared point by point against
   their original sources at 3,000 random cells: r = 0.983–0.9999, mean bias ≈ 0.
 
