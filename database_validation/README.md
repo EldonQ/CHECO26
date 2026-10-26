@@ -255,8 +255,12 @@ python script/make_validation_figures.py
 python script/check_cross_source_numbers.py          # numbers in the manuscripts and this repository versus the delivery
 ```
 
+Every script reads `CHECO_ROOT` and falls back to a default path when it is unset; the
+fallback is the author's delivery layout, so set the variable rather than relying on it.
 The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
-`data/covariates/`, `scripts/config.yaml` and `00_docs/`.
+`data/covariates/`, `scripts/config.yaml` and `00_docs/`. `audit_fidelity.py` additionally
+reads `CHECO_SRC`, the directory holding the source rasters it compares against, which are
+in neither the repository nor the delivery.
 
 ## Layout
 
@@ -265,6 +269,7 @@ The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
 | `VERIFICATION_REPORT.md` | full delivery verification report |
 | `INDEPENDENT_VERIFICATION.md` | the independent recomputation, written up separately |
 | `MANUSCRIPT_REVIEW.md` | the simulated three-seat review of the manuscript: what was accepted and fixed, what was rejected with evidence, and what would need new data |
+| `VERIFICATION_RUN.md` | one clean-shell run of the whole chain, with per-step times and results: `scripts/audit/run_full_verification.py` |
 | `result_dataframe/per_layer_stats.csv` | one row per layer: theme, dataset, unit, n_valid, na_frac, min, max, bytes, SHA-256, licence class, release status |
 | `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
 | `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
