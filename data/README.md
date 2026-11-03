@@ -15,6 +15,7 @@ downloading anything.
 | `table3_resampling_effect.csv` | machine-readable version of Table 2: the resampling check on three representative layers |
 | `sample_layers/glo/...` | seven representative delivered layers, checked cell by cell against the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
 | `source_layers/cnclim1km/...` | the raw 0.01° source of one sample layer (CNClim1km bio01), used by the standardization example to demonstrate reprojection from EPSG:4326 |
+| `source_layers/smod/...` | GHS-SMOD 2020 settlement classes cropped to the China window (30 arc-sec, CC BY 4.0), the public input of the distance example |
 
 ## Manifest columns
 
@@ -51,4 +52,6 @@ the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](
 | `glo/anthro/foothii/2020/hii/...` | anthro | WCS footHII | human footprint index, 2020 |
 | `glo/lulc/glu1km/2020/forest/..._prop.tif` | lulc | Global LULC projection | the base proportion layer, focal input of the example below |
 | `glo/lulc/glu1km/2020/forest/..._prop_f5000.tif` | lulc | Global LULC projection | flagship discrete-to-continuous derivation (forest proportion, 5-km window) |
+| `glo/lulc/glu1km/2020/forest/..._prop_f20000.tif` | lulc | Global LULC projection | same derivation at the widest window (41 x 41), which uses the explicit count path |
 | `glo/dist/grip4/road/...` | dist | GRIP4 | distance to the road network |
+| `glo/dist/smod/urban/...` | dist | GHS-SMOD | distance to settlements, reproduced by the distance example |

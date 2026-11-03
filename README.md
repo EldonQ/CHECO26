@@ -136,10 +136,13 @@ Two things run without the 170.9 GB archive:
   `pipeline_r/scripts/01_common.R` -- the same code that produced the archive, with parameters
   read from `pipeline_r/config.yaml` rather than restated. They need R with `terra` and `yaml`,
   use only the public files in `data/`, and each ends with a check: the focal example
-  recomputes a delivered layer cell by cell (maximum difference 3.0e-8), the standardization
-  example reproduces a delivered climate layer from its raw 0.01 deg source (mean difference
-  0.015 degC), and the distance example verifies the distance transform against closed-form
-  Euclidean values (maximum error 0.002 m).
+  recomputes two delivered focal layers cell by cell (maximum difference 3.0e-8, i.e. float32
+  rounding, and one of them exercises the wide-window code path), the standardization example
+  reprojects a raw 0.01 deg climate source onto the grid and reproduces the delivered layer
+  (sd 0.03 degC, no systematic offset), and the distance example rebuilds the settlement
+  distance surface from the GHS-SMOD source (97.9% of the delivered feature cells recovered,
+  mean distance difference 69 m) while verifying the distance transform itself against
+  closed-form Euclidean values (maximum error 0.002 m).
 - **The figure scripts** in `pipeline_r/scripts/figs/`, which need `terra` and the delivered
   layers.
 

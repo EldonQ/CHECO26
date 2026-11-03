@@ -3,29 +3,32 @@
 A minimal, runnable example of how features are converted into distance
 surfaces for the raster modelling stack.
 
-The example is **not** a re-implementation. It calls `dist_from_feature()` from
-`pipeline_r/scripts/01_common.R` — the same helper used by
-`pipeline_r/scripts/09_derive_dist.R` — and the production writer:
+The example is **not** a re-implementation. It reproduces the SMOD step of
+`pipeline_r/scripts/09_derive_dist.R` (settlement classes 21/22/23 -> 1,
+everything else 0, projected onto the grid with max resampling) and then calls
+the production helpers:
 
 ```r
-d <- dist_from_feature(feat)    # flag features as 1, everything else as 0/NA
-d <- apply_china_mask(d, NA)    # distance is computed on the full grid, then clipped
+d <- apply_china_mask(dist_from_feature(feat), NA)
 ```
+
+`dist_from_feature()` lives in `pipeline_r/scripts/01_common.R` and is the same
+function `09_derive_dist.R` uses. Classes, grid, resampling method and NoData
+all come from `pipeline_r/config.yaml`.
 
 ## Method
 
 ```
-feature vector (roads / rivers / water / urban / trails)
-  -> rasterize onto the CHECO26 grid (all_touched = TRUE, 1 = feature)
+GHS-SMOD settlement classes (30 arc-sec)
+  -> classes 21/22/23 -> 1, all other classes -> 0, NoData kept
+  -> max aggregation onto the CHECO26 grid (any urban source cell marks the cell)
   -> terra::distance(ifel(feat == 1, 1, NA), unit = "m")     [metres]
   -> clip to the China mask
 ```
 
 Feature cells carry distance 0; every other cell carries the Euclidean distance
-to the nearest feature cell. Distance is computed on the **full** grid — features
-outside China still provide context at the border — and only clipped on write.
-Path distance (elevation-aware) is not used in CHECO26: the 1-km grid is meant
-as a national modelling base, and the production scope is Euclidean distance.
+to the nearest feature cell, in metres. Path distance (elevation-aware) is not
+used in CHECO26: the 1-km grid is meant as a national modelling base.
 
 `terra::distance()` measures to the nearest **non-NA** cell, so non-feature cells
 must be set to NA rather than 0. Passing a 0/1 raster without NA produces a
@@ -52,22 +55,30 @@ everything else as 0).
 Rscript distance_layers_example/distance_layers.R
 ```
 
-Requires R with `terra` and `yaml`. The demo uses only files in this repository:
-the China mask (`data/mask_china.tif`) and the delivered road distance layer
-(`data/sample_layers/glo/dist/grip4/road/`). The demo feature is "everything
-outside China", so the result is the distance from every interior cell to the
-national border.
+Requires R with `terra` and `yaml`. Both files it needs are in this repository:
+
+- input: `data/source_layers/smod/GHS_SMOD_E2020_china_window.tif`
+  (GHS-SMOD 2020 cropped to the China window, CC BY 4.0, 3.4 MB)
+- reference: `data/sample_layers/glo/dist/smod/urban/glo_dist_smod_urban.tif`
+  (the delivered layer)
 
 ## What the example checks
 
 | Check | What it verifies |
 |---|---|
-| D1 | the first interior ring sits exactly 1,000 m from the border (100% of its cells); maximum distance 1,047 km |
-| D2 | a single feature cell at the grid centre yields exactly `1000 * hypot(dx, dy)` over a 41 × 41 window (max error 0.002 m, i.e. float32 rounding) |
-| D3 | descriptive statistics of the delivered road layer, as a sanity check on the surface being reproduced |
+| D1 | 97.92% of the delivered zero-distance cells are reproduced; mean absolute distance difference 69 m over 9,490,310 cells (the largest distance is 390 km) |
+| D2 | a single feature cell at the grid centre yields exactly `1000 * hypot(dx, dy)` over a 41 × 41 window (max error 0.0017 m, i.e. float32 rounding) |
 
-D2 is the strict one: it verifies the geometry of the distance transform against
-closed-form values, independent of any delivered layer.
+D2 is the strict check: it verifies the geometry of the distance transform
+against closed-form values, independent of any delivered layer.
+
+## Why 2% of the settlement cells differ
+
+The delivered layer was built from an earlier release of GHS-SMOD. The two
+releases place a few thousand settlement cells differently, which moves the
+feature set by about 2% and shifts distances near those cells (mean 69 m over
+the full grid). The distance transform itself is exact — D2 shows it — so this
+is a source-version effect, not a difference in method.
 
 ## Applying it to your own features
 

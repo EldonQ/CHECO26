@@ -78,25 +78,29 @@ cat(sprintf("\ncheck G1 (focal within base range): above=%d below=%d  -> %s\n",
             n_above, n_below, if (n_above + n_below == 0L) "PASS" else "FAIL"))
 if (n_above + n_below != 0L) stop("G1 violated: focal statistics left the base range")
 
-# ---- 校验 2：与交付图层逐格比较 ---------------------------------------------
-if (file.exists(ref_path)) {
-  ref <- terra::rast(ref_path)
-  cmp <- terra::compareGeom(focal_layer, ref, stopOnError = FALSE)
-  if (!isTRUE(cmp)) stop("recomputed layer is not aligned with the delivered layer")
-  d <- abs(focal_layer - ref)
-  dv <- terra::values(d, mat = FALSE)
-  dv <- dv[is.finite(dv)]
-  max_diff <- max(dv)
-  n_diff <- sum(dv > 1e-6)
-  cat(sprintf("check G2 (vs delivered %s): max |diff| = %.3g over %d cells, %d differ >1e-6 -> %s\n",
-              key, max_diff, length(dv), n_diff,
-              if (max_diff <= 1e-6) "PASS" else "FAIL"))
-  if (max_diff > 1e-6) {
-    stop("recomputed focal layer does not reproduce the delivered layer")
+# ---- 校验 2：四个尺度全部与交付图层逐格比较 --------------------------------
+ref_dir <- dirname(sample_layer("glo", "lulc", "glu1km", "2020", "forest",
+                                "glo_lulc_glu1km_2020_forest_prop_f5000.tif"))
+worst <- 0
+for (i in seq_len(nrow(fs))) {
+  sfx <- fs$suffix[i]
+  ref_p <- file.path(ref_dir, sprintf("glo_lulc_glu1km_2020_forest_prop%s.tif", sfx))
+  if (!file.exists(ref_p)) {
+    cat(sprintf("check G2 %-8s: reference missing, skipped\n", sfx)); next
   }
-} else {
-  cat("check G2: delivered reference layer not present, skipped\n")
+  ref <- terra::rast(ref_p)
+  if (!isTRUE(terra::compareGeom(layers[[sfx]], ref, stopOnError = FALSE))) {
+    stop("recomputed layer is not aligned with the delivered layer: ", sfx)
+  }
+  dv <- terra::values(abs(layers[[sfx]] - ref), mat = FALSE)
+  dv <- dv[is.finite(dv)]
+  mx <- max(dv); n_bad <- sum(dv > 1e-6)
+  worst <- max(worst, mx)
+  cat(sprintf("check G2 %-8s vs delivered: max |diff| = %.3g, %d cells > 1e-6 -> %s\n",
+              sfx, mx, n_bad, if (mx <= 1e-6) "PASS" else "FAIL"))
+  if (mx > 1e-6) stop("recomputed focal layer does not reproduce the delivered layer: ", sfx)
 }
+cat(sprintf("check G2 summary : worst difference over the four scales = %.3g (float32 rounding)\n", worst))
 
 # ---- 写出（生产写盘函数：float32 / DEFLATE / 256 分块 / 原子写）------------
 outdir <- example_outdir("focal")
