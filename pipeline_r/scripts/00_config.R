@@ -66,6 +66,11 @@ GRID <- function() {
   height <- as.integer(round((ymax - ymin) / res))
 
   tpl_path <- file.path(dirname(P("covariates")), "template_albers1km.tif")
+  # 公开仓库把同一网格命名为 CHECO26-standardgrid.tif
+  if (!file.exists(tpl_path)) {
+    alt <- file.path(dirname(P("covariates")), "CHECO26-standardgrid.tif")
+    if (file.exists(alt)) tpl_path <- alt
+  }
   crs_use <- if (file.exists(tpl_path)) terra::crs(terra::rast(tpl_path)) else g$crs_wkt
 
   list(

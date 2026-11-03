@@ -196,6 +196,20 @@ focal_all <- function(x) {
 #'
 #' CRS 用 proj4 语义比较，而非 WKT 文本：config 的 WKT 与模板 WKT 仅元数据节点不同，
 #' 文本比较会误判（2026-10-19 实测：proj4 完全相同但 WKT 字符串不同）。
+# ---- 距离面 ----------------------------------------------------------------
+#' 要素层 -> 欧氏距离面（米）。
+#'
+#' **terra::distance 的语义（2026-10-19 最小用例实测确认）**：
+#'   它算的是「到最近**非 NA** 像元」的距离。
+#'   因此必须把要素之外的像元全部置 NA，要素保留为数值；
+#'   若传 0/1 栅格（无 NA），结果毫无意义（实测中心反成 1000、其余全 0）。
+#'   按正确用法，结果与解析值精确吻合：
+#'     相邻 1000、对角 1000*sqrt(2)=1414.2、边角 1000*sqrt(50)=7071.1
+dist_from_feature <- function(feat) {
+  x <- terra::ifel(feat == 1, 1, NA)
+  terra::distance(x, unit = "m")
+}
+
 check_alignment <- function(path) {
   if (!file.exists(path)) return(FALSE)
   r <- tryCatch(terra::rast(path), error = function(e) NULL)

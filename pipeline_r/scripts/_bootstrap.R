@@ -16,8 +16,10 @@ if (!nzchar(Sys.getenv("CHECO_ROOT", ""))) {
 }
 CHECO_ROOT <- Sys.getenv("CHECO_ROOT")
 
+# 脚本目录：交付树用 R/，公开仓库用 pipeline_r/scripts/
 R_DIR <- file.path(CHECO_ROOT, "R")
-if (!dir.exists(R_DIR)) stop("R/ not found under CHECO_ROOT: ", CHECO_ROOT)
+if (!dir.exists(R_DIR)) R_DIR <- file.path(CHECO_ROOT, "pipeline_r", "scripts")
+if (!dir.exists(R_DIR)) stop("scripts directory not found under CHECO_ROOT: ", CHECO_ROOT)
 
 source(file.path(R_DIR, "00_config.R"), encoding = "UTF-8")
 source(file.path(R_DIR, "01_common.R"), encoding = "UTF-8")

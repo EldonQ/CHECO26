@@ -24,18 +24,7 @@ source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R
 TASKS <- c("grip4_road", "grip4_majorroad", "osm_trail", "smod_urban", "gsw_water")
 
 # ---- 特征层 -> 距离 --------------------------------------------------------
-#' 与 Python dist_from_feature (scipy distance_transform_edt) 等价。
-#'
-#' **terra::distance 的语义（2026-10-19 最小用例实测确认）**：
-#'   它算的是「到最近**非 NA** 像元」的距离。
-#'   因此必须把要素之外的像元全部置 NA，要素保留为数值；
-#'   若传 0/1 栅格（无 NA），结果毫无意义（实测中心反成 1000、其余全 0）。
-#'   按正确用法，结果与解析值精确吻合：
-#'     相邻 1000、对角 1000*sqrt(2)=1414.2、边角 1000*sqrt(50)=7071.1
-dist_from_feature <- function(feat) {
-  x <- terra::ifel(feat == 1, 1, NA)
-  terra::distance(x, unit = "m")
-}
+# dist_from_feature() 定义在 01_common.R，工作示例与生产脚本共用同一实现
 
 # ---- 各要素层 --------------------------------------------------------------
 feat_grip4 <- function(major_only = FALSE) {

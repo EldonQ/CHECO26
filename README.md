@@ -66,7 +66,7 @@ fixed, variable-type-driven standardization procedure:
 9. saving the final raster layers as float32 GeoTIFF (DEFLATE, 256 x 256 tiled, atomic write)
 
 For the standardization rules, the focal-window semantics and the distance-surface
-method, see the worked examples in
+method, see the three R worked examples (they call the production functions directly) in
 [`layer_standardization_example/`](layer_standardization_example/),
 [`focal_statistics_example/`](focal_statistics_example/) and
 [`distance_layers_example/`](distance_layers_example/). The complete production
@@ -132,10 +132,14 @@ unusable.
 Two things run without the 170.9 GB archive:
 
 - **The three worked examples** in `layer_standardization_example/`, `focal_statistics_example/`
-  and `distance_layers_example/`. They need Python 3 with `rasterio`, `numpy` and `PyYAML`,
-  accept any GeoTIFF as input and write a layer onto the CHECO26 grid. Each directory carries
-  its own README with the exact command. Verified on rasterio 1.4.4: the standardization
-  example reproduces the archive's 9,490,310 in-mask cells on a sample layer.
+  and `distance_layers_example/`. They are R scripts that call the production functions from
+  `pipeline_r/scripts/01_common.R` -- the same code that produced the archive, with parameters
+  read from `pipeline_r/config.yaml` rather than restated. They need R with `terra` and `yaml`,
+  use only the public files in `data/`, and each ends with a check: the focal example
+  recomputes a delivered layer cell by cell (maximum difference 3.0e-8), the standardization
+  example reproduces a delivered climate layer from its raw 0.01 deg source (mean difference
+  0.015 degC), and the distance example verifies the distance transform against closed-form
+  Euclidean values (maximum error 0.002 m).
 - **The figure scripts** in `pipeline_r/scripts/figs/`, which need `terra` and the delivered
   layers.
 
@@ -161,9 +165,9 @@ data disk rather than the system disk.
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
 | [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — 20 stage scripts, 16 tools, 70 tests, 8 figure scripts, configuration |
 | [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports, and the [layer-by-layer data quality audit](database_validation/DATA_QUALITY_AUDIT.md) |
-| [`layer_standardization_example/`](layer_standardization_example/) | minimal standardization worked example |
-| [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example |
-| [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example |
+| [`layer_standardization_example/`](layer_standardization_example/) | standardization worked example (R, calls production `warp_to_template()`) |
+| [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example (R, calls production `focal_all()`) |
+| [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example (R, calls production `dist_from_feature()`) |
 | [`figs/`](figs/) | README figures |
 
 The delivered rasters are not in this repository: 170.9 GB cannot live in git.
