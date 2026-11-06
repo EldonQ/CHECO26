@@ -28,7 +28,7 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 | Data type                   | float32, every layer without exception |
 | NoData                      | -9999, every layer |
 | Storage                     | GeoTIFF, DEFLATE compressed, 256 x 256 tiles |
-| Volume                      | 170.9 GB (159.2 GiB) |
+| Volume                      | 166.9 GB (155.5 GiB) |
 
 ## Layer inventory
 
@@ -74,7 +74,7 @@ pipeline is in [`pipeline_r/`](pipeline_r/).
 
 ## Data availability
 
-CHECO26 is a database of 170.9 GB and 21,110 float32 GeoTIFF layers on the China_Albers
+CHECO26 is a database of 166.9 GB and 21,110 float32 GeoTIFF layers on the China_Albers
 1-km grid. It is described in a data manuscript currently in preparation and is not yet
 publicly released. This repository provides everything needed to
 understand, audit and reproduce the database:
@@ -112,6 +112,16 @@ bias ≈ 0.
 pipeline re-derives 16 properties from the delivered files, including a full rerun
 of the composition identity on the 2008 reference year, and reports no failure.
 
+**Rebuild of the static layers (November 2026).** The 773 static-theme layers were
+rebuilt with the released R pipeline and 814 layers were replaced, together with the
+layers that depend on them. Every layer is now the output of the code in this
+repository, running on R 4.4.3 with terra 1.8.54 (GDAL 3.10.1). The previous build used
+GDAL 3.10.3, so continuous layers differ by small, unbiased sub-pixel amounts (0.015 °C
+on annual mean temperature, 0.045 on soil clay), while mode-resampled categorical layers
+agree to 99.99%. Per-layer statistics are in
+[`database_validation/rerun_20261106_comparison.csv`](database_validation/rerun_20261106_comparison.csv),
+the record of the run in [`database_validation/RERUN_20261106.md`](database_validation/RERUN_20261106.md).
+
 Resampling was quantified per theme: the 1-km product reproduces the area-weighted
 source mean with a median relative difference of 0.00% for canopy height, 2.40% for
 distance to rivers and 7.75% for flow accumulation, while the within-cell
@@ -129,7 +139,7 @@ unusable.
 
 ## Running the code
 
-Two things run without the 170.9 GB archive:
+Two things run without the 166.9 GB archive:
 
 - **The three worked examples** in `layer_standardization_example/`, `focal_statistics_example/`
   and `distance_layers_example/`. They are R scripts that call the production functions from
@@ -173,7 +183,7 @@ data disk rather than the system disk.
 | [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example (R, calls production `dist_from_feature()`) |
 | [`figs/`](figs/) | README figures |
 
-The delivered rasters are not in this repository: 170.9 GB cannot live in git.
+The delivered rasters are not in this repository: 166.9 GB cannot live in git.
 What ships here is the layer manifest, the grid definition, the pipeline that
 produced the layers, and the validation evidence — enough to understand, audit
 and reproduce the database without holding a copy of it.

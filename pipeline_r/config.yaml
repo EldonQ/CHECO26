@@ -116,8 +116,10 @@ hydro90m_vars:                 # Hydrography90m China Final 全量变量（零�
   # 其余 9 个高程差变量为米。判定依据「高差/距离=坡度」逐像元检验：
   #   9 个米制变量 p50 坡度 = 0.031 .. 0.111（3%–11%，中国地形合理）
   #   slope_elv_dw_cel   p50 坡度 = 8.837（883%，不可能）；x0.01 后 = 0.088（8.8%）合理
-  scale_cm_exception:
-    slope_elv_dw_cel: 0.01      # 唯一需要 cm->m 的成员
+  # scale_cm_exception 于 2026-11-06 移除：slope_elv_dw_cel 的源为米
+  #   （INT2S，中国境内中位 9.47、p99 65.1、max 315.7），交付层与该分布一致；
+  #   早期 Python 管线从未读取此键，R 移植时补上了读取分支，导致该层小 100 倍。
+  #   若将来确有厘米源，请按变量单独确认后再加回。
   # 源内哨兵值：必须先置为 nodata 再聚合，否则 1km 平均会把它抹成连续污染
   src_sentinel:
     # README 明示出口像元值 = 99999；但源里该哨兵被 GRASS 累加扩散，
