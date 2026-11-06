@@ -218,6 +218,8 @@ rest came from reading the producing code against the text.
 | 3 | "7 coordinate reference systems" | 4, after collapsing synonyms: EPSG:4326 (19,271 layers), China_Albers (1,174), World Mercator (540), World Mollweide (125) | recomputed from `source_crs` |
 | 4 | "17 no-data conventions" | 13 distinct conventions from 18 declarations (NaN, 0, none, -3.4e38, -32768, NaN with -inf, -9999, 32767, -200, -128, 65535, UInt32 sentinel, not applicable) | recomputed from `source_nodata` |
 | 5 | "a SHA-256 manifest of 21,118 entries covering 170.91 GB" | 21,118 rows are 172.46 GB; the 21,110 active layers are 170.91 GB and the 8 withdrawn records add 1.54 GB | the cross-source audit, by summing the manifest by basename |
+
+> After the 2026-11-06 rebuild, `MANIFEST.csv` totals 166.94 GB for the 21,110 delivered layers (168.49 GB including masks and species files). The row above records the state at the time of that audit.
 | 6 | "a random 48 layers" | `11_validate.R` draws them at even intervals along the production chronology, not at random | reading the sampling code |
 | 7 | resampling "quantified per theme" | three representative layers, one per source type, of 21,110 (0.014%) | an external review counted the rows in the table |
 | 8 | "a second toolchain sharing no code" | true of `audit_data_quality.py` (Python/rasterio, 10 checks), but the sentence never said which of the two independent scripts it meant | an external review asked which one |

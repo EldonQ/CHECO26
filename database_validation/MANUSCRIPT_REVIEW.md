@@ -42,6 +42,7 @@ Numbers in brackets are the sections of `README.md` that carry the evidence.
 5. **The independent toolchain was unnamed.** It is `audit_data_quality.py`, Python with
    rasterio, ten checks over all 21,110 layers; the text now says so.
 6. **The manifest figure was wrong.** 21,118 rows are 172.46 GB; 170.91 GB is the 21,110
+   (Ceased to apply after the 2026-11-06 rebuild: 166.94 GB for the 21,110 delivered layers.)
    active layers. [Ten errors, row 5]
 7. **A sample described as random is systematic.** [Ten errors, row 6]
 8. **The population omission was not defended.** The old text explained only why a
