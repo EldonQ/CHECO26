@@ -34,7 +34,7 @@ from rasterio.crs import CRS
 ROOT = os.environ.get("CHECO_ROOT", r"E:\CHECO26\N-SDM")
 DOCS = os.path.join(ROOT, "00_docs")
 DATA = os.path.join(ROOT, "data", "covariates")
-COV = os.path.join(DATA, "glo")
+COV = os.path.join(DATA, "reg")
 AUD = os.path.join(ROOT, "audit")
 PROV = os.path.join(DOCS, "provenance_table.csv")
 

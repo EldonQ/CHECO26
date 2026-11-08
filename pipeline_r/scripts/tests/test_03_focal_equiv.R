@@ -24,16 +24,16 @@ read_clean <- function(path) {
 
 pairs <- list(
   list(tag = "lulc urban_prop  f1000  (3x3)",
-       base  = "data/covariates/glo/lulc/glu1km/2020/urban/glo_lulc_glu1km_2020_urban_prop.tif",
-       focal = "data/covariates/glo/lulc/glu1km/2020/urban/glo_lulc_glu1km_2020_urban_prop_f1000.tif",
+       base  = "data/covariates/reg/lulc/glu1km/2020/urban/reg_lulc_glu1km_2020_urban_prop.tif",
+       focal = "data/covariates/reg/lulc/glu1km/2020/urban/reg_lulc_glu1km_2020_urban_prop_f1000.tif",
        rc = 1L),
   list(tag = "vege ch2019      f5000  (11x11)",
-       base  = "data/covariates/glo/vege/ch2019/ch/glo_vege_ch2019_ch.tif",
-       focal = "data/covariates/glo/vege/ch2019/ch/glo_vege_ch2019_ch_f5000.tif",
+       base  = "data/covariates/reg/vege/ch2019/ch/reg_vege_ch2019_ch.tif",
+       focal = "data/covariates/reg/vege/ch2019/ch/reg_vege_ch2019_ch_f5000.tif",
        rc = 5L),
   list(tag = "anthro foothii01 f20000 (41x41)",
-       base  = "data/covariates/glo/anthro/foothii/2001/hii/glo_anthro_foothii_2001_hii.tif",
-       focal = "data/covariates/glo/anthro/foothii/2001/hii/glo_anthro_foothii_2001_hii_f20000.tif",
+       base  = "data/covariates/reg/anthro/foothii/2001/hii/reg_anthro_foothii_2001_hii.tif",
+       focal = "data/covariates/reg/anthro/foothii/2001/hii/reg_anthro_foothii_2001_hii_f20000.tif",
        rc = 20L)
 )
 

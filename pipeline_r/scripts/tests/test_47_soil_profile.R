@@ -16,7 +16,7 @@ for (adir in c("clay", "ph", "socd", "sand", "an")) {
   r <- .ing$soil_profile(adir, dst = dst, src_root = PATH_COV())
   el <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
   if (!identical(r$status, "ok")) { cat(sprintf("  %-6s %s : %s\n", adir, r$status, r$note)); next }
-  ref <- file.path(PATH_COV(), sprintf("glo/soil/csdlv2/%s/glo_soil_csdlv2_%s_profile.tif", adir, adir))
+  ref <- file.path(PATH_COV(), sprintf("reg/soil/csdlv2/%s/reg_soil_csdlv2_%s_profile.tif", adir, adir))
   if (!file.exists(ref)) { cat(sprintf("  %-6s 参照不存在\n", adir)); next }
   cm <- compare_layers(read_clean(dst), read_clean(ref))
   ntot <- ntot + 1; npass <- npass + cm$pass

@@ -36,8 +36,8 @@ SNAPSHOTS <- local({
 })
 
 snapshot_parts <- function(snap, extra = character()) {
-  if (is.na(snap$ssp)) c("glo", "lulc", "glu1km", snap$y, extra)
-  else c("glo", "lulc", "glu1km", "scenario", snap$y, snap$ssp, extra)
+  if (is.na(snap$ssp)) c("reg", "lulc", "glu1km", snap$y, extra)
+  else c("reg", "lulc", "glu1km", "scenario", snap$y, snap$ssp, extra)
 }
 
 # ---- 4 邻域边缘指示 --------------------------------------------------------

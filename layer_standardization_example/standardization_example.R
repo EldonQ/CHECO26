@@ -11,8 +11,8 @@
 # Input  (public): data/source_layers/cnclim1km/
 #                  bioclim_cnclim1km_present_1991_2020_bio01.tif
 #                  mean annual temperature, EPSG:4326, 0.01 deg
-# Check  (public): data/sample_layers/glo/bioclim/cnclim1km/present/bio01/
-#                  glo_bioclim_cnclim1km_present_bio01.tif
+# Check  (public): data/sample_layers/reg/bioclim/cnclim1km/present/bio01/
+#                  reg_bioclim_cnclim1km_present_bio01.tif
 #                  the delivered layer, reproduced here from the raw source
 #
 # Usage:  Rscript layer_standardization_example/standardization_example.R
@@ -30,8 +30,8 @@ example_rule("CHECO26 layer standardization -- production functions")
 
 src_path <- file.path(SOURCE_LAYERS, "cnclim1km",
                       "bioclim_cnclim1km_present_1991_2020_bio01.tif")
-ref_path <- sample_layer("glo", "bioclim", "cnclim1km", "present", "bio01",
-                         "glo_bioclim_cnclim1km_present_bio01.tif")
+ref_path <- sample_layer("reg", "bioclim", "cnclim1km", "present", "bio01",
+                         "reg_bioclim_cnclim1km_present_bio01.tif")
 if (!file.exists(src_path)) stop("missing input: ", src_path)
 
 # ---- 生产参数（全部来自 pipeline_r/config.yaml）-----------------------------
@@ -50,7 +50,7 @@ cat(sprintf("  NAflag          : %s\n", format(terra::NAflag(src))))
 
 # ---- 调用生产函数 -----------------------------------------------------------
 outdir <- example_outdir("standardization")
-dst <- file.path(outdir, "glo_bioclim_cnclim1km_present_bio01.tif")
+dst <- file.path(outdir, "reg_bioclim_cnclim1km_present_bio01.tif")
 
 t0 <- Sys.time()
 invisible(warp_to_template(

@@ -1,5 +1,5 @@
 section,check,examined,failed,detail,examples
-1 画像,列 layer_path,21118,0,"不同值 21118, 最长 125",glo/anthro/smod/1975/urbanprop/glo_anthr
+1 画像,列 layer_path,21118,0,"不同值 21118, 最长 125",reg/anthro/smod/1975/urbanprop/reg_anthr
 1 画像,列 status,21118,0,"不同值 2, 最长 9",active
 1 画像,列 source_file,21118,0,"不同值 1338, 最长 200",[path] E:/CHECO26/GHSL_GHS-SMOD_R2023A\G
 1 画像,列 source_dataset,21118,0,"不同值 21, 最长 177",GHS-SMOD R2023A (GHS_SMOD_E<year>_GLOBE_

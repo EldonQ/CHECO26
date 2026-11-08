@@ -3,9 +3,9 @@ Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 # 取 grip4 road 的参照层与 R 版（test_48 已写到 scratch）
-ref_p <- file.path(PATH_COV(), "glo/dist/grip4/road/glo_dist_grip4_road.tif")
+ref_p <- file.path(PATH_COV(), "reg/dist/grip4/road/reg_dist_grip4_road.tif")
 got_p <- file.path(file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_dist_test"),
-                   "glo/dist/grip4/road/glo_dist_grip4_road.tif")
+                   "reg/dist/grip4/road/reg_dist_grip4_road.tif")
 ref <- terra::rast(ref_p); got <- terra::rast(got_p)
 
 # 取一个 300x300 窗口

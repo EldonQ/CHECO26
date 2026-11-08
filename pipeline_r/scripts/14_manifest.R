@@ -55,7 +55,7 @@ LICENCE <- list(
 )
 
 licence_of <- function(relpath_short) {
-  # relpath 形如 glo/<theme>/<dataset>/...，分级键是 theme/dataset（第 2、3 段）
+  # relpath 形如 reg/<theme>/<dataset>/...，分级键是 theme/dataset（第 2、3 段）
   parts <- strsplit(relpath_short, "/", fixed = TRUE)[[1]]
   key <- if (length(parts) >= 3) paste(parts[2:3], collapse = "/") else relpath_short
   v <- LICENCE[[key]]

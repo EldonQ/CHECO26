@@ -44,14 +44,14 @@
 **为什么最终决定替换**：不是因为 R 版更准（两者都是同一源的面积加权平均），而是因为
 **可复现性**——这 5 层原本没有任何随库发布的生成脚本，读者无法重建；现在
 `R/16_ingest_hydrosheds_accum.R` 随库发布，21,110 层全部可由文档化的 R 管线重建。
-旧版 5 层备份在 `archive/backup_before_rfull_20261025/glo/hydro/hydrosheds/accumulation/`。
+旧版 5 层备份在 `archive/backup_before_rfull_20261025/reg/hydro/hydrosheds/accumulation/`。
 
 ## 三、实际做了什么
 
 | 阶段 | 层数 | 命令 | 耗时 | 结果 |
 |---|---:|---|---:|---|
 | `08_derive_topo_vege.R` | 30（28 土壤剖面 + aspect + tri） | `rerun_r_only.R 08` | 564 s | ok=28，零错误 |
-| `04_ingest_timeseries.R` | 24（vege 焦点） | `rerun_r_only.R 04 '^glo_vege_'` | 2,127 s | 27 层（含 3 个基底）全 ok |
+| `04_ingest_timeseries.R` | 24（vege 焦点） | `rerun_r_only.R 04 '^reg_vege_'` | 2,127 s | 27 层（含 3 个基底）全 ok |
 | `05_derive_lulc.R` | 540（glu1km，10 个快照） | `rerun_r_only.R 05` | 10,048 s | 10 快照全 ok |
 
 合计 **594 层重算**，用时约 3.5 小时。改写前把 594 个文件与 5 份元数据完整备份到

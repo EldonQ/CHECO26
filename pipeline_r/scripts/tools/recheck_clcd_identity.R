@@ -21,7 +21,7 @@ CLCD_CLASSES <- c("cropland", "forest", "shrub", "grassland", "water",
                   "snowice", "barren", "impervious", "wetland")
 
 clcd_layer <- function(year, cls) {
-  layer_path(c("glo", "lulc", "clcd", as.character(year), cls), "_prop")
+  layer_path(c("reg", "lulc", "clcd", as.character(year), cls), "_prop")
 }
 
 #' 对一年：返回 max|Σ−1|、有效像元数、中间值比例

@@ -31,7 +31,7 @@ ROOT = os.environ.get("CHECO_ROOT", os.getcwd())
 # delivery; point CHECO_SRC at the directory that holds them (DEM/, CSDLv2/, Bioclim/).
 SRC = os.environ.get("CHECO_SRC", "")
 AUD = os.path.join(ROOT, "audit")
-COV = os.path.join(ROOT, "data", "covariates", "glo")
+COV = os.path.join(ROOT, "data", "covariates", "reg")
 MASK = os.path.join(ROOT, "data", "mask_china.tif")
 ALBERS = ("+proj=aea +lat_0=0 +lon_0=105 +lat_1=25 +lat_2=47 "
           "+datum=WGS84 +units=m +no_defs")
@@ -42,23 +42,23 @@ N_POINTS = 3000
 PAIRS = [
     ("topo/elev",
      os.path.join(SRC, "DEM", "China_DEM_1km", "Albers_105", "DEM", "chdem_105.tif"),
-     "topo/chinadem/elev/glo_topo_chinadem_elev.tif", 1.0, 0.0),
+     "topo/chinadem/elev/reg_topo_chinadem_elev.tif", 1.0, 0.0),
     ("soil/ph_0_5",
      os.path.join(SRC, "CSDLv2", "1km", "GTiff", "pH", "pH_0-5cm_1km.tif"),
-     "soil/csdlv2/ph/0/glo_soil_csdlv2_ph_0.tif", 0.01, 0.0),
+     "soil/csdlv2/ph/0/reg_soil_csdlv2_ph_0.tif", 0.01, 0.0),
     ("anthro/hfp_2000",
      os.path.join(ROOT, "archive", "hfp", "HFP-2000-2018", "16571064",
                   "hfp2000", "hfp2000.tif"),
-     "anthro/hfp/2000/hfp/glo_anthro_hfp_2000_hfp.tif", 1.0, 0.0),
+     "anthro/hfp/2000/hfp/reg_anthro_hfp_2000_hfp.tif", 1.0, 0.0),
     ("bioclim/bio01_present",
      os.path.join(SRC, "Bioclim", "CHNECO26_Bioclim", "bioclim", "cnclim1km", "present",
                   "1991_2020", "bio01", "bioclim_cnclim1km_present_1991_2020_bio01.tif"),
-     "bioclim/cnclim1km/present/bio01/glo_bioclim_cnclim1km_present_bio01.tif",
+     "bioclim/cnclim1km/present/bio01/reg_bioclim_cnclim1km_present_bio01.tif",
      1.0, 0.0),
     ("bioclim/bio12_present",
      os.path.join(SRC, "Bioclim", "CHNECO26_Bioclim", "bioclim", "cnclim1km", "present",
                   "1991_2020", "bio12", "bioclim_cnclim1km_present_1991_2020_bio12.tif"),
-     "bioclim/cnclim1km/present/bio12/glo_bioclim_cnclim1km_present_bio12.tif",
+     "bioclim/cnclim1km/present/bio12/reg_bioclim_cnclim1km_present_bio12.tif",
      1.0, 0.0),
 ]
 

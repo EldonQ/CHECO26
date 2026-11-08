@@ -65,7 +65,7 @@ main <- function(fill_stats = TRUE) {
   base <- read.csv(VD_PATH(), fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
   cat(sprintf("现有字典: %d 行；溯源表: %d 行\n", nrow(base), nrow(prov)))
 
-  drop <- grepl("^glo/anthro/(landscan|foothii)/", base$relpath)
+  drop <- grepl("^reg/anthro/(landscan|foothii)/", base$relpath)
   base <- base[!drop, ]
   cat(sprintf("  剔除 LandScan/footHII: %d 行，余 %d 行\n", sum(drop), nrow(base)))
 

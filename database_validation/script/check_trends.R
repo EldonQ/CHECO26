@@ -35,8 +35,8 @@ frac <- function(f) { v <- terra::values(terra::rast(f)); mean(v, na.rm = TRUE) 
 cls <- c("cropland","forest","shrub","grassland","water","snowice","barren","impervious","wetland")
 a <- b <- setNames(numeric(length(cls)), cls)
 for (cl in cls) {
-  a[cl] <- frac(file.path(COV, sprintf("glo/lulc/clcd/2000/%s/glo_lulc_clcd_2000_%s_prop.tif", cl, cl)))
-  b[cl] <- frac(file.path(COV, sprintf("glo/lulc/clcd/2005/%s/glo_lulc_clcd_2005_%s_prop.tif", cl, cl)))
+  a[cl] <- frac(file.path(COV, sprintf("reg/lulc/clcd/2000/%s/reg_lulc_clcd_2000_%s_prop.tif", cl, cl)))
+  b[cl] <- frac(file.path(COV, sprintf("reg/lulc/clcd/2005/%s/reg_lulc_clcd_2005_%s_prop.tif", cl, cl)))
 }
 d <- b - a
 say("cropland 2000 (%)", 20.53, a[["cropland"]])
@@ -53,7 +53,7 @@ say("\u4e5d\u7c7b\u4e4b\u548c 2005 (%)", 100.00, sum(b), tol = 0.02)
 
 # ---- 2) hlu1km \u68ee\u6797\u4e0e\u57ce\u5e02 1960 vs 2020 ----
 cat("\n2) hlu1km \u68ee\u6797\u4e0e\u57ce\u5e02 1960 vs 2020\n")
-hf <- function(yr, cl) frac(file.path(COV, sprintf("glo/lulc/hlu1km/%s/%s/glo_lulc_hlu1km_%s_%s_prop.tif", yr, cl, yr, cl)))
+hf <- function(yr, cl) frac(file.path(COV, sprintf("reg/lulc/hlu1km/%s/%s/reg_lulc_hlu1km_%s_%s_prop.tif", yr, cl, yr, cl)))
 m60 <- hf("1960","mngforest"); u60 <- hf("1960","forest")
 m20 <- hf("2020","mngforest"); u20 <- hf("2020","forest")
 r60 <- hf("1960","urban");     r20 <- hf("2020","urban")
@@ -71,17 +71,17 @@ say("urban 2020 (%)", 1.65, r20)
 cat("\n3) \u9010\u7c7b\u4e2d\u95f4\u503c\u6bd4\u4f8b\uff08\u4e0b\u9650 0 < v < 1\uff09\n")
 midp <- function(f) { v <- terra::values(terra::rast(f)); v <- v[!is.na(v)]; 100 * mean(v > 0 & v < 1) }
 clcd_mid <- mean(vapply(cls, function(cl)
-  midp(file.path(COV, sprintf("glo/lulc/clcd/2000/%s/glo_lulc_clcd_2000_%s_prop.tif", cl, cl))), 0))
+  midp(file.path(COV, sprintf("reg/lulc/clcd/2000/%s/reg_lulc_clcd_2000_%s_prop.tif", cl, cl))), 0))
 hcls <- c("urban","cropland","pasture","mngforest","forest","grassshrub","sparse","water")
 hlu_mid <- mean(vapply(hcls, function(cl)
-  midp(file.path(COV, sprintf("glo/lulc/hlu1km/2020/%s/glo_lulc_hlu1km_2020_%s_prop.tif", cl, cl))), 0))
+  midp(file.path(COV, sprintf("reg/lulc/hlu1km/2020/%s/reg_lulc_hlu1km_2020_%s_prop.tif", cl, cl))), 0))
 say("clcd \u9010\u7c7b\u4e2d\u95f4\u503c\u5747\u503c (%)", 21.4, clcd_mid, tol = 0.15)
 say("hlu1km \u9010\u7c7b\u4e2d\u95f4\u503c\u5747\u503c (%)", 5.8, hlu_mid, tol = 0.15)
 say("\u6bd4\u503c", 3.7, clcd_mid / hlu_mid, tol = 0.15)
 
 # ---- 4) \u7126\u70b9\u56db\u5c3a\u5ea6 max \u5355\u8c03\u9012\u51cf ----
 cat("\n4) \u7126\u70b9\u56db\u5c3a\u5ea6 max \u5355\u8c03\u9012\u51cf\uff08CLCD 2000 cropland\uff09\n")
-st <- file.path(COV, "glo/lulc/clcd/2000/cropland/glo_lulc_clcd_2000_cropland_prop")
+st <- file.path(COV, "reg/lulc/clcd/2000/cropland/reg_lulc_clcd_2000_cropland_prop")
 mx <- vapply(c("", "_f1000", "_f5000", "_f10000", "_f20000"), function(s)
   terra::global(terra::rast(paste0(st, s, ".tif")), "max", na.rm = TRUE)[1,1], 0)
 say("max _f1000",   1.0000, mx[2], tol = 1e-3)
@@ -112,7 +112,7 @@ if (diff(range(mn)) < 1e-4) {
 
 # ---- 5) \u7ec4\u6210\u6052\u7b49\u5f0f ----
 cat("\n5) CLCD 2008 \u7ec4\u6210\u6052\u7b49\u5f0f\n")
-fs <- file.path(COV, sprintf("glo/lulc/clcd/2008/%s/glo_lulc_clcd_2008_%s_prop.tif", cls, cls))
+fs <- file.path(COV, sprintf("reg/lulc/clcd/2008/%s/reg_lulc_clcd_2008_%s_prop.tif", cls, cls))
 s <- terra::app(terra::rast(fs), "sum", na.rm = FALSE)
 v <- terra::values(s, mat = FALSE); v <- v[!is.na(v)]
 say("max|sum-1|", 5.215e-08, max(abs(v - 1)), tol = 0.05)

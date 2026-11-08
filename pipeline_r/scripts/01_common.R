@@ -46,7 +46,7 @@ apply_china_mask <- function(x, fill = NA) {
 #' 输出根可被环境变量 CHECO_OUT_ROOT 重定向（测试用）：
 #'   置空时写正式交付树 PATH_COV()；置为某目录时写该目录下的同构子树。
 #' 这样测试永远不会覆盖交付数据。
-#' @param parts 目录层级，如 c("glo","anthro","hfp","2020","hfp")
+#' @param parts 目录层级，如 c("reg","anthro","hfp","2020","hfp")
 #' @param suffix 文件名后缀，如 ""、"_prop"、"_f5000"
 layer_path <- function(parts, suffix = "") {
   ov <- Sys.getenv("CHECO_OUT_ROOT", "")

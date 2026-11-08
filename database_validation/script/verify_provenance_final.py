@@ -103,8 +103,8 @@ def main():
              if os.path.exists(os.path.join(DATA, r["layer_path"].replace("/", os.sep)))]
     add("B2 withdrawn 行对应文件不在交付树", len(wd), len(still), "", still)
     shape = [r["layer_path"] for r in act
-             if not r["layer_path"].startswith("glo/") or not r["layer_path"].endswith(".tif")]
-    add("B3 active 路径均为 glo/…/*.tif", len(act), len(shape), "", shape)
+             if not r["layer_path"].startswith("reg/") or not r["layer_path"].endswith(".tif")]
+    add("B3 active 路径均为 reg/…/*.tif", len(act), len(shape), "", shape)
 
     # ---------- C. values and formats ----------
     badr = []

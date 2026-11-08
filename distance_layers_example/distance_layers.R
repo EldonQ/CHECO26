@@ -14,8 +14,8 @@
 # Input  (public, CC BY 4.0): data/source_layers/smod/
 #                             GHS_SMOD_E2020_china_window.tif
 #                             GHS-SMOD 2020 settlement classes, 30 arc-sec
-# Reference (public):         data/sample_layers/glo/dist/smod/urban/
-#                             glo_dist_smod_urban.tif (the delivered layer)
+# Reference (public):         data/sample_layers/reg/dist/smod/urban/
+#                             reg_dist_smod_urban.tif (the delivered layer)
 #
 # Checks: D1 reproduces the delivered layer cell by cell; D2 verifies the
 # distance transform against closed-form Euclidean values.
@@ -35,7 +35,7 @@ example_rule("CHECO26 distance layers -- production functions")
 
 # ---- 1) 要素层：与 09_derive_dist.R 的 feat_smod_urban() 同步骤 ------------
 src_path <- file.path(SOURCE_LAYERS, "smod", "GHS_SMOD_E2020_china_window.tif")
-ref_path <- sample_layer("glo", "dist", "smod", "urban", "glo_dist_smod_urban.tif")
+ref_path <- sample_layer("reg", "dist", "smod", "urban", "reg_dist_smod_urban.tif")
 if (!file.exists(src_path)) stop("missing input: ", src_path)
 
 urban_classes <- as.integer(unlist(CFG()$smmod_urban_classes))
@@ -103,7 +103,7 @@ if (err >= 0.01) stop("distance surface deviates from the Euclidean grid metric"
 
 # ---- 5) 写出（生产写盘函数）-------------------------------------------------
 outdir <- example_outdir("distance")
-dst <- file.path(outdir, "glo_dist_smod_urban.tif")
+dst <- file.path(outdir, "reg_dist_smod_urban.tif")
 atomic_write_raster(dst, d, dtype = "float32")
 cat(sprintf("written           : %s\n", basename(dst)))
 

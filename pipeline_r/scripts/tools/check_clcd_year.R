@@ -30,7 +30,7 @@ ntc <- function(label, detail) { cat(sprintf("  note  %s  %s\n", label, detail))
 main <- function(year) {
   g <- GRID()
   paths <- vapply(CLCD_CLASSES, function(cn)
-    layer_path(c("glo", "lulc", "clcd", as.character(year), cn), "_prop"), "")
+    layer_path(c("reg", "lulc", "clcd", as.character(year), cn), "_prop"), "")
   cat(sprintf("=== clcd %d 质检（9 类）===\n\n", year))
   if (!all(file.exists(paths))) {
     cat(sprintf("  缺 %d 层，无法检查\n", sum(!file.exists(paths)))); return(invisible(NULL))

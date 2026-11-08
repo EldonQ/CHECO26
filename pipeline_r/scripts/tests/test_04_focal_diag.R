@@ -13,8 +13,8 @@ read_clean <- function(path) {
   r
 }
 
-bp <- file.path(CHECO_ROOT, "data/covariates/glo/vege/ch2019/ch/glo_vege_ch2019_ch.tif")
-fp <- file.path(CHECO_ROOT, "data/covariates/glo/vege/ch2019/ch/glo_vege_ch2019_ch_f5000.tif")
+bp <- file.path(CHECO_ROOT, "data/covariates/reg/vege/ch2019/ch/reg_vege_ch2019_ch.tif")
+fp <- file.path(CHECO_ROOT, "data/covariates/reg/vege/ch2019/ch/reg_vege_ch2019_ch_f5000.tif")
 b <- read_clean(bp); ref <- read_clean(fp)
 got <- apply_china_mask(focal_mean(b, 5L), NA)
 

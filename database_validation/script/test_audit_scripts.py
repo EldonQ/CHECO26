@@ -118,7 +118,7 @@ def case_per_layer(root):
         ("p_empty", empty, transform, {}, "range_unverifiable", {"range": "[0, 2]"}),
     ]
 
-    cov = os.path.join(root, "data", "covariates", "glo")
+    cov = os.path.join(root, "data", "covariates", "reg")
     files = []
     for name, arr, tr, kw, want, meta in cases:
         p = os.path.join(cov, "topo", "mut", name + ".tif")
@@ -129,7 +129,7 @@ def case_per_layer(root):
     man, dic, prov = [], [], []
     for name, p, tr, arr, want, meta in files:
         rel = os.path.relpath(p, cov).replace("\\", "/")
-        key = "glo/" + rel
+        key = "reg/" + rel
         h = sha256(p)
         if meta.get("bad_sha"):
             h = "0" * 64
@@ -199,13 +199,13 @@ def case_composition(root):
     c = np.full((H, W), 0.6, "float32")
     d = np.full((H, W), 0.3, "float32")     # 0.6 + 0.3 = 0.9  -> must fail
 
-    cov = os.path.join(root, "data", "covariates", "glo")
+    cov = os.path.join(root, "data", "covariates", "reg")
     nul = np.full((H, W), np.float32(NODATA), "float32")
     for ds, year, cls, arr in (("good", "2020", "cropland", a), ("good", "2020", "forest", b),
                                ("bad", "2020", "cropland", c), ("bad", "2020", "forest", d),
                                ("zero", "2020", "cropland", nul), ("zero", "2020", "forest", nul)):
         p = os.path.join(cov, "lulc", ds, year, cls,
-                         "glo_lulc_%s_%s_%s_prop.tif" % (ds, year, cls))
+                         "reg_lulc_%s_%s_%s_prop.tif" % (ds, year, cls))
         write_tif(p, arr, transform, crs)
 
     r = run([sys.executable, COMPOSITION, "--workers", "1"], root)
@@ -235,10 +235,10 @@ def case_focal(root):
     os.makedirs(aud, exist_ok=True)
     rows = [
         # base with range [0, 10]
-        {"relpath": "glo/topo/mut/base.tif", "vmin": "0", "vmax": "10"},
-        {"relpath": "glo/topo/mut/base_f1000.tif", "vmin": "1", "vmax": "9"},   # fine
-        {"relpath": "glo/topo/mut/base_f5000.tif", "vmin": "-1", "vmax": "9"},  # below base
-        {"relpath": "glo/topo/mut/base_f10000.tif", "vmin": "1", "vmax": "11"}, # above base
+        {"relpath": "reg/topo/mut/base.tif", "vmin": "0", "vmax": "10"},
+        {"relpath": "reg/topo/mut/base_f1000.tif", "vmin": "1", "vmax": "9"},   # fine
+        {"relpath": "reg/topo/mut/base_f5000.tif", "vmin": "-1", "vmax": "9"},  # below base
+        {"relpath": "reg/topo/mut/base_f10000.tif", "vmin": "1", "vmax": "11"}, # above base
     ]
     cols = sorted({k for r in rows for k in r})
     with open(os.path.join(aud, "layer_audit.csv"), "w", newline="", encoding="utf-8") as f:

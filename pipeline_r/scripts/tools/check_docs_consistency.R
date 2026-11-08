@@ -98,7 +98,7 @@ main <- function() {
     prov2 <- read.csv(file.path(PATH_DOCS(), "provenance_table.csv"),
                       fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
     act2 <- prov2[prov2$status == "active", ]
-    th2 <- sub("/.*", "", sub("^glo/", "", act2$layer_path))
+    th2 <- sub("/.*", "", sub("^reg/", "", act2$layer_path))
     man2 <- read.csv(file.path(PATH_DOCS(), "MANIFEST.csv"),
                      fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
     gb2 <- sum(man2$bytes[grepl("^covariates/", man2$relpath)]) / 1e9
@@ -121,8 +121,8 @@ main <- function() {
       chk(sprintf("\u8bba\u6587 %s \u5408\u8ba1", nm), gp(pat),
           format(sum(th2 == nm), big.mark = ","))
     }
-    ds2 <- unique(paste(sub("/.*", "", sub("^glo/", "", act2$layer_path)),
-      sapply(strsplit(sub("^glo/", "", act2$layer_path), "/"),
+    ds2 <- unique(paste(sub("/.*", "", sub("^reg/", "", act2$layer_path)),
+      sapply(strsplit(sub("^reg/", "", act2$layer_path), "/"),
              function(x) if (length(x) >= 2) x[2] else x[1]), sep = "/"))
     if (zh) {
       chk("\u8bba\u6587\u6570\u636e\u96c6\u6570", gp("([0-9]+) \u4e2a\u6570\u636e\u96c6"), as.character(length(ds2)))

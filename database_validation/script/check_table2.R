@@ -47,7 +47,7 @@ PAPER_N <- c(
 man <- read.csv(file.path(ROOT, "00_docs", "MANIFEST.csv"),
                 fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
 cov <- man[grepl("^covariates/", man$relpath), ]
-rel <- sub("^covariates/glo/", "", cov$relpath)
+rel <- sub("^covariates/reg/", "", cov$relpath)
 key <- sapply(strsplit(rel, "/"), function(x) paste(x[1], x[2], sep = "/"))
 tb  <- table(key)
 

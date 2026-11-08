@@ -18,11 +18,11 @@ for (tag in .ing$TASKS) {
     cat(sprintf("  %-16s %s : %s\n", tag, r$status, r$note)); next
   }
   ref <- file.path(PATH_COV(), switch(tag,
-    grip4_road      = "glo/dist/grip4/road/glo_dist_grip4_road.tif",
-    grip4_majorroad = "glo/dist/grip4/majorroad/glo_dist_grip4_majorroad.tif",
-    osm_trail       = "glo/dist/osm/trail/glo_dist_osm_trail.tif",
-    smod_urban      = "glo/dist/smod/urban/glo_dist_smod_urban.tif",
-    gsw_water       = "glo/dist/gsw/water/glo_dist_gsw_water.tif"))
+    grip4_road      = "reg/dist/grip4/road/reg_dist_grip4_road.tif",
+    grip4_majorroad = "reg/dist/grip4/majorroad/reg_dist_grip4_majorroad.tif",
+    osm_trail       = "reg/dist/osm/trail/reg_dist_osm_trail.tif",
+    smod_urban      = "reg/dist/smod/urban/reg_dist_smod_urban.tif",
+    gsw_water       = "reg/dist/gsw/water/reg_dist_gsw_water.tif"))
   if (!file.exists(ref)) { cat(sprintf("  %-16s 参照不存在\n", tag)); next }
   cm <- compare_layers(read_clean(r$dst), read_clean(ref))
   ntot <- ntot + 1; npass <- npass + cm$pass

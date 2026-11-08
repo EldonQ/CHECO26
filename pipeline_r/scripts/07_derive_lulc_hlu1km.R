@@ -7,8 +7,8 @@
 #     同名的 *_global-f.tif 是"全球统一参数"版本，**不使用**（已定：只用 country-f）
 #
 # 产出：
-#   历史  lulc/hlu1km/<year>/<class>/glo_lulc_hlu1km_<year>_<class>_prop[_f<米>].tif
-#   未来  lulc/hlu1km/scenario/<year>/<ssp>/<class>/glo_lulc_hlu1km_scenario_<year>_<ssp>_<class>_prop[_f<米>].tif
+#   历史  lulc/hlu1km/<year>/<class>/reg_lulc_hlu1km_<year>_<class>_prop[_f<米>].tif
+#   未来  lulc/hlu1km/scenario/<year>/<ssp>/<class>/reg_lulc_hlu1km_scenario_<year>_<ssp>_<class>_prop[_f<米>].tif
 #   组合 = 历史 61 年 + 未来 80 年 x 5 情景 = 461
 #   层数 = 461 x 8 类 x (1 + 4 focal) = 18,440
 #
@@ -64,8 +64,8 @@ hlu_codes_sorted <- function() sort(hlu_codes())
 
 #' 目标目录层级
 hlu_parts <- function(year, ssp, cls) {
-  if (is.na(ssp)) c("glo", "lulc", "hlu1km", as.character(year), cls)
-  else c("glo", "lulc", "hlu1km", "scenario", as.character(year), ssp, cls)
+  if (is.na(ssp)) c("reg", "lulc", "hlu1km", as.character(year), cls)
+  else c("reg", "lulc", "hlu1km", "scenario", as.character(year), ssp, cls)
 }
 
 # China 窗口（经纬度，足够覆盖模板，留余量）

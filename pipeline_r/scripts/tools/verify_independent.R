@@ -165,7 +165,7 @@ if (nrow(filled) >= 10L) {
 
 # ---------------------------------------------------------------- F 哈希
 cat("\nF. SHA-256 抽样比对\n")
-# relpath 形如 "covariates/glo/..."，是相对 data/ 的路径，
+# relpath 形如 "covariates/reg/..."，是相对 data/ 的路径，
 # 所以要拼 dirname(COV) 而不是 COV，否则会变成 .../covariates/covariates/...
 DATA <- dirname(COV)
 set.seed(11); hpick <- sample(seq_len(nrow(man_layers)), 8)
@@ -182,10 +182,10 @@ say(n_cmp == 8L && hmis == 0L, "随机 8 层 SHA-256 与 MANIFEST 一致",
 
 # ---------------------------------------------------------------- G clcd 恒等式
 cat("\nG. clcd 组成恒等式（独立复算）\n")
-clcd_dir <- file.path(COV, "glo/lulc/clcd")
+clcd_dir <- file.path(COV, "reg/lulc/clcd")
 yr <- "2008"
 cls <- c("cropland","forest","shrub","grassland","water","snowice","barren","impervious","wetland")
-fs <- file.path(clcd_dir, yr, cls, sprintf("glo_lulc_clcd_%s_%s_prop.tif", yr, cls))
+fs <- file.path(clcd_dir, yr, cls, sprintf("reg_lulc_clcd_%s_%s_prop.tif", yr, cls))
 have <- file.exists(fs)
 say(sum(have) == 9L, sprintf("%s 年 9 个类层齐全", yr),
     sprintf("找到 %d / 9", sum(have)))

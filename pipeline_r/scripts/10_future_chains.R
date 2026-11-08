@@ -4,7 +4,7 @@
 # 与早期 Python 版 07_future_chains.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
 #
 # 目录口径（下游模型要求）：
-#   glo/bioclim/cnclim1km-<chain>/scenario/<cyear>/<ssp>/<var>/
+#   reg/bioclim/cnclim1km-<chain>/scenario/<cyear>/<ssp>/<var>/
 #   即 scenario=倒数第 2 级、year=倒数第 3 级
 #
 # 组合：2 链 × 3 时段 × 3 SSP × 28 变量 = 504
@@ -39,7 +39,7 @@ build_manifest <- function() {
         src <- file.path(P("bioclim"), paste0("cnclim1km_", chain), "future", speriod, ssp, v,
                          sprintf("bioclim_cnclim1km_%s_future_%s_%s_%s.tif", chain, speriod, ssp, v))
         tasks[[length(tasks) + 1L]] <- list(
-          parts = c("glo", "bioclim", dsname, "scenario", cy, ssp, v),
+          parts = c("reg", "bioclim", dsname, "scenario", cy, ssp, v),
           src = src, chain = chain, cyear = cy, speriod = speriod, ssp = ssp, v = v)
       }
     }

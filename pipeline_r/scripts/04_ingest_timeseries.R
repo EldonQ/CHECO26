@@ -41,7 +41,7 @@ build_manifest <- function() {
   years <- 2000:2024
   for (y in years) {
     src <- file.path(hfp_root, sprintf("hfp%d", y), sprintf("hfp%d.tif", y))
-    parts <- c("glo", "anthro", "hfp", as.character(y), "hfp")
+    parts <- c("reg", "anthro", "hfp", as.character(y), "hfp")
     add(list(kind = "warp", parts = parts, suffix = "", src = src,
              rule = "downscale_continuous", scale = NULL, src_nodata = NULL))
     for (f in focal_tasks(parts)) add(list(kind = "focal", parts = f$parts, base = f$base, suffix = f$suffix))
@@ -51,14 +51,14 @@ build_manifest <- function() {
   for (y in as.integer(unlist(cfg$smod_epochs))) {
     d <- sprintf("GHS_SMOD_E%d_GLOBE_R2023A_4326_30ss_V2_0", y)
     add(list(kind = "smod",
-             parts = c("glo", "anthro", "smod", as.character(y), "urbanprop"),
+             parts = c("reg", "anthro", "smod", as.character(y), "urbanprop"),
              suffix = "", src = file.path(P("smod_ghs"), d, paste0(d, ".tif"))))
   }
 
   # ---- vege/glassndvi 2020-2022：基底 + 4 焦点 ----
   for (y in as.integer(unlist(cfg$ndvi_years))) {
     src <- file.path(P("ndvi_30m"), as.character(y), sprintf("NDVImax%d.tif", y))
-    parts <- c("glo", "vege", "glassndvi", as.character(y), "ndvimax")
+    parts <- c("reg", "vege", "glassndvi", as.character(y), "ndvimax")
     add(list(kind = "warp", parts = parts, suffix = "", src = src,
              rule = "downscale_continuous",
              scale = as.numeric(cfg$units_scale$ndvi), src_nodata = 32767))
@@ -66,9 +66,9 @@ build_manifest <- function() {
   }
 
   # ---- vege 静态 3 变量的焦点（基底由 03 生产）----
-  for (bp in list(c("glo", "vege", "catcd", "treecover"),
-                  c("glo", "vege", "ch2019", "ch"),
-                  c("glo", "vege", "agb2019", "agb"))) {
+  for (bp in list(c("reg", "vege", "catcd", "treecover"),
+                  c("reg", "vege", "ch2019", "ch"),
+                  c("reg", "vege", "agb2019", "agb"))) {
     for (f in focal_tasks(bp)) add(list(kind = "focal", parts = f$parts, base = f$base, suffix = f$suffix))
   }
   tasks

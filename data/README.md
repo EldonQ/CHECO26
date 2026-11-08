@@ -13,9 +13,18 @@ downloading anything.
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
 | `table2_dataset_layer_counts.csv` | machine-readable version of Table 1 in the manuscript: layer counts per dataset entry |
 | `table3_resampling_effect.csv` | machine-readable version of Table 2: the resampling check on three representative layers |
-| `sample_layers/glo/...` | seven representative delivered layers, checked cell by cell against the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
+| `sample_layers/reg/...` | seven representative delivered layers, checked cell by cell against the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
 | `source_layers/cnclim1km/...` | the raw 0.01° source of one sample layer (CNClim1km bio01), used by the standardization example to demonstrate reprojection from EPSG:4326 |
 | `source_layers/smod/...` | GHS-SMOD 2020 settlement classes cropped to the China window (30 arc-sec, CC BY 4.0), the public input of the distance example |
+
+## Naming convention
+
+Every layer path has six levels, `scope/theme/dataset/period/variable/file`, and the
+file name repeats the scope and the theme (`reg_<theme>_<dataset>_...tif`). The scope of
+CHECO26 is **`reg`** (regional, the China window); the archive and any deployment that
+follows the nsdm layout therefore use the same names — no prefix rewriting is needed
+when the data move. A `glo` scope exists in the wider project for global products and is
+not part of CHECO26.
 
 ## Manifest columns
 
@@ -46,12 +55,12 @@ the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](
 
 | Sample | Theme | Dataset | Why this layer |
 |---|---|---|---|
-| `glo/bioclim/cnclim1km/present/bio01/...` | bioclim | CNClim1km | the template-defining climate layer (annual mean temperature) |
-| `glo/soil/csdlv2/ph/...` | soil | CSDLv2 | whole-profile pH, shows the soil depth convention |
-| `glo/topo/chinadem/elev/...` | topo | China DEM | national elevation |
-| `glo/anthro/foothii/2020/hii/...` | anthro | WCS footHII | human footprint index, 2020 |
-| `glo/lulc/glu1km/2020/forest/..._prop.tif` | lulc | Global LULC projection | the base proportion layer, focal input of the example below |
-| `glo/lulc/glu1km/2020/forest/..._prop_f5000.tif` | lulc | Global LULC projection | flagship discrete-to-continuous derivation (forest proportion, 5-km window) |
-| `glo/lulc/glu1km/2020/forest/..._prop_f20000.tif` | lulc | Global LULC projection | same derivation at the widest window (41 x 41), which uses the explicit count path |
-| `glo/dist/grip4/road/...` | dist | GRIP4 | distance to the road network |
-| `glo/dist/smod/urban/...` | dist | GHS-SMOD | distance to settlements, reproduced by the distance example |
+| `reg/bioclim/cnclim1km/present/bio01/...` | bioclim | CNClim1km | the template-defining climate layer (annual mean temperature) |
+| `reg/soil/csdlv2/ph/...` | soil | CSDLv2 | whole-profile pH, shows the soil depth convention |
+| `reg/topo/chinadem/elev/...` | topo | China DEM | national elevation |
+| `reg/anthro/foothii/2020/hii/...` | anthro | WCS footHII | human footprint index, 2020 |
+| `reg/lulc/glu1km/2020/forest/..._prop.tif` | lulc | Global LULC projection | the base proportion layer, focal input of the example below |
+| `reg/lulc/glu1km/2020/forest/..._prop_f5000.tif` | lulc | Global LULC projection | flagship discrete-to-continuous derivation (forest proportion, 5-km window) |
+| `reg/lulc/glu1km/2020/forest/..._prop_f20000.tif` | lulc | Global LULC projection | same derivation at the widest window (41 x 41), which uses the explicit count path |
+| `reg/dist/grip4/road/...` | dist | GRIP4 | distance to the road network |
+| `reg/dist/smod/urban/...` | dist | GHS-SMOD | distance to settlements, reproduced by the distance example |

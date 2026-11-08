@@ -8,9 +8,9 @@
 # production window radii from pipeline_r/config.yaml (1, 5, 10, 20 km, i.e.
 # 3x3, 11x11, 21x21 and 41x41 cells).
 #
-# Input  (public): data/sample_layers/glo/lulc/glu1km/2020/forest/
-#                  glo_lulc_glu1km_2020_forest_prop.tif   (base 1-km layer)
-# Check  (public): data/sample_layers/.../glo_lulc_glu1km_2020_forest_prop_f5000.tif
+# Input  (public): data/sample_layers/reg/lulc/glu1km/2020/forest/
+#                  reg_lulc_glu1km_2020_forest_prop.tif   (base 1-km layer)
+# Check  (public): data/sample_layers/.../reg_lulc_glu1km_2020_forest_prop_f5000.tif
 #                  the delivered _f5000 layer, recomputed here from the base
 #
 # Usage:  Rscript focal_statistics_example/focal_statistics.R [--radius-km 5]
@@ -27,10 +27,10 @@ source(file.path(.this_dir, "..", "example_bootstrap.R"), encoding = "UTF-8")
 
 example_rule("CHECO26 focal statistics -- production functions")
 
-base_path <- sample_layer("glo", "lulc", "glu1km", "2020", "forest",
-                          "glo_lulc_glu1km_2020_forest_prop.tif")
-ref_path  <- sample_layer("glo", "lulc", "glu1km", "2020", "forest",
-                          "glo_lulc_glu1km_2020_forest_prop_f5000.tif")
+base_path <- sample_layer("reg", "lulc", "glu1km", "2020", "forest",
+                          "reg_lulc_glu1km_2020_forest_prop.tif")
+ref_path  <- sample_layer("reg", "lulc", "glu1km", "2020", "forest",
+                          "reg_lulc_glu1km_2020_forest_prop_f5000.tif")
 if (!file.exists(base_path)) stop("missing input: ", base_path)
 
 radius_km <- 5L
@@ -79,12 +79,12 @@ cat(sprintf("\ncheck G1 (focal within base range): above=%d below=%d  -> %s\n",
 if (n_above + n_below != 0L) stop("G1 violated: focal statistics left the base range")
 
 # ---- 校验 2：四个尺度全部与交付图层逐格比较 --------------------------------
-ref_dir <- dirname(sample_layer("glo", "lulc", "glu1km", "2020", "forest",
-                                "glo_lulc_glu1km_2020_forest_prop_f5000.tif"))
+ref_dir <- dirname(sample_layer("reg", "lulc", "glu1km", "2020", "forest",
+                                "reg_lulc_glu1km_2020_forest_prop_f5000.tif"))
 worst <- 0
 for (i in seq_len(nrow(fs))) {
   sfx <- fs$suffix[i]
-  ref_p <- file.path(ref_dir, sprintf("glo_lulc_glu1km_2020_forest_prop%s.tif", sfx))
+  ref_p <- file.path(ref_dir, sprintf("reg_lulc_glu1km_2020_forest_prop%s.tif", sfx))
   if (!file.exists(ref_p)) {
     cat(sprintf("check G2 %-8s: reference missing, skipped\n", sfx)); next
   }
@@ -105,7 +105,7 @@ cat(sprintf("check G2 summary : worst difference over the four scales = %.3g (fl
 # ---- 写出（生产写盘函数：float32 / DEFLATE / 256 分块 / 原子写）------------
 outdir <- example_outdir("focal")
 for (sfx in names(layers)) {
-  dst <- file.path(outdir, sprintf("glo_lulc_glu1km_2020_forest_prop%s.tif", sfx))
+  dst <- file.path(outdir, sprintf("reg_lulc_glu1km_2020_forest_prop%s.tif", sfx))
   atomic_write_raster(dst, layers[[sfx]], dtype = "float32")
   cat(sprintf("written           : %s\n", basename(dst)))
 }

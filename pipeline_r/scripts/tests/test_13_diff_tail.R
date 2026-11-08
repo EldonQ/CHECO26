@@ -16,14 +16,14 @@ read_clean_mat <- function(path) {
 
 d1 <- file.path(PATH_SCRATCH(), "r_theme_equiv")
 cases <- list(
-  list(tag = "bio01 bilinear",       f = "glo_bioclim_cnclim1km_present_bio01.tif",
-       ref = file.path(PATH_COV(), "glo/bioclim/cnclim1km/present/bio01/glo_bioclim_cnclim1km_present_bio01.tif")),
-  list(tag = "clay bilinear x0.01",  f = "glo_soil_csdlv2_clay_0.tif",
-       ref = file.path(PATH_COV(), "glo/soil/csdlv2/clay/0/glo_soil_csdlv2_clay_0.tif")),
-  list(tag = "channel-dist-up-cel average", f = "glo_hydro_h90m_channel-dist-up-cel.tif",
-       ref = file.path(PATH_COV(), "glo/hydro/h90m/channel-dist-up-cel/glo_hydro_h90m_channel-dist-up-cel.tif")),
-  list(tag = "basin mode",           f = "glo_hydro_h90m_basin.tif",
-       ref = file.path(PATH_COV(), "glo/hydro/h90m/basin/glo_hydro_h90m_basin.tif"))
+  list(tag = "bio01 bilinear",       f = "reg_bioclim_cnclim1km_present_bio01.tif",
+       ref = file.path(PATH_COV(), "reg/bioclim/cnclim1km/present/bio01/reg_bioclim_cnclim1km_present_bio01.tif")),
+  list(tag = "clay bilinear x0.01",  f = "reg_soil_csdlv2_clay_0.tif",
+       ref = file.path(PATH_COV(), "reg/soil/csdlv2/clay/0/reg_soil_csdlv2_clay_0.tif")),
+  list(tag = "channel-dist-up-cel average", f = "reg_hydro_h90m_channel-dist-up-cel.tif",
+       ref = file.path(PATH_COV(), "reg/hydro/h90m/channel-dist-up-cel/reg_hydro_h90m_channel-dist-up-cel.tif")),
+  list(tag = "basin mode",           f = "reg_hydro_h90m_basin.tif",
+       ref = file.path(PATH_COV(), "reg/hydro/h90m/basin/reg_hydro_h90m_basin.tif"))
 )
 
 cat("=== 差异尾部结构分析 ===\n")

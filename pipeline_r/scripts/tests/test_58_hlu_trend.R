@@ -5,7 +5,7 @@ Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
 get_frac <- function(year, cls) {
-  p <- layer_path(c("glo", "lulc", "hlu1km", as.character(year), cls), "_prop")
+  p <- layer_path(c("reg", "lulc", "hlu1km", as.character(year), cls), "_prop")
   if (!file.exists(p)) return(NA_real_)
   r <- terra::rast(p); nd <- terra::NAflag(r)
   a <- terra::global(r, "mean", na.rm = TRUE)[1, 1]

@@ -43,7 +43,7 @@ import numpy as np
 import rasterio
 
 CHECO_ROOT = os.environ.get("CHECO_ROOT", r"E:\CHECO26\N-SDM")
-COV_ROOT = os.path.join(CHECO_ROOT, "data", "covariates", "glo")
+COV_ROOT = os.path.join(CHECO_ROOT, "data", "covariates", "reg")
 MASK_PATH = os.path.join(CHECO_ROOT, "data", "mask_china.tif")
 TEMPLATE_PATH = os.path.join(CHECO_ROOT, "data", "template_albers1km.tif")
 DICT_PATH = os.path.join(CHECO_ROOT, "00_docs", "variable_dictionary.csv")
@@ -232,9 +232,9 @@ def main():
     fout = open(args.out, "a", newline="", encoding="utf-8")
     writer = None
 
-    # document keys carry the leading `glo/` level that COV_ROOT already consumes
+    # document keys carry the leading `reg/` level that COV_ROOT already consumes
     def keyed(rel):
-        return rel if rel.startswith("glo/") else "glo/" + rel
+        return rel if rel.startswith("reg/") else "reg/" + rel
     jobs = [(keyed(rel), os.path.join(COV_ROOT, rel.replace("/", os.sep)),
              dic.get(keyed(rel), {}), man.get(keyed(rel), {}), prov.get(keyed(rel), {}))
             for rel in todo]

@@ -4,7 +4,7 @@
 
 ## 一、范围与结论
 
-审计对象是交付树 `data/covariates/glo/` 下的全部 GeoTIFF，逐层打开、逐层读值，不抽样、不依赖溯源表里的记录值。
+审计对象是交付树 `data/covariates/reg/` 下的全部 GeoTIFF，逐层打开、逐层读值，不抽样、不依赖溯源表里的记录值。
 
 | 项目 | 结果 |
 |---|---|
@@ -70,11 +70,11 @@
 
 | 层 | 有效格 | 占掩膜 |
 |---|---:|---:|
-| `glo/hydro/h90m/outlet/glo_hydro_h90m_outlet.tif` | 18,551 | 0.20% |
-| `glo/lulc/glu1km/scenario/2100/ssp585/glo_lulc_glu1km_scenario_2100_ssp585_patchdensity-forest_f1000.tif` | 2,685,567 | 28.30% |
-| `glo/lulc/glu1km/scenario/2100/ssp585/glo_lulc_glu1km_scenario_2100_ssp585_patchsize-forest_f1000.tif` | 2,685,567 | 28.30% |
-| `glo/lulc/glu1km/scenario/2050/ssp585/glo_lulc_glu1km_scenario_2050_ssp585_patchdensity-forest_f1000.tif` | 2,740,557 | 28.88% |
-| `glo/lulc/glu1km/scenario/2050/ssp585/glo_lulc_glu1km_scenario_2050_ssp585_patchsize-forest_f1000.tif` | 2,740,557 | 28.88% |
+| `reg/hydro/h90m/outlet/reg_hydro_h90m_outlet.tif` | 18,551 | 0.20% |
+| `reg/lulc/glu1km/scenario/2100/ssp585/reg_lulc_glu1km_scenario_2100_ssp585_patchdensity-forest_f1000.tif` | 2,685,567 | 28.30% |
+| `reg/lulc/glu1km/scenario/2100/ssp585/reg_lulc_glu1km_scenario_2100_ssp585_patchsize-forest_f1000.tif` | 2,685,567 | 28.30% |
+| `reg/lulc/glu1km/scenario/2050/ssp585/reg_lulc_glu1km_scenario_2050_ssp585_patchdensity-forest_f1000.tif` | 2,740,557 | 28.88% |
+| `reg/lulc/glu1km/scenario/2050/ssp585/reg_lulc_glu1km_scenario_2050_ssp585_patchsize-forest_f1000.tif` | 2,740,557 | 28.88% |
 
 最少的那一层是水文网络的出口标记，本身是稀疏标记层；其余多为 `glu1km` 的森林斑块指标——斑块统计只在森林存在的格上有定义，所以有效格随森林面积变化。这不是缺失，是定义域。
 
@@ -82,7 +82,7 @@
 
 有 1 层在所有有效格上取同一个值：
 
-- `glo/hydro/h90m/outlet/glo_hydro_h90m_outlet.tif`，恒为 1.0，18,551 个有效格
+- `reg/hydro/h90m/outlet/reg_hydro_h90m_outlet.tif`，恒为 1.0，18,551 个有效格
 
 这一层作为栅格是退化的（方差为零），不应当作连续协变量使用；它的信息在“某格是否为出口”这个二值事实里，而不在数值上。
 

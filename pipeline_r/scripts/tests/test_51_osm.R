@@ -15,7 +15,7 @@ cat(sprintf("  状态: %s %s  用时 %.0f 秒\n", r$status,
             as.numeric(difftime(Sys.time(), t0, units = "secs"))))
 if (identical(r$status, "ok")) {
   cat(sprintf("  nfeat=%s 值域 [%.1f, %.1f]\n", format(r$nfeat, big.mark=","), r$vmin, r$vmax))
-  ref <- file.path(PATH_COV(), "glo/dist/osm/trail/glo_dist_osm_trail.tif")
+  ref <- file.path(PATH_COV(), "reg/dist/osm/trail/reg_dist_osm_trail.tif")
   cm <- compare_layers(read_clean(r$dst), read_clean(ref))
   cat(sprintf("  比对: %s | %s\n", ifelse(cm$pass,"PASS","FAIL"), fmt_cmp(cm)))
 }

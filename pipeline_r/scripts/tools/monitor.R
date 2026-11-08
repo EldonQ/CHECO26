@@ -15,8 +15,8 @@ count_progress <- function() {
                    fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
   prov <- prov[prov$status == "active", ]
   ex <- file.exists(file.path(PATH_COV(), prov$layer_path))
-  ds <- sub("^glo/[^/]+/([^/]+)/.*$", "\\1", prov$layer_path)
-  theme <- sub("^glo/([^/]+)/.*$", "\\1", prov$layer_path)
+  ds <- sub("^reg/[^/]+/([^/]+)/.*$", "\\1", prov$layer_path)
+  theme <- sub("^reg/([^/]+)/.*$", "\\1", prov$layer_path)
   key <- paste(theme, ds, sep = "/")
   agg <- tapply(ex, key, function(v) c(have = sum(v), total = length(v)))
   tab <- data.frame(ds = names(agg),
@@ -149,7 +149,7 @@ main <- function() {
   if (pr[["clcd"]] > 0) {
     CPU_PER_YEAR <- 12225
     cat("\n  clcd 进度（按年产出；不落盘后无临时文件，改看进程 CPU）:\n")
-    base_clcd <- list.files(file.path(PATH_COV(), "glo/lulc/clcd"),
+    base_clcd <- list.files(file.path(PATH_COV(), "reg/lulc/clcd"),
                             pattern = "_prop\\.tif$", recursive = TRUE, full.names = TRUE)
     cat(sprintf("    已完成年份: %.1f / 26\n", length(base_clcd) / 9))
 
@@ -187,9 +187,9 @@ main <- function() {
   # clcd_focal_one 缺“已存在检查”，与已修复的 hlu_focal_one（缺陷 42）同类。
   # 基底阶段运行中不能改脚本（文件锁），故安排在基底完成后、焦点启动前修。
   if (pr[["clcd"]] > 0) {
-    n_base <- length(list.files(file.path(PATH_COV(), "glo/lulc/clcd"),
+    n_base <- length(list.files(file.path(PATH_COV(), "reg/lulc/clcd"),
                                 pattern = "_prop\\.tif$", recursive = TRUE))
-    n_focal <- length(list.files(file.path(PATH_COV(), "glo/lulc/clcd"),
+    n_focal <- length(list.files(file.path(PATH_COV(), "reg/lulc/clcd"),
                                  pattern = "_prop_f\\d+\\.tif$", recursive = TRUE))
     if (n_base >= 234L && n_focal == 0L) {
       cat("\n  ⚠ 基底已完成、焦点尚未开始。**启动焦点前先修 clcd_focal_one 的已存在检查**\n")

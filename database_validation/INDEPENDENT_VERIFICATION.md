@@ -87,7 +87,7 @@
 
 ### 3.4 SHA-256 — 路径重复拼前缀
 
-`file.path(COV, "covariates/glo/...")` 变成 `.../covariates/covariates/glo/...`，
+`file.path(COV, "covariates/reg/...")` 变成 `.../covariates/covariates/reg/...`，
 `file.exists()` 全部 FALSE，于是**比较 0 层却报 PASS**。
 
 这条正是"空转检查"的活样本：如果不是强制输出比较次数，

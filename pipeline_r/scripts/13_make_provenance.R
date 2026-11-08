@@ -143,7 +143,7 @@ FS <- FOCAL_SPEC()
 rows_hfp <- function() {
   out <- list()
   for (y in 2000:2024) {
-    parts <- c("glo", "anthro", "hfp", as.character(y), "hfp")
+    parts <- c("reg", "anthro", "hfp", as.character(y), "hfp")
     out[[length(out) + 1L]] <- mk_row(parts, "", META_HFP,
       "Annual Human Footprint index aggregated to 1 km [index 0-50]",
       "index (0-50)", "[0, 50]",
@@ -163,7 +163,7 @@ rows_hfp <- function() {
 rows_clcd <- function() {
   out <- list()
   for (y in 2000:2025) for (cn in unname(CLCD_LEGEND)) {
-    parts <- c("glo", "lulc", "clcd", as.character(y), cn)
+    parts <- c("reg", "lulc", "clcd", as.character(y), cn)
     out[[length(out) + 1L]] <- mk_row(parts, "_prop", META_CLCD,
       sprintf("Areal proportion of CLCD land-cover class '%s' within the 1 km output cell [ratio 0-1]", cn),
       "ratio (0-1)", "[0, 1]",
@@ -185,8 +185,8 @@ rows_hlu <- function() {
   add_combo <- function(year, ssp) {
     hits <- 0L
     for (cn in unname(HLU_LEGEND)) {
-      parts <- if (is.na(ssp)) c("glo", "lulc", "hlu1km", as.character(year), cn)
-               else c("glo", "lulc", "hlu1km", "scenario", as.character(year), ssp, cn)
+      parts <- if (is.na(ssp)) c("reg", "lulc", "hlu1km", as.character(year), cn)
+               else c("reg", "lulc", "hlu1km", "scenario", as.character(year), ssp, cn)
       out[[length(out) + 1L]] <<- mk_row(parts, "_prop", META_HLU,
         sprintf("Areal proportion of harmonised land-use class '%s' in %d%s [ratio 0-1]",
                 cn, year, if (is.na(ssp)) " (historic)" else paste0(" under ", ssp)),
@@ -214,7 +214,7 @@ main <- function(fill_actual = FALSE) {
                    check.names = FALSE)
   cat(sprintf("现有溯源表: %d 行 x %d 列\n", nrow(base), ncol(base)))
 
-  drop <- grepl("^glo/anthro/(landscan|foothii)/", base$layer_path)
+  drop <- grepl("^reg/anthro/(landscan|foothii)/", base$layer_path)
   cat(sprintf("  剔除 LandScan/footHII: %d 行\n", sum(drop)))
   base <- base[!drop, ]
 

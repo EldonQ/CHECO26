@@ -98,7 +98,7 @@ def fig_range(rows, out):
         if np.isnan(y[i]):
             continue
         short = os.path.basename(rows[i]["relpath"])[:-4]
-        short = short.replace("glo_", "").replace(".tif", "")
+        short = short.replace("reg_", "").replace(".tif", "")
         ax.annotate(short, (x[i], y[i]), textcoords="offset points",
                     xytext=(4, 4), fontsize=7.5, color="#555555")
     fig.tight_layout()
@@ -138,7 +138,7 @@ def fig_na(rows, out):
 
 def fig_cellcheck(checks, out):
     checks = sorted(checks, key=lambda c: float(c["match"]))
-    labels = [os.path.basename(c["relpath"])[:-4].replace("glo_", "")
+    labels = [os.path.basename(c["relpath"])[:-4].replace("reg_", "")
               for c in checks]
     vals = [float(c["match"]) for c in checks]
     colors = ["#4E79A7" if c["verdict"] == "pass" else "#F28E2B"

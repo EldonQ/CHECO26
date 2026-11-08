@@ -38,8 +38,8 @@ cfg <- CFG()
 src <- file.path(P("bioclim"), "cnclim1km/present/1991_2020/bio01",
                  "bioclim_cnclim1km_present_1991_2020_bio01.tif")
 diag <- file.path(PATH_SCRATCH(), "diag_warp")
-ref_existing <- file.path(PATH_COV(), "glo/bioclim/cnclim1km/present/bio01",
-                          "glo_bioclim_cnclim1km_present_bio01.tif")
+ref_existing <- file.path(PATH_COV(), "reg/bioclim/cnclim1km/present/bio01",
+                          "reg_bioclim_cnclim1km_present_bio01.tif")
 
 cat("=== warp 差异来源判定 ===\n\n")
 

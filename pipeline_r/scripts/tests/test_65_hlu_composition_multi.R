@@ -9,8 +9,8 @@ CLS <- c("urban", "cropland", "pasture", "mngforest", "forest",
 
 #' 用流式 global 求 8 层之和的极值（不加载整层到内存）
 check <- function(year, ssp) {
-  parts <- if (is.na(ssp)) c("glo", "lulc", "hlu1km", as.character(year))
-           else c("glo", "lulc", "hlu1km", "scenario", as.character(year), ssp)
+  parts <- if (is.na(ssp)) c("reg", "lulc", "hlu1km", as.character(year))
+           else c("reg", "lulc", "hlu1km", "scenario", as.character(year), ssp)
   s <- NULL; n <- 0L
   for (cn in CLS) {
     p <- layer_path(c(parts, cn), "_prop")

@@ -36,8 +36,8 @@ build_manifest <- function() {
   tasks <- list()
   add <- function(v, st) {
     if (v %in% withdrawn) return(invisible())
-    parts <- if (v %in% DIST_VARS) c("glo", "dist", "h90m", gsub("_", "-", v))
-             else c("glo", "hydro", "h90m", gsub("_", "-", v))
+    parts <- if (v %in% DIST_VARS) c("reg", "dist", "h90m", gsub("_", "-", v))
+             else c("reg", "hydro", "h90m", gsub("_", "-", v))
     tasks[[length(tasks) + 1L]] <<- list(
       parts = parts, suffix = paste0("_", st), var = v, stat = st,
       src = file.path(P("hydro_final"), v, sprintf("%s_china.tif", v)),

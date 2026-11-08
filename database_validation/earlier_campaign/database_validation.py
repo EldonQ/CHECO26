@@ -22,7 +22,7 @@ Gates (all hard, all must pass for a delivery):
 
 Usage:
     python database_validation.py \
-        --root      path/to/covariates_tree   (directory containing glo/) \
+        --root      path/to/covariates_tree   (directory containing reg/) \
         --manifest  ../../data/CHECO26_datalayers_details.csv \
         --grid      ../../data/CHECO26-standardgrid.tif \
         --mask      ../../data/mask_china.tif \
@@ -130,7 +130,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", required=True,
-                    help="covariates tree root (the directory containing glo/)")
+                    help="covariates tree root (the directory containing reg/)")
     ap.add_argument("--manifest", required=True)
     ap.add_argument("--grid", required=True)
     ap.add_argument("--mask", required=True)

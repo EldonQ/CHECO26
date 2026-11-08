@@ -7,7 +7,7 @@
 #
 # Usage:
 #   Rscript R/tools/rerun_r_only.R 08                 # soil profiles + aspect/tri (30)
-#   Rscript R/tools/rerun_r_only.R 04 '^glo_vege_'    # vege focal layers (24)
+#   Rscript R/tools/rerun_r_only.R 04 '^reg_vege_'    # vege focal layers (24)
 #   Rscript R/tools/rerun_r_only.R 05 1               # glu1km snapshot 1 (54)
 #
 # The 5 RESTRICTED HydroSHEDS accumulation layers are deliberately not covered:

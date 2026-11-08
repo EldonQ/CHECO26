@@ -17,28 +17,28 @@ r <- .ing$derive_snapshot(snap, c("prop", "shannon", "edge", "patch"))
 cat(sprintf("\n[全部] %s : %d 层, %.0f 秒\n\n", r$status, r$n,
             as.numeric(difftime(Sys.time(), t0, units = "secs"))))
 
-REF <- file.path(PATH_COV(), "glo/lulc/glu1km/2020")
+REF <- file.path(PATH_COV(), "reg/lulc/glu1km/2020")
 ref_path <- function(p) {
-  cls <- sub("^glo_lulc_glu1km_2020_", "", p)
+  cls <- sub("^reg_lulc_glu1km_2020_", "", p)
   cls <- sub("_(prop|shannon|edge|patchdensity|patchsize).*$", "", cls)
   file.path(REF, cls, p)
 }
 
 cat("=== 分段抽样比对 ===\n")
 checks <- list(
-  list(f = "glo_lulc_glu1km_2020_urban_prop.tif",            cat = TRUE,  tag = "prop 基底（分类）"),
-  list(f = "glo_lulc_glu1km_2020_cropland_prop.tif",         cat = TRUE,  tag = "prop 基底（分类）"),
-  list(f = "glo_lulc_glu1km_2020_cropland_prop_f1000.tif",   cat = FALSE, tag = "prop f1000"),
-  list(f = "glo_lulc_glu1km_2020_cropland_prop_f5000.tif",   cat = FALSE, tag = "prop f5000"),
-  list(f = "glo_lulc_glu1km_2020_cropland_prop_f20000.tif",  cat = FALSE, tag = "prop f20000"),
-  list(f = "glo_lulc_glu1km_2020_shannon_f1000.tif",         cat = FALSE, tag = "shannon f1000"),
-  list(f = "glo_lulc_glu1km_2020_shannon_f20000.tif",        cat = FALSE, tag = "shannon f20000"),
-  list(f = "glo_lulc_glu1km_2020_edge.tif",                  cat = FALSE, tag = "edge 基底"),
-  list(f = "glo_lulc_glu1km_2020_edge_f5000.tif",            cat = FALSE, tag = "edge f5000"),
-  list(f = "glo_lulc_glu1km_2020_patchdensity-all_f5000.tif", cat = FALSE, tag = "patchdensity-all f5000"),
-  list(f = "glo_lulc_glu1km_2020_patchsize-all_f20000.tif",  cat = FALSE, tag = "patchsize-all f20000"),
-  list(f = "glo_lulc_glu1km_2020_patchdensity-forest_f5000.tif", cat = FALSE, tag = "patchdensity-forest f5000"),
-  list(f = "glo_lulc_glu1km_2020_patchsize-forest_f20000.tif",   cat = FALSE, tag = "patchsize-forest f20000")
+  list(f = "reg_lulc_glu1km_2020_urban_prop.tif",            cat = TRUE,  tag = "prop 基底（分类）"),
+  list(f = "reg_lulc_glu1km_2020_cropland_prop.tif",         cat = TRUE,  tag = "prop 基底（分类）"),
+  list(f = "reg_lulc_glu1km_2020_cropland_prop_f1000.tif",   cat = FALSE, tag = "prop f1000"),
+  list(f = "reg_lulc_glu1km_2020_cropland_prop_f5000.tif",   cat = FALSE, tag = "prop f5000"),
+  list(f = "reg_lulc_glu1km_2020_cropland_prop_f20000.tif",  cat = FALSE, tag = "prop f20000"),
+  list(f = "reg_lulc_glu1km_2020_shannon_f1000.tif",         cat = FALSE, tag = "shannon f1000"),
+  list(f = "reg_lulc_glu1km_2020_shannon_f20000.tif",        cat = FALSE, tag = "shannon f20000"),
+  list(f = "reg_lulc_glu1km_2020_edge.tif",                  cat = FALSE, tag = "edge 基底"),
+  list(f = "reg_lulc_glu1km_2020_edge_f5000.tif",            cat = FALSE, tag = "edge f5000"),
+  list(f = "reg_lulc_glu1km_2020_patchdensity-all_f5000.tif", cat = FALSE, tag = "patchdensity-all f5000"),
+  list(f = "reg_lulc_glu1km_2020_patchsize-all_f20000.tif",  cat = FALSE, tag = "patchsize-all f20000"),
+  list(f = "reg_lulc_glu1km_2020_patchdensity-forest_f5000.tif", cat = FALSE, tag = "patchdensity-forest f5000"),
+  list(f = "reg_lulc_glu1km_2020_patchsize-forest_f20000.tif",   cat = FALSE, tag = "patchsize-forest f20000")
 )
 npass <- 0; ntot <- 0
 for (c in checks) {

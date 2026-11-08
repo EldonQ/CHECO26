@@ -24,8 +24,8 @@ v[!is.na(v) & !(v %in% codes)] <- 255
 terra::values(cls) <- v
 valid <- cls; terra::values(valid) <- as.integer(!is.na(v) & v %in% codes)
 
-REF <- file.path(PATH_COV(), "glo/lulc/glu1km/2020")
-OUTD <- file.path(OUT, "glo/lulc/glu1km/2020")
+REF <- file.path(PATH_COV(), "reg/lulc/glu1km/2020")
+OUTD <- file.path(OUT, "reg/lulc/glu1km/2020")
 
 cat("=== 重算 2020 快照 patch 层（已修 labm=0 索引 bug）===\n\n")
 res <- list()
@@ -39,7 +39,7 @@ for (scope in c("all", "forest")) {
     pm <- .ing$patch_metric(binary, rc)
     el <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
     for (metric in c("patchdensity", "patchsize")) {
-      fname <- sprintf("glo_lulc_glu1km_2020_%s-%s_f%d.tif", metric, scope, fs$radius_km[k] * 1000)
+      fname <- sprintf("reg_lulc_glu1km_2020_%s-%s_f%d.tif", metric, scope, fs$radius_km[k] * 1000)
       ref <- file.path(REF, fname)
       if (!file.exists(ref)) next
       got_arr <- if (metric == "patchdensity") pm$density else pm$msize

@@ -10,7 +10,7 @@ if (dir.exists(cache)) { file.remove(list.files(cache, full.names = TRUE)); cat(
 .ing <- new.env(parent = globalenv())
 sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/03_ingest_static.R"), envir = .ing)
 tasks <- .ing$build_manifest()
-target <- "glo_hydro_h90m_channel-elv-up-cel.tif"
+target <- "reg_hydro_h90m_channel-elv-up-cel.tif"
 k <- which(vapply(tasks, function(t) basename(layer_path(t$parts)), "") == target)
 t <- tasks[[k]]
 

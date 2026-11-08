@@ -4,12 +4,12 @@
 Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
-dir <- file.path(PATH_COV(), "glo/anthro/hfp")
+dir <- file.path(PATH_COV(), "reg/anthro/hfp")
 years <- 2000:2024
 mu <- numeric(length(years)); names(mu) <- years
 sd_ <- mu
 for (i in seq_along(years)) {
-  p <- file.path(dir, years[i], "hfp", sprintf("glo_anthro_hfp_%d_hfp.tif", years[i]))
+  p <- file.path(dir, years[i], "hfp", sprintf("reg_anthro_hfp_%d_hfp.tif", years[i]))
   if (!file.exists(p)) { mu[i] <- NA; sd_[i] <- NA; next }
   r <- terra::rast(p)
   g <- terra::global(r, c("mean", "sd"), na.rm = TRUE)

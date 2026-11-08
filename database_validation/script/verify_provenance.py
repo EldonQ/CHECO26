@@ -26,7 +26,7 @@ import re
 
 ROOT = os.environ.get("CHECO_ROOT", r"E:\CHECO26\N-SDM")
 DOCS = os.path.join(ROOT, "00_docs")
-DATA = os.path.join(ROOT, "data", "covariates")      # layer_path starts with glo/
+DATA = os.path.join(ROOT, "data", "covariates")      # layer_path starts with reg/
 AUD = os.path.join(ROOT, "audit")
 
 RANGE = re.compile(r"\[(-?[\d.eE+-]+),\s*(-?[\d.eE+-]+)\]")

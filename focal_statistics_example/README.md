@@ -58,8 +58,8 @@ Rscript focal_statistics_example/focal_statistics.R
 Requires R with `terra` and `yaml`. The input and the reference output are both
 in this repository:
 
-- input: `data/sample_layers/.../glo_lulc_glu1km_2020_forest_prop.tif` (base 1-km layer)
-- reference: `data/sample_layers/.../glo_lulc_glu1km_2020_forest_prop_f5000.tif` (delivered layer)
+- input: `data/sample_layers/.../reg_lulc_glu1km_2020_forest_prop.tif` (base 1-km layer)
+- reference: `data/sample_layers/.../reg_lulc_glu1km_2020_forest_prop_f5000.tif` (delivered layer)
 
 ## What the example checks
 
@@ -76,7 +76,7 @@ so it doubles as a regression test of `focal_mean()`.
 ## A note on the sample layers
 
 While building this example we found that the copy of
-`glo_lulc_glu1km_2020_forest_prop_f5000.tif` that had been shipped in
+`reg_lulc_glu1km_2020_forest_prop_f5000.tif` that had been shipped in
 `data/sample_layers/` did not match the archive (it had 26,279 distinct values
 where the archive layer has 4,496, and it disagreed with the base layer). It was
 replaced with the archive version; the other sample layers were checked cell by

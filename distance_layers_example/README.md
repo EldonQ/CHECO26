@@ -59,7 +59,7 @@ Requires R with `terra` and `yaml`. Both files it needs are in this repository:
 
 - input: `data/source_layers/smod/GHS_SMOD_E2020_china_window.tif`
   (GHS-SMOD 2020 cropped to the China window, CC BY 4.0, 3.4 MB)
-- reference: `data/sample_layers/glo/dist/smod/urban/glo_dist_smod_urban.tif`
+- reference: `data/sample_layers/reg/dist/smod/urban/reg_dist_smod_urban.tif`
   (the delivered layer)
 
 ## What the example checks

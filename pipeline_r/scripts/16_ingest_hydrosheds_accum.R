@@ -41,9 +41,9 @@ dir.create(OUT, showWarnings = FALSE, recursive = TRUE)
 SENT <- 4294967295
 
 layers <- function() {
-  base <- file.path(PATH_COV(), "glo/hydro/hydrosheds/accumulation")
-  c(file.path(base, "glo_hydro_hydrosheds_accumulation.tif"),
-    file.path(base, sprintf("glo_hydro_hydrosheds_accumulation_f%d.tif", c(1000, 5000, 10000, 20000))))
+  base <- file.path(PATH_COV(), "reg/hydro/hydrosheds/accumulation")
+  c(file.path(base, "reg_hydro_hydrosheds_accumulation.tif"),
+    file.path(base, sprintf("reg_hydro_hydrosheds_accumulation_f%d.tif", c(1000, 5000, 10000, 20000))))
 }
 
 build <- function() {
@@ -94,7 +94,7 @@ build <- function() {
   cat(sprintf("  空洞 IDW 填充（≤2 km）：新增 %s 格\n", format(n_after - n_before, big.mark = ",")))
   w <- mask(w, msk, maskvalues = c(0, NA), updatevalue = NA)
 
-  base_out <- file.path(OUT, "glo_hydro_hydrosheds_accumulation.tif")
+  base_out <- file.path(OUT, "reg_hydro_hydrosheds_accumulation.tif")
   # writeRaster defaults to NaN as the missing value; the delivery convention is -9999
   NAflag(w) <- -9999
   writeRaster(w, base_out, overwrite = TRUE, datatype = "FLT4S", NAflag = -9999,
@@ -108,7 +108,7 @@ build <- function() {
     k <- 2L * rad + 1L
     f <- focal(w, w = matrix(1, k, k), fun = "mean", na.rm = TRUE, na.policy = "all")
     f <- mask(f, msk, maskvalues = c(0, NA), updatevalue = NA)
-    p <- file.path(OUT, sprintf("glo_hydro_hydrosheds_accumulation_f%d.tif", rad * 1000L))
+    p <- file.path(OUT, sprintf("reg_hydro_hydrosheds_accumulation_f%d.tif", rad * 1000L))
     NAflag(f) <- -9999
     writeRaster(f, p, overwrite = TRUE, datatype = "FLT4S", NAflag = -9999,
                 gdal = c("COMPRESS=DEFLATE", "TILED=YES", "PREDICTOR=3"))
@@ -132,7 +132,7 @@ check <- function() {
     only_new <- sum(!is.na(a) & is.na(b)); only_old <- sum(is.na(a) & !is.na(b))
     d <- a[ok] - b[ok]
     cat(sprintf("%-52s 共用 %s | 新独有 %d | 旧独有 %d | 偏差 %+.3g | 平均|d| %.3g | max|d| %.3g\n",
-                gsub("^glo_hydro_hydrosheds_accumulation", "base", sub("\\.tif$", "", basename(ref[i]))),
+                gsub("^reg_hydro_hydrosheds_accumulation", "base", sub("\\.tif$", "", basename(ref[i]))),
                 format(sum(ok), big.mark = ","), only_new, only_old,
                 mean(d), mean(abs(d)), max(abs(d))))
   }

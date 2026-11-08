@@ -7,7 +7,7 @@ source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding 
 sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/05_derive_lulc.R"), envir = .ing)
 
 g <- GRID()
-REF <- file.path(PATH_COV(), "glo/lulc/glu1km/2020")
+REF <- file.path(PATH_COV(), "reg/lulc/glu1km/2020")
 
 # 用已有 prop 基底重建 binary：
 #   all    = 中国境内（用 mask）
@@ -19,7 +19,7 @@ read_bin <- function(kind) {
     terra::values(r) <- as.integer(terra::values(m, mat = FALSE) == 1)
     r
   } else {
-    r <- terra::rast(file.path(REF, "forest/glo_lulc_glu1km_2020_forest_prop.tif"))
+    r <- terra::rast(file.path(REF, "forest/reg_lulc_glu1km_2020_forest_prop.tif"))
     v <- terra::values(r, mat = FALSE); nd <- terra::NAflag(r)
     if (!is.na(nd)) v[!is.na(v) & v == nd] <- NA
     terra::values(r) <- ifelse(!is.na(v) & v > 0.5, 1L, 0L)
@@ -52,7 +52,7 @@ for (kind in c("all", "forest")) {
     pm <- .ing$patch_metric(bin, rr)
     el <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
     for (metric in c("patchdensity", "patchsize")) {
-      ref_f <- file.path(REF, sprintf("glo_lulc_glu1km_2020_%s-%s_f%d.tif",
+      ref_f <- file.path(REF, sprintf("reg_lulc_glu1km_2020_%s-%s_f%d.tif",
                                       metric, kind, rr * 1000))
       if (!file.exists(ref_f)) { cat(sprintf("    参照缺失: %s\n", basename(ref_f))); next }
       ref <- crop_cells(terra::rast(ref_f), R0, C0, N, N)

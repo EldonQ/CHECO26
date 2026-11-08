@@ -43,14 +43,14 @@ report <- function(ds, bases) {
 }
 
 # hfp
-p1 <- file.path(PATH_COV(), "glo/anthro/hfp")
-bases1 <- list.files(p1, pattern = "^glo_anthro_hfp_[0-9]+_hfp\\.tif$",
+p1 <- file.path(PATH_COV(), "reg/anthro/hfp")
+bases1 <- list.files(p1, pattern = "^reg_anthro_hfp_[0-9]+_hfp\\.tif$",
                      recursive = TRUE, full.names = TRUE)
 cat(sprintf("hfp: %d 个基底层（应有 25）\n", length(bases1)))
 if (length(bases1)) report("anthro/hfp", head(bases1, 5))
 
 # hlu1km（已生成部分）
-p2 <- file.path(PATH_COV(), "glo/lulc/hlu1km")
+p2 <- file.path(PATH_COV(), "reg/lulc/hlu1km")
 bases2 <- list.files(p2, pattern = "_prop\\.tif$", recursive = TRUE, full.names = TRUE)
 cat(sprintf("\nhlu1km: %d 个比例基底层（目标 3,688）\n", length(bases2)))
 if (length(bases2)) report("lulc/hlu1km", head(bases2, 4))
@@ -63,6 +63,6 @@ chk_range <- function(f, lo, hi, lab) {
   ok <- st$min >= lo - 1e-6 && st$max <= hi + 1e-6
   cat(sprintf("  %-46s [%.4g, %.4g] %s\n", lab, st$min, st$max, ifelse(ok, "OK", "OUT OF RANGE")))
 }
-hf <- list.files(file.path(PATH_COV(), "glo/anthro/hfp"), pattern = "^glo_anthro_hfp_2000.*\\.tif$",
+hf <- list.files(file.path(PATH_COV(), "reg/anthro/hfp"), pattern = "^reg_anthro_hfp_2000.*\\.tif$",
                  recursive = TRUE, full.names = TRUE)
 for (f in hf) chk_range(f, 0, 50, basename(f))

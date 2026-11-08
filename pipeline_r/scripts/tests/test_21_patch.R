@@ -5,7 +5,7 @@ source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding 
 .ing <- new.env(parent = globalenv())
 sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/05_derive_lulc.R"), envir = .ing)
 
-p <- file.path(PATH_COV(), "glo/lulc/glu1km/2020/urban/glo_lulc_glu1km_2020_urban_prop.tif")
+p <- file.path(PATH_COV(), "reg/lulc/glu1km/2020/urban/reg_lulc_glu1km_2020_urban_prop.tif")
 r <- terra::rast(p)
 v <- terra::values(r, mat = FALSE); nd <- terra::NAflag(r)
 if (!is.na(nd)) v[!is.na(v) & v == nd] <- NA

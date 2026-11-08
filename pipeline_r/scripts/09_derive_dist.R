@@ -114,11 +114,11 @@ feat_gsw_water <- function() {
 # ---- 单任务 --------------------------------------------------------------
 run_task <- function(tag) {
   dst <- switch(tag,
-    grip4_road      = layer_path(c("glo", "dist", "grip4", "road")),
-    grip4_majorroad = layer_path(c("glo", "dist", "grip4", "majorroad")),
-    osm_trail       = layer_path(c("glo", "dist", "osm", "trail")),
-    smod_urban      = layer_path(c("glo", "dist", "smod", "urban")),
-    gsw_water       = layer_path(c("glo", "dist", "gsw", "water")))
+    grip4_road      = layer_path(c("reg", "dist", "grip4", "road")),
+    grip4_majorroad = layer_path(c("reg", "dist", "grip4", "majorroad")),
+    osm_trail       = layer_path(c("reg", "dist", "osm", "trail")),
+    smod_urban      = layer_path(c("reg", "dist", "smod", "urban")),
+    gsw_water       = layer_path(c("reg", "dist", "gsw", "water")))
   if (file.exists(dst) && !identical(Sys.getenv("CHECO_FORCE"), "1") && check_alignment(dst))
     return(list(status = "skip", dst = dst))
 

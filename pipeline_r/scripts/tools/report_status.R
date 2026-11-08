@@ -14,8 +14,8 @@ build_table <- function() {
                    fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
   prov <- prov[prov$status == "active", ]
   ex <- file.exists(file.path(PATH_COV(), prov$layer_path))
-  th <- sub("^glo/([^/]+)/.*$", "\\1", prov$layer_path)
-  ds <- sub("^glo/[^/]+/([^/]+)/.*$", "\\1", prov$layer_path)
+  th <- sub("^reg/([^/]+)/.*$", "\\1", prov$layer_path)
+  ds <- sub("^reg/[^/]+/([^/]+)/.*$", "\\1", prov$layer_path)
   key <- paste(th, ds, sep = "/")
   agg <- tapply(ex, key, function(v) c(have = sum(v), total = length(v)))
   tab <- data.frame(ds = names(agg),

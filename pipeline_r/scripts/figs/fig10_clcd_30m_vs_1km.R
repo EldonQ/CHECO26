@@ -15,7 +15,7 @@ source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding 
 suppressPackageStartupMessages({ library(ggplot2); library(patchwork) })
 
 # 取一个耕地比例中等的窗口（混合像元多，最能看出差异）
-cv <- terra::values(terra::rast(layer_path(c("glo","lulc","clcd","2000","cropland"), "_prop")),
+cv <- terra::values(terra::rast(layer_path(c("reg","lulc","clcd","2000","cropland"), "_prop")),
                     mat = FALSE)
 mv <- terra::values(china_mask(), mat = FALSE)
 # 2026-10-20 修：只按"混合像元 + 境内"选点，结果选中了海岸带像元，
@@ -78,7 +78,7 @@ p1 <- ggplot(fv, aes(x, y, fill = code)) +
         plot.subtitle = element_text(size = 8, hjust = 0))
 
 # --- 右：1 km 耕地比例 ---
-coarse <- terra::crop(terra::rast(layer_path(c("glo","lulc","clcd","2000","cropland"), "_prop")),
+coarse <- terra::crop(terra::rast(layer_path(c("reg","lulc","clcd","2000","cropland"), "_prop")),
                       win)
 cvv <- terra::as.data.frame(coarse, xy = TRUE, na.rm = TRUE)
 names(cvv)[3] <- "p"

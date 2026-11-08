@@ -24,15 +24,15 @@ n_cell <- if (length(commandArgs(TRUE))) as.integer(commandArgs(TRUE)[1]) else 3
 # 319 m 的"平均冠层高度"这种物理不可能值——第一次跑就踩了这个坑。
 cases <- list(
   list(key = "vege / forest canopy height (30 m, cm->m)",
-       our = "glo/vege/ch2019/ch/glo_vege_ch2019_ch.tif",
+       our = "reg/vege/ch2019/ch/reg_vege_ch2019_ch.tif",
        src = "E:/CHECO26/NDVI_forest aboveground biomass_forest canopy height/forest canopy height/_/China_Forest_Canopy_Height_2019.tif",
        nd = 65535, scale = 0.01),
   list(key = "hydro / Hydrosheds accumulation (90 m)",
-       our = "glo/hydro/hydrosheds/accumulation/glo_hydro_hydrosheds_accumulation.tif",
+       our = "reg/hydro/hydrosheds/accumulation/reg_hydro_hydrosheds_accumulation.tif",
        src = "E:/HydroSHEDS Core Data/work/00_src/as_acc_3s.tif",
        nd = NA_real_, scale = 1),
   list(key = "dist / stream distance downstream-near (90 m)",
-       our = "glo/dist/h90m/stream-dist-dw-near/glo_dist_h90m_stream-dist-dw-near.tif",
+       our = "reg/dist/h90m/stream-dist-dw-near/reg_dist_h90m_stream-dist-dw-near.tif",
        src = "E:/h90m/Final/stream_dist_dw_near/stream_dist_dw_near_china.tif",
        nd = NA_real_, scale = 1)
 )

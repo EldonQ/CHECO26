@@ -4,7 +4,7 @@
 Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 
-root <- file.path(PATH_COV(), "glo/lulc/hlu1km")
+root <- file.path(PATH_COV(), "reg/lulc/hlu1km")
 FS <- FOCAL_SPEC()
 
 #' 抽一个基底，复算 3x3 焦点并与磁盘上的 f1000 比对
@@ -35,7 +35,7 @@ if (is.null(res)) { cat("无可比对的对\n"); quit(save = "no") }
 cat("\n=== 复算 3x3 焦点 vs 磁盘上的 _prop_f1000 ===\n")
 for (i in seq_len(nrow(res)))
   cat(sprintf("  %-46s max|d| %.3e  mean|d| %.3e\n",
-              sub("glo_lulc_hlu1km_1960_", "", res$base), res$maxabs, res$meanabs))
+              sub("reg_lulc_hlu1km_1960_", "", res$base), res$maxabs, res$meanabs))
 cat(sprintf("\n最大 max|d| = %.3e（应接近 0，float32 舍入量级）\n", max(res$maxabs)))
 cat(sprintf("结论: %s\n", ifelse(max(res$maxabs) < 1e-6,
     "通过 —— 改名后基底与焦点仍配对正确", "失败 —— 配对错位")))

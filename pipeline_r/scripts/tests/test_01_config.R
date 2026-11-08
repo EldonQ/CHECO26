@@ -35,9 +35,9 @@ print(FOCAL_SPEC())
 
 cat("\n=== check_alignment 对既有层的判定（抽 3 层应全 TRUE）===\n")
 probe <- c(
-  "data/covariates/glo/bioclim/cnclim1km/present/bio01/glo_bioclim_cnclim1km_present_bio01.tif",
-  "data/covariates/glo/anthro/smod/2020/urbanprop/glo_anthro_smod_2020_urbanprop.tif",
-  "data/covariates/glo/lulc/glu1km/2020/urban/glo_lulc_glu1km_2020_urban_prop_f5000.tif"
+  "data/covariates/reg/bioclim/cnclim1km/present/bio01/reg_bioclim_cnclim1km_present_bio01.tif",
+  "data/covariates/reg/anthro/smod/2020/urbanprop/reg_anthro_smod_2020_urbanprop.tif",
+  "data/covariates/reg/lulc/glu1km/2020/urban/reg_lulc_glu1km_2020_urban_prop_f5000.tif"
 )
 for (p in probe) {
   fp <- file.path(CHECO_ROOT, p)

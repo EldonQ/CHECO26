@@ -27,14 +27,14 @@ run_part <- function(part) {
 r_prop <- run_part("prop")
 
 cat("\n=== prop 抽样比对 ===\n")
-probe <- c("glo_lulc_glu1km_2020_urban_prop.tif",
-           "glo_lulc_glu1km_2020_cropland_prop_f5000.tif",
-           "glo_lulc_glu1km_2020_water_prop_f20000.tif",
-           "glo_lulc_glu1km_2020_forest_prop_f10000.tif")
+probe <- c("reg_lulc_glu1km_2020_urban_prop.tif",
+           "reg_lulc_glu1km_2020_cropland_prop_f5000.tif",
+           "reg_lulc_glu1km_2020_water_prop_f20000.tif",
+           "reg_lulc_glu1km_2020_forest_prop_f10000.tif")
 for (p in probe) {
   got <- r_prop$files[basename(r_prop$files) == p]
-  cls <- sub("^glo_lulc_glu1km_2020_", "", p); cls <- sub("_prop.*$", "", cls)
-  ref <- file.path(PATH_COV(), "glo/lulc/glu1km/2020", cls, p)
+  cls <- sub("^reg_lulc_glu1km_2020_", "", p); cls <- sub("_prop.*$", "", cls)
+  ref <- file.path(PATH_COV(), "reg/lulc/glu1km/2020", cls, p)
   if (!length(got) || !file.exists(ref)) { cat(sprintf("  %-50s 跳过\n", p)); next }
   cmp <- compare_layers(read_clean(got[1]), read_clean(ref))
   cat(sprintf("  %-50s %s\n      %s\n", p, ifelse(cmp$pass, "PASS", "FAIL"), fmt_cmp(cmp)))

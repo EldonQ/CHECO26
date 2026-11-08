@@ -3,7 +3,7 @@
 #
 # 数据：archive/clcd-albert/CLCD_v01_YYYY_albert.tif
 #       161,378 x 135,079 @ 30 m, uint8, nodata=0, 与模板同 CRS（Albers），但 xmin 差 18,375 m
-# 产出：lulc/clcd/<year>/<class>/glo_lulc_clcd_<year>_<class>_prop[_f<米>].tif
+# 产出：lulc/clcd/<year>/<class>/reg_lulc_clcd_<year>_<class>_prop[_f<米>].tif
 #       26 年 (2000-2025) x 9 类 x (1 + 4 focal) = 1,170 层
 #
 # 关键设计（按行带流式，避免物化 21.8 G 像元）：
@@ -33,7 +33,7 @@ CLCD_LEGEND <- c(
 
 clcd_src <- function(year) file.path(CLCD_DIR(), sprintf("CLCD_v01_%d_albert.tif", year))
 
-clcd_parts <- function(year, cls) c("glo", "lulc", "clcd", as.character(year), cls)
+clcd_parts <- function(year, cls) c("reg", "lulc", "clcd", as.character(year), cls)
 
 # ---- 行带窗口 --------------------------------------------------------------
 #' 取模板的第 r0..r0+nr-1 行、全宽的子几何（返回 SpatRaster）

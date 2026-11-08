@@ -266,7 +266,7 @@ main <- function(mode = c("header", "full"), limit = NULL) {
   # 但比例组全部属于 lulc，于是 head() 仍取前 12 个（glu1km + hlu1km），
   # 依然一组 CLCD 都没检到。正确的分层键是 **theme/dataset**。
   grp_key <- function(d) {
-    x <- sub("^.*?covariates/glo/", "", d)     # "lulc/clcd/2008"
+    x <- sub("^.*?covariates/reg/", "", d)     # "lulc/clcd/2008"
     p <- strsplit(x, "/")[[1]]
     if (length(p) >= 2) paste(p[1], p[2], sep = "/") else p[1]
   }

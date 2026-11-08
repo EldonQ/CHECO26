@@ -93,13 +93,13 @@ soil_profile <- function(adir, dst = NULL, src_root = NULL) {
     d <- do.call(file.path, as.list(c(root_in, parts)))
     file.path(d, paste0(paste(parts, collapse = "_"), suffix, ".tif"))
   }
-  if (is.null(dst)) dst <- layer_path(c("glo", "soil", "csdlv2", adir), "_profile")
+  if (is.null(dst)) dst <- layer_path(c("reg", "soil", "csdlv2", adir), "_profile")
   if (file.exists(dst) && !identical(Sys.getenv("CHECO_FORCE"), "1") && check_alignment(dst))
     return(list(status = "skip", dst = dst))
 
   num <- NULL; den <- NULL
   for (k in seq_along(PROFILE_DEPTHS)) {
-    p <- in_path(c("glo", "soil", "csdlv2", adir, PROFILE_DEPTHS[k]))
+    p <- in_path(c("reg", "soil", "csdlv2", adir, PROFILE_DEPTHS[k]))
     if (!file.exists(p)) return(list(status = "error", dst = dst, note = paste("missing", p)))
     m <- terra::as.matrix(read_clean_r(p), wide = TRUE)
     if (is.null(num)) { num <- matrix(0, nrow(m), ncol(m)); den <- num }
@@ -135,7 +135,7 @@ main <- function(which = c("topo", "profile")) {
   print_grid()
 
   if (which == "topo") {
-    ep <- layer_path(c("glo", "topo", "chinadem", "elev"))
+    ep <- layer_path(c("reg", "topo", "chinadem", "elev"))
     if (!file.exists(ep)) stop("elev 层不存在，请先跑 03_ingest_static.R")
     elev <- terra::as.matrix(read_clean_r(ep), wide = TRUE)
     res <- as.numeric(CFG()$grid$resolution)
@@ -145,7 +145,7 @@ main <- function(which = c("topo", "profile")) {
 
     t0 <- Sys.time()
     asp <- horn_aspect(elev, res)
-    d1 <- layer_path(c("glo", "topo", "chinadem", "aspect"))
+    d1 <- layer_path(c("reg", "topo", "chinadem", "aspect"))
     atomic_write_raster(d1, terra::rast(asp, extent = terra::ext(g$rast), crs = g$crs), dtype = "float32")
     cat(sprintf("  aspect: %.1f 秒, 值域 [%.2f, %.2f]\n",
                 as.numeric(difftime(Sys.time(), t0, units = "secs")),
@@ -153,7 +153,7 @@ main <- function(which = c("topo", "profile")) {
 
     t0 <- Sys.time()
     tri <- riley_tri(elev)
-    d2 <- layer_path(c("glo", "topo", "chinadem", "tri"))
+    d2 <- layer_path(c("reg", "topo", "chinadem", "tri"))
     atomic_write_raster(d2, terra::rast(tri, extent = terra::ext(g$rast), crs = g$crs), dtype = "float32")
     cat(sprintf("  tri   : %.1f 秒, 值域 [%.2f, %.2f]\n",
                 as.numeric(difftime(Sys.time(), t0, units = "secs")),

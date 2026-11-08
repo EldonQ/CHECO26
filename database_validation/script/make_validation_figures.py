@@ -96,7 +96,7 @@ def fig_range(rows, out, n_all):
     for i in idx:
         if np.isnan(y[i]):
             continue
-        short = os.path.basename(rows[i]["relpath"])[:-4].replace("glo_", "")
+        short = os.path.basename(rows[i]["relpath"])[:-4].replace("reg_", "")
         ax.annotate(short, (x[i], y[i]), textcoords="offset points",
                     xytext=(4, 4), fontsize=7.5, color="#555555")
     fig.tight_layout()

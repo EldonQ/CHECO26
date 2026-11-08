@@ -9,7 +9,7 @@ OUT <- file.path(PATH_DOCS(), "figures")
 dir.create(OUT, showWarnings = FALSE, recursive = TRUE)
 
 YEAR <- if (length(commandArgs(TRUE))) as.integer(commandArgs(TRUE)[1]) else 2007L
-base_parts <- c("glo", "lulc", "hlu1km", as.character(YEAR), "urban")
+base_parts <- c("reg", "lulc", "hlu1km", as.character(YEAR), "urban")
 FS <- FOCAL_SPEC()
 
 # ---- 选定放大窗口：北京-天津-河北（urban 纹理最丰富）----

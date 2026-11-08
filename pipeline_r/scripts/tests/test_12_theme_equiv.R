@@ -12,22 +12,22 @@ sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/03_ingest_static.R"),
 tasks <- .ing$build_manifest()
 
 pick <- c(
-  "glo_bioclim_cnclim1km_present_bio01.tif",
-  "glo_bioclim_cnclim1km_present_bio12.tif",
-  "glo_bioclim_cnclim1km_present_sunp.tif",
-  "glo_soil_csdlv2_clay_0.tif",
-  "glo_soil_csdlv2_ph_0.tif",
-  "glo_soil_csdlv2_an_0.tif",
-  "glo_topo_chinadem_elev.tif",
-  "glo_topo_chinadem_slope.tif",
-  "glo_hydro_h90m_channel-dist-up-cel.tif",
-  "glo_hydro_h90m_channel-curv-cel.tif",
-  "glo_hydro_h90m_spi.tif",
-  "glo_hydro_h90m_channel-elv-up-cel.tif",
-  "glo_hydro_h90m_basin.tif",
-  "glo_vege_ch2019_ch.tif",
-  "glo_vege_agb2019_agb.tif",
-  "glo_vege_catcd_treecover.tif"
+  "reg_bioclim_cnclim1km_present_bio01.tif",
+  "reg_bioclim_cnclim1km_present_bio12.tif",
+  "reg_bioclim_cnclim1km_present_sunp.tif",
+  "reg_soil_csdlv2_clay_0.tif",
+  "reg_soil_csdlv2_ph_0.tif",
+  "reg_soil_csdlv2_an_0.tif",
+  "reg_topo_chinadem_elev.tif",
+  "reg_topo_chinadem_slope.tif",
+  "reg_hydro_h90m_channel-dist-up-cel.tif",
+  "reg_hydro_h90m_channel-curv-cel.tif",
+  "reg_hydro_h90m_spi.tif",
+  "reg_hydro_h90m_channel-elv-up-cel.tif",
+  "reg_hydro_h90m_basin.tif",
+  "reg_vege_ch2019_ch.tif",
+  "reg_vege_agb2019_agb.tif",
+  "reg_vege_catcd_treecover.tif"
 )
 
 name_of <- function(t) basename(layer_path(t$parts))

@@ -63,7 +63,7 @@ cat(sprintf("  同组像元对的一致性: %d / %d\n", agree, tot))
 # ---- 3) 全尺寸计时 ----
 cat("\n=== 3) 全尺寸计时 4062 x 4861 ===\n")
 for (cls in c("urban", "forest", "cropland")) {
-  p <- file.path(PATH_COV(), sprintf("glo/lulc/glu1km/2020/%s/glo_lulc_glu1km_2020_%s_prop.tif", cls, cls))
+  p <- file.path(PATH_COV(), sprintf("reg/lulc/glu1km/2020/%s/reg_lulc_glu1km_2020_%s_prop.tif", cls, cls))
   if (!file.exists(p)) next
   r <- terra::rast(p)
   v <- terra::values(r, mat = FALSE); nd <- terra::NAflag(r)

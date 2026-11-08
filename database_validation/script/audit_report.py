@@ -64,7 +64,7 @@ def main():
     A("")
     A("## 一、范围与结论")
     A("")
-    A("审计对象是交付树 `data/covariates/glo/` 下的全部 GeoTIFF，逐层打开、逐层读值，"
+    A("审计对象是交付树 `data/covariates/reg/` 下的全部 GeoTIFF，逐层打开、逐层读值，"
       "不抽样、不依赖溯源表里的记录值。")
     A("")
     A("| 项目 | 结果 |")

@@ -27,7 +27,7 @@ import numpy as np
 import rasterio
 
 ROOT = os.environ.get("CHECO_ROOT", r"E:\CHECO26\N-SDM")
-COV = os.path.join(ROOT, "data", "covariates", "glo")
+COV = os.path.join(ROOT, "data", "covariates", "reg")
 AUD = os.path.join(ROOT, "audit")
 NODATA = np.float32(-9999.0)
 
@@ -38,7 +38,7 @@ TOL_LOOSE = 1e-3
 def group_key(rel):
     """(dataset, year, scenario) for a base proportion layer, or None.
 
-    `rel` is relative to COV_ROOT, which already consumes the leading `glo/`
+    `rel` is relative to COV_ROOT, which already consumes the leading `reg/`
     level, so parts[0] is the theme and parts[1] the dataset. Only base layers
     count: a focal variant (``_prop_f1000``) is a window mean and does not sum to
     1 across classes, so including it would make every group fail by construction.

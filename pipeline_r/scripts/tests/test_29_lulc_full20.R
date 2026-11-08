@@ -5,7 +5,7 @@ Sys.setenv(CHECO_OUT_ROOT = OUT)
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
-REF <- file.path(PATH_COV(), "glo/lulc/glu1km/2020")
+REF <- file.path(PATH_COV(), "reg/lulc/glu1km/2020")
 #' shannon/edge/patch 层直接位于快照根；只有 *_prop 层按类别分子目录
 
 .ing <- new.env(parent = globalenv())
@@ -19,32 +19,32 @@ cat(sprintf("\n[全部四段] %s : %d 层, %.0f 秒\n\n", r$status, r$n,
             as.numeric(difftime(Sys.time(), t0, units = "secs"))))
 
 ref_path <- function(p) {
-  rest <- sub("^glo_lulc_glu1km_2020_", "", p)
+  rest <- sub("^reg_lulc_glu1km_2020_", "", p)
   if (grepl("^[a-z]+_prop", rest)) file.path(REF, sub("_.*$", "", rest), p)
   else file.path(REF, p)
 }
 
 checks <- list(
-  list(f = "glo_lulc_glu1km_2020_urban_prop.tif",              cat = TRUE,  tag = "prop base urban"),
-  list(f = "glo_lulc_glu1km_2020_cropland_prop_f1000.tif",     cat = FALSE, tag = "prop f1000"),
-  list(f = "glo_lulc_glu1km_2020_cropland_prop_f20000.tif",    cat = FALSE, tag = "prop f20000"),
-  list(f = "glo_lulc_glu1km_2020_shannon_f1000.tif",           cat = FALSE, tag = "shannon f1000"),
-  list(f = "glo_lulc_glu1km_2020_shannon_f5000.tif",           cat = FALSE, tag = "shannon f5000"),
-  list(f = "glo_lulc_glu1km_2020_shannon_f10000.tif",          cat = FALSE, tag = "shannon f10000"),
-  list(f = "glo_lulc_glu1km_2020_shannon_f20000.tif",          cat = FALSE, tag = "shannon f20000"),
-  list(f = "glo_lulc_glu1km_2020_edge.tif",                    cat = FALSE, tag = "edge base"),
-  list(f = "glo_lulc_glu1km_2020_edge_f1000.tif",              cat = FALSE, tag = "edge f1000"),
-  list(f = "glo_lulc_glu1km_2020_edge_f5000.tif",              cat = FALSE, tag = "edge f5000"),
-  list(f = "glo_lulc_glu1km_2020_edge_f10000.tif",             cat = FALSE, tag = "edge f10000"),
-  list(f = "glo_lulc_glu1km_2020_edge_f20000.tif",             cat = FALSE, tag = "edge f20000"),
-  list(f = "glo_lulc_glu1km_2020_patchdensity-all_f5000.tif",  cat = FALSE, tag = "patchdensity-all f5000"),
-  list(f = "glo_lulc_glu1km_2020_patchsize-all_f5000.tif",     cat = FALSE, tag = "patchsize-all f5000"),
-  list(f = "glo_lulc_glu1km_2020_patchdensity-all_f20000.tif", cat = FALSE, tag = "patchdensity-all f20000"),
-  list(f = "glo_lulc_glu1km_2020_patchsize-all_f20000.tif",    cat = FALSE, tag = "patchsize-all f20000"),
-  list(f = "glo_lulc_glu1km_2020_patchdensity-forest_f5000.tif", cat = FALSE, tag = "patchdensity-forest f5000"),
-  list(f = "glo_lulc_glu1km_2020_patchsize-forest_f5000.tif",    cat = FALSE, tag = "patchsize-forest f5000"),
-  list(f = "glo_lulc_glu1km_2020_patchdensity-forest_f20000.tif",cat = FALSE, tag = "patchdensity-forest f20000"),
-  list(f = "glo_lulc_glu1km_2020_patchsize-forest_f20000.tif",   cat = FALSE, tag = "patchsize-forest f20000")
+  list(f = "reg_lulc_glu1km_2020_urban_prop.tif",              cat = TRUE,  tag = "prop base urban"),
+  list(f = "reg_lulc_glu1km_2020_cropland_prop_f1000.tif",     cat = FALSE, tag = "prop f1000"),
+  list(f = "reg_lulc_glu1km_2020_cropland_prop_f20000.tif",    cat = FALSE, tag = "prop f20000"),
+  list(f = "reg_lulc_glu1km_2020_shannon_f1000.tif",           cat = FALSE, tag = "shannon f1000"),
+  list(f = "reg_lulc_glu1km_2020_shannon_f5000.tif",           cat = FALSE, tag = "shannon f5000"),
+  list(f = "reg_lulc_glu1km_2020_shannon_f10000.tif",          cat = FALSE, tag = "shannon f10000"),
+  list(f = "reg_lulc_glu1km_2020_shannon_f20000.tif",          cat = FALSE, tag = "shannon f20000"),
+  list(f = "reg_lulc_glu1km_2020_edge.tif",                    cat = FALSE, tag = "edge base"),
+  list(f = "reg_lulc_glu1km_2020_edge_f1000.tif",              cat = FALSE, tag = "edge f1000"),
+  list(f = "reg_lulc_glu1km_2020_edge_f5000.tif",              cat = FALSE, tag = "edge f5000"),
+  list(f = "reg_lulc_glu1km_2020_edge_f10000.tif",             cat = FALSE, tag = "edge f10000"),
+  list(f = "reg_lulc_glu1km_2020_edge_f20000.tif",             cat = FALSE, tag = "edge f20000"),
+  list(f = "reg_lulc_glu1km_2020_patchdensity-all_f5000.tif",  cat = FALSE, tag = "patchdensity-all f5000"),
+  list(f = "reg_lulc_glu1km_2020_patchsize-all_f5000.tif",     cat = FALSE, tag = "patchsize-all f5000"),
+  list(f = "reg_lulc_glu1km_2020_patchdensity-all_f20000.tif", cat = FALSE, tag = "patchdensity-all f20000"),
+  list(f = "reg_lulc_glu1km_2020_patchsize-all_f20000.tif",    cat = FALSE, tag = "patchsize-all f20000"),
+  list(f = "reg_lulc_glu1km_2020_patchdensity-forest_f5000.tif", cat = FALSE, tag = "patchdensity-forest f5000"),
+  list(f = "reg_lulc_glu1km_2020_patchsize-forest_f5000.tif",    cat = FALSE, tag = "patchsize-forest f5000"),
+  list(f = "reg_lulc_glu1km_2020_patchdensity-forest_f20000.tif",cat = FALSE, tag = "patchdensity-forest f20000"),
+  list(f = "reg_lulc_glu1km_2020_patchsize-forest_f20000.tif",   cat = FALSE, tag = "patchsize-forest f20000")
 )
 npass <- 0; ntot <- 0
 for (c in checks) {

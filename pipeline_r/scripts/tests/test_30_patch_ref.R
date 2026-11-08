@@ -3,13 +3,13 @@ Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
 source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
 
-REF <- file.path(PATH_COV(), "glo/lulc/glu1km/2020")
-OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_lulc_full/glo/lulc/glu1km/2020")
+REF <- file.path(PATH_COV(), "reg/lulc/glu1km/2020")
+OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_lulc_full/reg/lulc/glu1km/2020")
 
-files <- c("glo_lulc_glu1km_2020_patchdensity-all_f5000.tif",
-           "glo_lulc_glu1km_2020_patchsize-all_f5000.tif",
-           "glo_lulc_glu1km_2020_patchdensity-forest_f5000.tif",
-           "glo_lulc_glu1km_2020_patchsize-forest_f5000.tif")
+files <- c("reg_lulc_glu1km_2020_patchdensity-all_f5000.tif",
+           "reg_lulc_glu1km_2020_patchsize-all_f5000.tif",
+           "reg_lulc_glu1km_2020_patchdensity-forest_f5000.tif",
+           "reg_lulc_glu1km_2020_patchsize-forest_f5000.tif")
 
 for (f in files) {
   cat("\n=== ", f, " ===\n", sep = "")

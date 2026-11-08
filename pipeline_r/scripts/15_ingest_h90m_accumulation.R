@@ -136,7 +136,7 @@ main <- function(mode = c("make", "check")) {
   }
 
   # ---- 写基底 ----
-  stem <- file.path(OUT, "glo_hydro_h90m_accumulation")
+  stem <- file.path(OUT, "reg_hydro_h90m_accumulation")
   writeRaster(base, paste0(stem, ".tif"), overwrite = TRUE, datatype = "FLT4S",
               gdal = c("COMPRESS=DEFLATE", "TILED=YES", "PREDICTOR=3"))
   cat("  已写基底\n")

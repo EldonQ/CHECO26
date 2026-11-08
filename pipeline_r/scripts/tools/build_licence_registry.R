@@ -224,7 +224,7 @@ main <- function(mode = c("write", "dry")) {
                    fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE,
                    check.names = FALSE)
   act <- prov[prov$status == "active", ]
-  key <- vapply(strsplit(sub("^glo/", "", act$layer_path), "/"),
+  key <- vapply(strsplit(sub("^reg/", "", act$layer_path), "/"),
                 function(x) if (length(x) >= 2) paste(x[1], x[2], sep = "/") else x[1], "")
   tab <- table(key)
   reg$layers <- as.integer(tab[reg$dataset_key])

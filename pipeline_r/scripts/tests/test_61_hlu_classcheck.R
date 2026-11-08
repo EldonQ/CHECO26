@@ -40,7 +40,7 @@ src_frac <- sapply(names(LAB), function(k) {
 # ---- 2) 交付层：取同一网格上的均值 ----
 cat("读交付层...\n")
 del_frac <- sapply(names(LAB), function(k) {
-  p <- layer_path(c("glo", "lulc", "hlu1km", as.character(YEAR), k), "_prop")
+  p <- layer_path(c("reg", "lulc", "hlu1km", as.character(YEAR), k), "_prop")
   if (!file.exists(p)) return(NA_real_)
   as.numeric(terra::global(terra::rast(p), "mean", na.rm = TRUE)[1, 1])
 })

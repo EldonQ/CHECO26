@@ -12,9 +12,9 @@ cat(sprintf("溯源表 active: %d\n", nrow(prov)))
 cat(sprintf("磁盘已有    : %d (%.2f%%)\n", sum(ex), 100 * mean(ex)))
 cat(sprintf("尚缺        : %d\n\n", sum(!ex)))
 
-ds <- sub("^glo/([^/]+)/.*$", "\\2", prov$layer_path)
-ds <- paste(sub("^glo/([^/]+)/.*$", "\\1", prov$layer_path),
-            sub("^glo/[^/]+/([^/]+)/.*$", "\\1", prov$layer_path), sep = "/")
+ds <- sub("^reg/([^/]+)/.*$", "\\2", prov$layer_path)
+ds <- paste(sub("^reg/([^/]+)/.*$", "\\1", prov$layer_path),
+            sub("^reg/[^/]+/([^/]+)/.*$", "\\1", prov$layer_path), sep = "/")
 tab <- data.frame(theme_dataset = names(tapply(ex, ds, length)),
                   total = as.integer(tapply(ex, ds, length)),
                   have  = as.integer(tapply(ex, ds, sum)),

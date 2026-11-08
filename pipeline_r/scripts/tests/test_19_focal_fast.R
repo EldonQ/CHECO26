@@ -23,7 +23,7 @@ focal_mean_fast <- function(x, radius_cells) {
 }
 
 probe <- file.path(PATH_COV(),
-  "glo/lulc/glu1km/2020/cropland/glo_lulc_glu1km_2020_cropland_prop.tif")
+  "reg/lulc/glu1km/2020/cropland/reg_lulc_glu1km_2020_cropland_prop.tif")
 x <- terra::rast(probe)
 nd <- terra::NAflag(x); v <- terra::values(x, mat = FALSE)
 if (!is.na(nd)) v[!is.na(v) & v == nd] <- NA

@@ -55,7 +55,7 @@ build_manifest <- function() {
   # bioclim 28
   for (v in BIOCLIM_VARS) {
     tasks[[length(tasks) + 1L]] <- list(
-      parts = c("glo", "bioclim", "cnclim1km", "present", v),
+      parts = c("reg", "bioclim", "cnclim1km", "present", v),
       src = file.path(P("bioclim"), "cnclim1km/present/1991_2020", v,
                       sprintf("bioclim_cnclim1km_present_1991_2020_%s.tif", v)),
       rule = "continuous", scale = NULL, src_nodata = NULL, sentinel = NULL)
@@ -73,7 +73,7 @@ build_manifest <- function() {
       if (length(hits) != 1L)
         stop(sprintf("soil source ambiguous/missing: %s %s -> %d hits", attr, dsrc, length(hits)))
       tasks[[length(tasks) + 1L]] <- list(
-        parts = c("glo", "soil", "csdlv2", adir, dname),
+        parts = c("reg", "soil", "csdlv2", adir, dname),
         src = hits[[1]], rule = "continuous", scale = sc,
         src_nodata = -32768, sentinel = NULL)
     }
@@ -81,11 +81,11 @@ build_manifest <- function() {
 
   # topo 2
   tasks[[length(tasks) + 1L]] <- list(
-    parts = c("glo", "topo", "chinadem", "elev"),
+    parts = c("reg", "topo", "chinadem", "elev"),
     src = "E:/CHECO26/DEM/China_DEM_1km/Albers_105/DEM/chdem_105.tif",
     rule = "continuous", scale = NULL, src_nodata = -32768, sentinel = NULL)
   tasks[[length(tasks) + 1L]] <- list(
-    parts = c("glo", "topo", "chinadem", "slope"),
+    parts = c("reg", "topo", "chinadem", "slope"),
     src = "E:/CHECO26/DEM/China_DEM_1km/Albers_105/TIFF/chdem_Slope.tif",
     rule = "continuous", scale = NULL, src_nodata = NULL, sentinel = NULL)
 
@@ -95,8 +95,8 @@ build_manifest <- function() {
     src <- file.path(P("hydro_final"), v, sprintf("%s_china.tif", v))
     is_cat <- v %in% unlist(hcfg$categorical)
     parts <- if (v %in% DIST_VARS) {
-      c("glo", "dist", "h90m", gsub("_", "-", v))
-    } else c("glo", "hydro", "h90m", gsub("_", "-", v))
+      c("reg", "dist", "h90m", gsub("_", "-", v))
+    } else c("reg", "hydro", "h90m", gsub("_", "-", v))
     sc <- NULL
     if (!is.null(cm_exc[[v]])) sc <- as.numeric(cm_exc[[v]])
     else if (!is.null(scale_map[[v]])) sc <- as.numeric(scale_map[[v]])
@@ -110,16 +110,16 @@ build_manifest <- function() {
 
   # vege 3
   tasks[[length(tasks) + 1L]] <- list(
-    parts = c("glo", "vege", "agb2019", "agb"),
+    parts = c("reg", "vege", "agb2019", "agb"),
     src = file.path(P("agb"), "China_Forest_AGB_2019.tif"),
     rule = "downscale_continuous", scale = NULL, src_nodata = NULL, sentinel = NULL)
   tasks[[length(tasks) + 1L]] <- list(
-    parts = c("glo", "vege", "ch2019", "ch"),
+    parts = c("reg", "vege", "ch2019", "ch"),
     src = file.path(P("canopy_height"), "China_Forest_Canopy_Height_2019.tif"),
     rule = "downscale_continuous", scale = as.numeric(CFG()$units_scale$canopy_height),
     src_nodata = 65535, sentinel = NULL)
   tasks[[length(tasks) + 1L]] <- list(
-    parts = c("glo", "vege", "catcd", "treecover"),
+    parts = c("reg", "vege", "catcd", "treecover"),
     src = P("catcd"), rule = "downscale_continuous", scale = NULL,
     src_nodata = -128, sentinel = NULL)
 

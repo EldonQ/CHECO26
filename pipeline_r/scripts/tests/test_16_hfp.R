@@ -19,7 +19,7 @@ cat(sprintf("  全球值域 [%.4f, %.4f] ; NA 数 %s\n",
 rm(v); gc(verbose = FALSE)
 
 outdir <- file.path(PATH_SCRATCH(), "r_hfp_test"); ensure_dir(outdir)
-dst <- file.path(outdir, "glo_anthro_hfp_2000_hfp.tif")
+dst <- file.path(outdir, "reg_anthro_hfp_2000_hfp.tif")
 
 cat("\n=== 执行 warp（average）===\n")
 t0 <- Sys.time()
