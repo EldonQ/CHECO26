@@ -1,6 +1,6 @@
 # CHECO26 pipeline (R)
 
-This is the pipeline that produced the delivered archive: 21,110 layers, 170.9 GB,
+This is the pipeline that produced the delivered archive: 21,110 layers, 166.9 GB,
 float32 on the China_Albers 1-km grid.
 
 It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That

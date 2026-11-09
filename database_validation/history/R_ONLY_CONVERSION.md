@@ -97,7 +97,8 @@
 | 项目 | 变化 |
 |---|---|
 | `MANIFEST.csv` | 全量重建（21,118 行，1,547 s） |
-| `variable_dictionary.csv` | 567 行的值域与有效像元数更新 |
+| `variable_dictionary.csv` | 567 行的值域与有效像元数更新；5 个累积流层同步 |
+| `PUBLIC_RELEASE_MANIFEST.csv` | 用 `14_manifest.R release` 重新生成：层集合与许可分级不变（OPEN 21,025 / NC 80 / RESTRICTED 5），4 个 ChinaDEM 行的 `source_doi_url` 从“URL + 手写说明”改为纯 URL（说明仍在溯源表 `notes` 列） |
 | `provenance_table.csv` | 594 行 `actual_range` 与 `script_function` 改为 R 阶段；122 行 `expected_range` 按新实测重设 1% 包络；另同步 407 行 `actual_range` 漂移 |
 | `layers_audit.csv` | 全量重审（21,110 行，去重后唯一） |
 | `composition_identity.csv` | 全量重跑 |
@@ -108,8 +109,7 @@
 | 指标 | 转换前 | 转换后 |
 |---|---:|---:|
 | 总字节 | 169,401,430,367（169.4 GB） | **170,937,302,191（170.9 GB）** |
-> 注（2026-11-06）：静态层用 R 管线重跑并替换后，MANIFEST 合计为 168,487,420,000 字节量级（168.49 GB）；上表为当时状态；重跑后 covariates 合计 166.94 GB。
-
+> 注（2026-11-06）：静态层用 R 管线重跑并替换后，covariates 合计 166,943,445,874 字节（166.94 GB）；上表为当时状态。
 | 不同 SHA-256 | 14,047（66.5%） | **14,050（66.6%）** |
 | 重复组 / 重复层 | 1,167 / 7,063 | **1,164 / 7,060** |
 | glu1km 字节唯一 | 462 / 540（85.6%） | **465 / 540（86.1%）** |

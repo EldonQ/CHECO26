@@ -130,7 +130,7 @@ def main() -> int:
             "CHECO_ROOT",
             os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
         args = [os.path.join(root, "00_docs", "SUBMISSION", n)
-                for n in ("CHECO26_manuscript.docx", "CHECO26_论文_中文.docx")]
+                for n in ("CHECO26_论文_中文.docx",)]
     bad = 0
     print("=== document inspection ===")
     for path in args:

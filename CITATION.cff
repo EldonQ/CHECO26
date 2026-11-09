@@ -19,7 +19,7 @@ abstract: >-
   complementary depths: annual observed cover 2000-2025 (CLCD, 1,170 layers), a
   China-relevant projection (GLU1km, 540 layers) and a harmonised yearly
   reconstruction 1960-2100 under five SSP-RCP scenarios (18,440 layers). Total
-  volume is 170.9 GB.
+  volume is 166.9 GB.
 version: "1.0"
 date-released: "2026-10-26"
 license: "CC-BY-4.0"

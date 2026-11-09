@@ -200,7 +200,7 @@ passed the range check because the counts were blank and the summary read blank 
 zero; a proportion group with no inspectable cell reported `max|sum-1| = 0`; the
 climate comparison returned success after comparing nothing; `chk()` passed when both
 sides were `NA`. All four are fixed, and the strengthened audit still clears all
-21,110 layers. Details and the remaining limits are in `AUDIT_OF_AUDITS.md`.
+21,110 layers. Details and the remaining limits are in [`history/AUDIT_OF_AUDITS.md`](history/AUDIT_OF_AUDITS.md).
 
 ## Ten errors found in our own description of the archive
 
@@ -267,12 +267,16 @@ in neither the repository nor the delivery.
 
 ## Layout
 
+Everything that records a past state — the earlier campaign, the manuscript review,
+the clean-shell verification run and the R-conversion history — lives in `history/`.
+The files at the top of this directory describe the archive as it stands today.
+
 | Path | Content |
 |---|---|
 | `VERIFICATION_REPORT.md` | full delivery verification report |
 | `INDEPENDENT_VERIFICATION.md` | the independent recomputation, written up separately |
-| `MANUSCRIPT_REVIEW.md` | the simulated three-seat review of the manuscript: what was accepted and fixed, what was rejected with evidence, and what would need new data |
-| `VERIFICATION_RUN.md` | one clean-shell run of the whole chain, with per-step times and results: `scripts/audit/run_full_verification.py` |
+| [`history/MANUSCRIPT_REVIEW.md`](history/MANUSCRIPT_REVIEW.md) | the simulated three-seat review of the manuscript: what was accepted and fixed, what was rejected with evidence, and what would need new data |
+| [`history/VERIFICATION_RUN.md`](history/VERIFICATION_RUN.md) | one clean-shell run of the whole chain, with per-step times and results: `scripts/audit/run_full_verification.py` |
 | `result_dataframe/per_layer_stats.csv` | one row per layer: theme, dataset, unit, n_valid, na_frac, min, max, bytes, SHA-256, licence class, release status |
 | `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
 | `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
@@ -282,4 +286,4 @@ recomputes the headline numbers from the delivery and flags any place — manusc
 carries a retired value, which is how the manifest row-count and size mismatch was found; `check_docx_quality.py`
 inspects the generated Word files rather than their source, and is what caught the Markdown backticks that had
 survived into ten paragraphs of the English manuscript |
-| `earlier_campaign/` | the earlier validation campaign, kept for provenance only |
+| [`history/earlier_campaign/`](history/earlier_campaign/) | the earlier validation campaign, kept for provenance only |
