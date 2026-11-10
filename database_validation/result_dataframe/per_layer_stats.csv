@@ -1,4 +1,4 @@
-relpath,theme,dataset,unit,n_valid,na_frac,vmin,vmax,bytes,sha256,licence_class,licence,release_status
+﻿relpath,theme,dataset,unit,n_valid,na_frac,vmin,vmax,bytes,sha256,licence_class,licence,release_status
 reg/anthro/hfp/2000/hfp/reg_anthro_hfp_2000_hfp.tif,anthro,hfp,指数(0-50),9462361,0.520781,0,50,28892354,d5445652455b0a088d6332a65c9c9f5beb46c86220eb826f21437b8d83efbede,OPEN,CC-BY-4.0,released
 reg/anthro/hfp/2000/hfp/reg_anthro_hfp_2000_hfp_f1000.tif,anthro,hfp,指数(0-50),9474455,0.520169,0,49.542896270752,28574548,ad83a980a5aaa88a8b42d44a84ffd687d33389a0e220e9f39ae5c96db6d92eff,OPEN,CC-BY-4.0,released
 reg/anthro/hfp/2000/hfp/reg_anthro_hfp_2000_hfp_f10000.tif,anthro,hfp,指数(0-50),9488721,0.519446,0,47.8133201599121,25283108,695749793947777ecf5c927dec985ec4d525aeb3a26ebb08b1d8c68062128180,OPEN,CC-BY-4.0,released
@@ -684,7 +684,7 @@ reg/dist/h90m/stream-dist-up-near/reg_dist_h90m_stream-dist-up-near.tif,dist,h90
 reg/dist/h90m/stream-dist-up-near/reg_dist_h90m_stream-dist-up-near_max.tif,dist,h90m,m,9463334,0.520732,0,12886,7594524,c5982b50bbfa3c43ed5418113b338fa221609b6ced3f3782032c56be87ea6ced,NC,CC-BY-NC-4.0,released
 reg/dist/h90m/stream-dist-up-near/reg_dist_h90m_stream-dist-up-near_min.tif,dist,h90m,m,9463334,0.520732,0,8161,179706,b7b4b0e0ed97921bb6ed76b7745ca25bc22b2f46ab467b0de0888eaec4102307,NC,CC-BY-NC-4.0,released
 reg/dist/osm/trail/reg_dist_osm_trail.tif,dist,osm,m,9490310,0.519366,0,372941,5875386,2c971f17ac80fb8422b1dd6d29cb7cde01012a8aad7b75caa2eb1e4f8cac3c27,OPEN,ODbL-1.0,released
-reg/dist/smod/urban/reg_dist_smod_urban.tif,dist,smod,m,9490310,0.519366,0,390079.46875,9959224,c220cd93ec019ec2d36ba7ef100e7c6b5842879ffbc0a6945b8f2ad0dbff7e24,OPEN,CC-BY-4.0,released
+reg/dist/smod/urban/reg_dist_smod_urban.tif,dist,smod,m,9490310,0.519366,0,390079.46875,12692616,9314c39d711d1ff813b998a5e528bd644dc2edc3e4e2bd6de4704530ad55e976,OPEN,CC-BY-4.0,released
 reg/hydro/h90m/basin/reg_hydro_h90m_basin.tif,hydro,h90m,类别编码,9461182,0.520841,613279,1119027,552896,871b82d00c13a9108657e63bb33987c63e0e9244fb899b018b845adb889cf498,NC,CC-BY-NC-4.0,released
 reg/hydro/h90m/channel-curv-cel/reg_hydro_h90m_channel-curv-cel.tif,hydro,h90m,1/m,9438998,0.521964,0,1.66084766387939,34158847,7d0d76e74987c0ed59366cc87b93882f7991963bae5441864472b86cac10bcf7,NC,CC-BY-NC-4.0,released
 reg/hydro/h90m/channel-dist-dw-seg/reg_hydro_h90m_channel-dist-dw-seg.tif,hydro,h90m,m,9438998,0.521964,56,44217.8203125,33462655,f33731d64fb3a189ca84e2ab58627b1871a8183fe19ba52a3d1bd99292732462,NC,CC-BY-NC-4.0,released
