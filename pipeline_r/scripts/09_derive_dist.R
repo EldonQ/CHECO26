@@ -64,9 +64,11 @@ feat_osm_trail <- function() {
 }
 
 feat_smod_urban <- function() {
-  ep <- as.integer(unlist(CFG()$smod_epochs))[1]   # Python: SMOD_EPOCH 单值
-  # 与 Python 一致：取 SMOD_EPOCH。config 里 smod_epochs 是列表，取最后一个（2020）
-  ep <- tail(as.integer(unlist(CFG()$smod_epochs)), 1)
+  # 该距离层的定义是"到 GHS-SMOD 2020 城市类 21/22/23 的距离"（见溯源表）。
+  # smod_epochs 是逐年 urbanprop 层的全集（1975-2030），取末值会得到 2030，
+  # 与图层定义不符（2026-11-10 修正）。改读专用键 dist_smod_epoch。
+  ep <- as.integer(unlist(CFG()$dist_smod_epoch))[1]
+  if (is.na(ep)) stop("config: dist_smod_epoch missing")
   d <- sprintf("GHS_SMOD_E%d_GLOBE_R2023A_4326_30ss_V2_0", ep)
   src <- file.path(P("smod_ghs"), d, paste0(d, ".tif"))
   if (!file.exists(src)) stop("SMOD not found: ", src)

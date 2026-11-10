@@ -66,19 +66,19 @@ Requires R with `terra` and `yaml`. Both files it needs are in this repository:
 
 | Check | What it verifies |
 |---|---|
-| D1 | 97.92% of the delivered zero-distance cells are reproduced; mean absolute distance difference 69 m over 9,490,310 cells (the largest distance is 390 km) |
+| D1 | 100.00% of the delivered zero-distance cells are reproduced; mean absolute distance difference 0 m over 9,490,310 cells (the largest distance is 390 km) — an exact reproduction |
 | D2 | a single feature cell at the grid centre yields exactly `1000 * hypot(dx, dy)` over a 41 × 41 window (max error 0.0017 m, i.e. float32 rounding) |
 
 D2 is the strict check: it verifies the geometry of the distance transform
 against closed-form values, independent of any delivered layer.
 
-## Why 2% of the settlement cells differ
+## Why D1 is now exact
 
-The delivered layer was built from an earlier release of GHS-SMOD. The two
-releases place a few thousand settlement cells differently, which moves the
-feature set by about 2% and shifts distances near those cells (mean 69 m over
-the full grid). The distance transform itself is exact — D2 shows it — so this
-is a source-version effect, not a difference in method.
+Earlier versions of this example disagreed with the delivered layer on about 2%
+of the settlement cells (mean 69 m). The cause was not the example: the
+production layer had been built from the **2030** GHS-SMOD epoch, while its
+documentation and this example use **2020**. The production layer has since been
+rebuilt from the 2020 epoch, so the two now agree pixel for pixel.
 
 ## Applying it to your own features
 

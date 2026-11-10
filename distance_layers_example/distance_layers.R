@@ -78,9 +78,9 @@ if (file.exists(ref_path)) {
   cat(sprintf("  reproduced; mean |distance difference| = %.0f m over %d cells -> %s\n",
               mad, sum(ok), if (recall >= 0.95 && mad < 2000) "PASS" else "FAIL"))
   if (recall < 0.95 || mad >= 2000) stop("distance surface deviates from the delivered layer")
-  cat(paste0("  (the 2% residual is a source-version effect: the delivered layer was built\n",
-             "   from an earlier GHS-SMOD release, so a few thousand settlement cells sit\n",
-             "   elsewhere. The distance transform itself is verified exactly by D2.)\n"))
+  cat(paste0("  (the delivered layer and this example both use the GHS-SMOD 2020 epoch,\n",
+             "   so D1 is an exact reproduction, not a statistical agreement. The distance\n",
+             "   transform itself is additionally verified by the analytic check D2.)\n"))
 } else {
   cat("check D1: delivered reference layer not present, skipped\n")
 }
