@@ -23,15 +23,19 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(digest) })
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 # ---- 许可证分级表（按数据集）----------------------------------------------
 # 键 = relpath 的前三段（theme/dataset），值 = (class, reason)
 LICENCE <- list(
-  "bioclim/cnclim1km"             = c("OPEN",   "Derived from CHELSA V2.1 (CC BY 4.0) and China 1 km baseline climate; see LICENCE_MATRIX.md"),
-  "bioclim/cnclim1km-ensmean"     = c("OPEN",   "Multi-GCM ensemble mean derived from CMIP6; CMIP6 model output is freely redistributable"),
-  "bioclim/cnclim1km-bcc-csm2-mr" = c("OPEN",   "Single-GCM chain derived from CMIP6; freely redistributable"),
+  "bioclim/chelsa21"               = c("OPEN",   "CHELSA v2.1 bioclimatic variables (CC0-1.0); see LICENCE_REGISTRY.csv"),
+  "bioclim/chelsa21-gfdl-esm4"     = c("OPEN",   "CHELSA v2.1 downscaled GFDL-ESM4 (CC0-1.0)"),
+  "bioclim/chelsa21-ipsl-cm6a-lr"  = c("OPEN",   "CHELSA v2.1 downscaled IPSL-CM6A-LR (CC0-1.0)"),
+  "bioclim/chelsa21-mpi-esm1-2-hr" = c("OPEN",   "CHELSA v2.1 downscaled MPI-ESM1-2-HR (CC0-1.0)"),
+  "bioclim/chelsa21-mri-esm2-0"    = c("OPEN",   "CHELSA v2.1 downscaled MRI-ESM2-0 (CC0-1.0)"),
+  "bioclim/chelsa21-ukesm1-0-ll"   = c("OPEN",   "CHELSA v2.1 downscaled UKESM1-0-LL (CC0-1.0)"),
+  "bioclim/chelsa21-ensmean"       = c("OPEN",   "Equal-weight mean of 5 CHELSA v2.1 GCMs (CC0-1.0)"),
   "soil/csdlv2"                   = c("UNVERIFIED", "CSDLv2 licence text has not been read; see LICENCE_MATRIX.md section 2"),
   "lulc/glu1km"                   = c("OPEN",   "Global LULC projection dataset (Zhang et al. 2023, Sci Data); see LICENCE_MATRIX.md"),
   "lulc/clcd"                     = c("OPEN",   "CLCD v1.0.5, CC BY 4.0, DOI 10.5281/zenodo.18180184 (verified)"),

@@ -1,7 +1,7 @@
 # =============================================================================
 # R/12_make_docs.R  --  变量字典与交付文档
 #
-# 与早期 Python 版 09_make_docs.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
+# 与早期 Python 版 09_make_docs.py 逐项对齐（该脚本已归档于 archive/removed_python_pipeline_20261025/）
 #
 # 策略（与 13_make_provenance.R 一致）：现有 1,600 行的 unit/note 已人工校对，
 # 不重推，而是保留已有行、剔除撤出数据集、为新数据集生成行。
@@ -12,7 +12,7 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(terra) })
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 VD_PATH <- function() file.path(PATH_DOCS(), "variable_dictionary.csv")
@@ -40,19 +40,38 @@ parse_relpath <- function(rp) {
   list(theme = parts[2], dataset = parts[3], file = fn, suffix = suffix)
 }
 
+# ---- CHELSA bioclim 变量单位（按变量区分，而非按数据集）------------------
+CHELSA_UNIT <- c(
+  bio01="°C", bio02="°C", bio03="%", bio04="°C×100", bio05="°C", bio06="°C", bio07="°C",
+  bio08="°C", bio09="°C", bio10="°C", bio11="°C",
+  bio12="mm", bio13="mm", bio14="mm", bio15="%", bio16="mm", bio17="mm", bio18="mm", bio19="mm",
+  gdd0="°C·day", gdd5="°C·day", gdd10="°C·day"
+)
+
 # ---- 新数据集行 ----------------------------------------------------------
 mk_vd_rows <- function(prov) {
   out <- list()
   for (i in seq_len(nrow(prov))) {
     rp <- prov$layer_path[i]
     pr <- parse_relpath(rp)
-    if (is.na(pr$dataset) || !pr$dataset %in% names(NEW_META)) next
-    meta <- NEW_META[[pr$dataset]]
-    out[[length(out) + 1L]] <- data.frame(
-      relpath = rp, theme = pr$theme, dataset = pr$dataset,
-      unit = meta$unit, value_min = NA_real_, value_max = NA_real_,
-      n_valid = NA_integer_, suffix = pr$suffix, note = meta$note,
-      sdm_note = "", stringsAsFactors = FALSE)
+    if (is.na(pr$dataset)) next
+    if (pr$theme == "bioclim" && grepl("^chelsa21", pr$dataset)) {
+      var <- tail(strsplit(sub("\\.tif$", "", pr$file), "_")[[1]], 1)
+      unit <- if (var %in% names(CHELSA_UNIT)) CHELSA_UNIT[[var]] else ""
+      out[[length(out) + 1L]] <- data.frame(
+        relpath = rp, theme = pr$theme, dataset = pr$dataset,
+        unit = unit, value_min = NA_real_, value_max = NA_real_,
+        n_valid = NA_integer_, suffix = pr$suffix,
+        note = "CHELSA v2.1 生物气候变量（标准口径，1km 重投影）",
+        sdm_note = "", stringsAsFactors = FALSE)
+    } else if (pr$dataset %in% names(NEW_META)) {
+      meta <- NEW_META[[pr$dataset]]
+      out[[length(out) + 1L]] <- data.frame(
+        relpath = rp, theme = pr$theme, dataset = pr$dataset,
+        unit = meta$unit, value_min = NA_real_, value_max = NA_real_,
+        n_valid = NA_integer_, suffix = pr$suffix, note = meta$note,
+        sdm_note = "", stringsAsFactors = FALSE)
+    }
   }
   if (!length(out)) return(NULL)
   do.call(rbind, out)
@@ -66,8 +85,10 @@ main <- function(fill_stats = TRUE) {
   cat(sprintf("现有字典: %d 行；溯源表: %d 行\n", nrow(base), nrow(prov)))
 
   drop <- grepl("^reg/anthro/(landscan|foothii)/", base$relpath)
-  base <- base[!drop, ]
-  cat(sprintf("  剔除 LandScan/footHII: %d 行，余 %d 行\n", sum(drop), nrow(base)))
+  drop_bio <- grepl("^reg/bioclim/cnclim1km", base$relpath)
+  base <- base[!drop & !drop_bio, ]
+  cat(sprintf("  剔除 LandScan/footHII: %d 行；旧 cnclim1km bioclim: %d 行，余 %d 行\n",
+              sum(drop), sum(drop_bio), nrow(base)))
 
   new <- mk_vd_rows(prov)
   cat(sprintf("  新数据集行: %d 行\n", nrow(new)))
@@ -86,13 +107,14 @@ main <- function(fill_stats = TRUE) {
   # 只保留溯源表中仍为 active 的层
   act <- prov$layer_path[prov$status == "active"]
   out <- out[out$relpath %in% act, ]
-  cat(sprintf("合并后: %d 行（期望 21,110）\n", nrow(out)))
+  cat(sprintf("合并后: %d 行（期望 21,788）\n", nrow(out)))
   stopifnot(!anyDuplicated(out$relpath))
 
   if (fill_stats) {
     cat("读取已存在层填 value_min/max/n_valid ...\n")
     root <- PATH_COV(); n <- 0L; t0 <- Sys.time()
     for (i in seq_len(nrow(out))) {
+      if (!is.na(out$n_valid[i])) next
       p <- file.path(root, out$relpath[i])
       if (!file.exists(p)) next
       st <- tryCatch(raster_stats(p), error = function(e) NULL)

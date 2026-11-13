@@ -9,6 +9,8 @@ the independent recomputation is [`INDEPENDENT_VERIFICATION.md`](INDEPENDENT_VER
 and the layer-by-layer audit is [`DATA_QUALITY_AUDIT.md`](DATA_QUALITY_AUDIT.md).
 This README is the summary; where they disagree, the underlying reports win.
 
+> **Bioclim replacement (2026-11-13).** The reports below were produced on the pre-replacement 21,110-layer tree (bioclim = cnclim1km). The bioclim theme has since been rebuilt from CHELSA v2.1 (1,210 layers, CC0-1.0); the database now holds 21,788 layers. The 20,578 non-bioclim layers are unchanged, and the 1,210 CHELSA bioclim layers passed a dedicated acceptance (`pipeline_r/scripts/tools/accept_chelsa.R`, 0 failures). The 21,110-layer counts below are historical.
+
 **Read the coverage column before the result column.** Two of the six checks open
 every layer and four do not. A "pass" from a sampled check is not evidence about
 the layers it never touched, and the numbers below never present it as such.

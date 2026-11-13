@@ -10,15 +10,8 @@
 #
 # 用法：
 #   Rscript R/tools/check_docs_consistency.R
-.root <- Sys.getenv("CHECO_ROOT", "")
-if (!nzchar(.root)) {
-  .a <- grep("^--file=", commandArgs(FALSE), value = TRUE)
-  .d <- if (length(.a)) dirname(normalizePath(sub("^--file=", "", .a[1]))) else getwd()
-  while (!file.exists(file.path(.d, "R", "_bootstrap.R")) && dirname(.d) != .d) .d <- dirname(.d)
-  .root <- .d
-}
-Sys.setenv(CHECO_ROOT = .root)
-source(file.path(.root, "R", "_bootstrap.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
 
 bad <- 0L; ok <- 0L
 chk <- function(what, claimed, actual) {
@@ -67,8 +60,8 @@ main <- function() {
                    fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
   n_active <- sum(prov$status == "active")
   n_all    <- nrow(prov)
-  chk("active 层数（应为 21,110）", 21110L, n_active)
-  chk("provenance 总行数（active + withdrawn）", n_all, 21118L)
+  chk("active 层数（应为 21,788）", 21788L, n_active)
+  chk("provenance 总行数（active + withdrawn）", n_all, 21796L)
 
   # ---------- 3) 已知限制条数 ----------
   cat("\n3) 已知限制条数（README vs Usage Notes）\n")
@@ -114,11 +107,17 @@ main <- function() {
       chk("\u8bba\u6587\u4e3b\u9898\u6570", gp("(eight|ten) themes"),
           if (n_th == 8L) "eight" else "ten")
     }
+    # 2026-10-26 改：论文把主题汇总表折进了正文（表 1 -> 一句话），
+    # 因此把提取范围锚定到「按主题计：…」这一句；若该句不存在则退回全文，
+    # 同时兼容旧的表格单元格写法 `| `lulc` | **20,150**`。
+    zh_scope <- ptxt
+    m_clause <- regmatches(ptxt, regexpr("\u6309\u4e3b\u9898\u8ba1\uff1a[^\u3002]*", ptxt))
+    if (length(m_clause)) zh_scope <- m_clause
     for (nm in c("lulc", "bioclim", "soil", "anthro", "hydro", "vege", "dist", "topo")) {
-      # 2026-10-21 改：原来要求单元格写成 "(`lulc`)"，绑定了一种排版；
-      # 改为 `| `lulc` | **20,150**` 这种更自然的形式，与论文的主题汇总表一致。
-      pat <- sprintf("\\| `%s` \\| \\*\\*([0-9,]+)\\*\\*", nm)
-      chk(sprintf("\u8bba\u6587 %s \u5408\u8ba1", nm), gp(pat),
+      pat <- sprintf("`?%s`?[^0-9]{0,24}([0-9][0-9,]*)", nm)
+      got <- regmatches(zh_scope, regexpr(pat, zh_scope))
+      got <- if (length(got)) sub(pat, "\\1", got) else NA_character_
+      chk(sprintf("\u8bba\u6587 %s \u5408\u8ba1", nm), got,
           format(sum(th2 == nm), big.mark = ","))
     }
     ds2 <- unique(paste(sub("/.*", "", sub("^reg/", "", act2$layer_path)),

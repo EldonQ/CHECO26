@@ -1,5 +1,7 @@
 # CHECO26 数据质量审计
 
+> **更新（2026-11-13）**：本审计针对替换前的 21,110 层交付树（bioclim 为旧 cnclim1km）。bioclim 主题已整体替换为 CHELSA v2.1（1,210 层，标准 BioClim 口径，CC0-1.0），全库现为 21,788 层；旧 cnclim1km 532 层已归档。其中 20,578 个非 bioclim 层未变动，1,210 个 CHELSA bioclim 层已通过专项验收（逐层几何/掩膜/NoData/值域 + bio02/03/05/06 标准口径 + 磁盘=清单=溯源=字典四方一致，`pipeline_r/scripts/tools/accept_chelsa.R`，0 失败）。下文 21,110 与 cnclim1km 非标准口径分析保留为**历史记录**。
+
 本文件由 `scripts/audit/audit_report.py` 从 `audit/` 下的审计表生成，文中每个数字都可在对应 CSV 中查到，没有任何一个数字是手写的。重跑 `audit_data_quality.py`、`audit_composition.py`、`audit_fidelity.py` 与 `audit_summarize.py` 即可完整复现。
 
 ## 一、范围与结论

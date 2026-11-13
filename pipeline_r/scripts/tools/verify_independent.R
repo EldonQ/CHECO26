@@ -9,9 +9,9 @@
 # 所以本脚本对每一项都强制输出"比较次数"，且断言里包含次数 > 0。
 #
 # 用法：Rscript R/tools/verify_independent.R
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
 
-ROOT  <- Sys.getenv("CHECO_ROOT", getwd())
+ROOT  <- "E:/CHECO26/N-SDM"
 COV   <- file.path(ROOT, "data/covariates")
 DOCS  <- file.path(ROOT, "00_docs")
 TPL   <- file.path(ROOT, "data/template_albers1km.tif")
@@ -36,7 +36,7 @@ cat("================================================================\n\n")
 cat("A. 层数与清单\n")
 all_tif <- list.files(COV, pattern = "\\.tif$", recursive = TRUE, full.names = TRUE)
 all_tif <- all_tif[!grepl("\\.(aux\\.xml|tmp\\.tif|ovr)$", all_tif)]
-say(length(all_tif) == 21110L, "covariates 下 tif 层数 = 21,110",
+say(length(all_tif) == 21788L, "covariates 下 tif 层数 = 21,788",
     sprintf("实测 %d（比较 1 次）", length(all_tif)))
 
 man <- read.csv(file.path(DOCS, "MANIFEST.csv"), fileEncoding = "UTF-8-BOM",
@@ -44,7 +44,7 @@ man <- read.csv(file.path(DOCS, "MANIFEST.csv"), fileEncoding = "UTF-8-BOM",
 man_layers <- man[grepl("^covariates/", man$relpath), ]
 say(nrow(man) == 21118L, "MANIFEST 总行数 = 21,118",
     sprintf("实测 %d（比较 1 次）", nrow(man)))
-say(nrow(man_layers) == 21110L, "MANIFEST 中 covariates 行 = 21,110",
+say(nrow(man_layers) == 21788L, "MANIFEST 中 covariates 行 = 21,788",
     sprintf("实测 %d（比较 1 次）", nrow(man_layers)))
 
 # 清单与磁盘双向差集

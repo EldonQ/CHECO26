@@ -152,12 +152,23 @@ lulc_legend:                   # Zhang et al. 2023 (figshare.23542860) 原生图
   6: water
 
 climate:
-  chains: [ensmean, bcc_csm2_mr]     # 用户定案：仅两条链入主树
-  ssps: [ssp126, ssp245, ssp585]
-  periods:                            # 目录中心年 -> 源数据原生时段文件夹名
-    "2030": "2021_2040"
-    "2055": "2041_2070"
-    "2085": "2071_2100"
+  # 2026-11-12 起 bioclim 主题改用 CHELSA v2.1（标准 BioClim 口径，CC0-1.0），
+  # 替代 cnclim1km（其 bio02/03/05/06/07 为月极值口径，非标准）。旧层归档于 archive/。
+  # 源：F:/LLQ/CHELSA-bioclim/CHELSA_v2.1（桶 os.unil.cloud.switch.ch/chelsa02）。
+  source: chelsa21                 # 现值数据集名；未来链 = chelsa21-<gcm> 与 chelsa21-ensmean
+  present_period: "1981-2010"      # CHELSA 现值气候态
+  n_bio: 19                        # bio01..bio19
+  extra_vars: [gdd0, gdd5, gdd10]  # 生长度日（基准 0/5/10°C）
+  gcms: [GFDL-ESM4, IPSL-CM6A-LR, MPI-ESM1-2-HR, MRI-ESM2-0, UKESM1-0-LL]
+  chains: [gfdl-esm4, ipsl-cm6a-lr, mpi-esm1-2-hr, mri-esm2-0, ukesm1-0-ll, ensmean]
+  ssps: [ssp126, ssp370, ssp585]   # CHELSA 提供 126/370/585（无 245）
+  periods:                         # 目录中心年 -> CHELSA 原生时段文件夹名
+    "2025": "2011-2040"
+    "2055": "2041-2070"
+    "2085": "2071-2100"
+  bio03_scale: 100                 # CHELSA bio03 原生分数(0-1)，×100 → WorldClim 百分数口径
+  crop_lonlat: [70, 138, 15, 56]   # 投影前裁剪窗口（lon_min,lon_max,lat_min,lat_max）
+  # ensmean = 5 个已交付 GCM 层的逐像元等权算术平均（后处理，非独立降尺度）
 
 lulc_scenarios:                # 未来 LULC 原生快照（与气候 SSP 口径一致，仅 126/245/585）
   ssps: [ssp126, ssp245, ssp585]
@@ -172,7 +183,8 @@ paths:
   scratch: "scratch"
   china_shp: "E:/CHECO26/china/china.shp"
   # ---- 源数据 ----
-  bioclim: "E:/CHECO26/Bioclim/CHNECO26_Bioclim/bioclim"
+  bioclim: "E:/CHECO26/Bioclim/CHNECO26_Bioclim/bioclim"   # 旧 cnclim1km 源（已停用，仅存档参考）
+  chelsa: "F:/LLQ/CHELSA-bioclim/CHELSA_v2.1"               # CHELSA v2.1 bioclim 源（现行）
   soil_1km: "E:/CHECO26/CSDLv2/1km"
   dem_final: "E:/CHECO26/DEM/China_DEM_1km"          # elev/slope 实际源（chdem_105.tif / chdem_Slope.tif）；旧 E:/CHECO26/Final 已于 2026-08-07 全库校验通过后删除
   hydro_final: "E:/h90m/Final"                            # 60 层旧成果

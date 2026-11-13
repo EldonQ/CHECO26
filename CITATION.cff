@@ -2,14 +2,14 @@ cff-version: 1.2.0
 message: >-
   If you use CHECO26, please cite this database and the source products listed
   under `references`. The repository's own code and documentation are CC BY 4.0,
-  but the data layers carry per-layer licences: 21,023 layers are CC BY 4.0, 76
-  CC BY-NC 4.0, 4 CC BY-NC-SA 4.0, 1 Copernicus and 1 ODbL 1.0. Check the licence
+  but the data layers carry per-layer licences: 20,491 layers are CC BY 4.0, 1,210
+  CC0-1.0, 76 CC BY-NC 4.0, 4 CC BY-NC-SA 4.0, 1 Copernicus and 1 ODbL 1.0. Check the licence
   fields of a layer before redistributing it.
 title: "CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research"
 abstract: >-
-  A uniform-grid library of 21,110 environmental layers covering China at 1 km in
+  A uniform-grid library of 21,788 environmental layers covering China at 1 km in
   an equal-area Albers projection (WGS 84, central meridian 105 E, standard
-  parallels 25 N and 47 N). Twenty-one dataset entries drawn from nineteen source
+  parallels 25 N and 47 N). Twenty-five dataset entries drawn from nineteen source
   products across eight categories (bioclim, soil, lulc, anthro, hydro, vege,
   dist, topo) are standardised to one grid of 4,861 x 4,062 cells, one data type
   (float32) and one NoData convention (-9999). Besides the harmonised source
@@ -19,7 +19,7 @@ abstract: >-
   complementary depths: annual observed cover 2000-2025 (CLCD, 1,170 layers), a
   China-relevant projection (GLU1km, 540 layers) and a harmonised yearly
   reconstruction 1960-2100 under five SSP-RCP scenarios (18,440 layers). Total
-  volume is 166.9 GB.
+  volume is 183.1 GB.
 version: "1.0"
 date-released: "2026-10-26"
 license: "CC-BY-4.0"
@@ -46,16 +46,21 @@ authors:
     affiliation: "to be completed before release"
 references:
   - type: dataset
-    title: "A 1 km monthly dataset of historical and future climate changes over China (V8)"
+    title: "Climatologies at high resolution for the earth's land surface areas (CHELSA v2.1)"
     authors:
-      - name: "Hu, X."
-      - name: "Shi, S."
-      - name: "Zhou, B."
-      - name: "Ni, J."
-    year: 2025
+      - name: "Karger, D. N."
+      - name: "Conrad, O."
+      - name: "Böhner, J."
+      - name: "Kawohl, T."
+      - name: "Kreft, H."
+      - name: "Soria-Auza, R. W."
+      - name: "Zimmermann, N. E."
+      - name: "Linder, H. P."
+      - name: "Kessler, M."
+    year: 2021
     publisher:
-      name: "Science Data Bank"
-    doi: "10.57760/sciencedb.13546"
+      name: "EnviDat"
+    doi: "10.16904/envidat.228.v2.1"
   - type: dataset
     title: "A China dataset of soil properties for land surface modelling (version 2, CSDLv2)"
     authors:

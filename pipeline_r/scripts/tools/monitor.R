@@ -3,10 +3,10 @@
 #
 # 用法： Rscript R/tools/monitor.R
 # 设计为可反复运行；每次追加一行，便于事后画曲线 / 判断速率衰减。
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
 
-TARGET <- 21110L
+TARGET <- 21788L
 LOG <- file.path(CHECO_ROOT, "logs", "monitor.csv")
 
 #' 按溯源表逐个 file.exists（权威计数，不受 .tmp.tif 污染）

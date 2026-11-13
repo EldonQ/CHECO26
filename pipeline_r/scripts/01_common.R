@@ -118,9 +118,11 @@ terra_method <- function(m) {
 #' @param apply_mask 是否套中国掩膜（默认 TRUE）
 warp_to_template <- function(src, dst, method, src_nodata = NULL,
                              scale = NULL, apply_mask = TRUE,
-                             dtype = "float32") {
+                             dtype = "float32", crop_ext = NULL) {
   r <- terra::rast(src)
   if (!is.null(src_nodata)) terra::NAflag(r) <- src_nodata
+  # 可选：投影前先裁到目标窗口（全球源如 CHELSA 用，避免对整幅投影）
+  if (!is.null(crop_ext)) r <- terra::crop(r, crop_ext, snap = "out")
   tmpl <- GRID()$rast
   out <- terra::project(r, tmpl, method = terra_method(method), align = FALSE)
   if (!is.null(scale)) out <- out * as.numeric(scale)

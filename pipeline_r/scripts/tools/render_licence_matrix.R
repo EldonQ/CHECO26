@@ -6,18 +6,18 @@
 # 本脚本只负责把它渲染成人读的 Markdown。
 #
 # 用法：Rscript R/tools/render_licence_matrix.R
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
 
 reg <- read.csv(file.path(PATH_DOCS(), "LICENCE_REGISTRY.csv"),
                 fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
-stopifnot(sum(reg$layers) == 21110)
+stopifnot(sum(reg$layers) == 21788)
 
 fmt <- function(x) format(x, big.mark = ",", scientific = FALSE)
 L <- character(0)
 add <- function(...) L <<- c(L, ...)
 
-add("# 许可证矩阵与分发风险（2026-10-21 重建）", "",
+add("# 许可证矩阵与分发风险", "",
     "本文件**由 `R/tools/render_licence_matrix.R` 从 `LICENCE_REGISTRY.csv` 自动生成**，",
     "请勿手工编辑。机器可读版本即该 CSV（逐数据集 19 个字段）。", "",
     "每层的许可信息也已写入 `provenance_table.csv` 的 4 个许可列
@@ -43,7 +43,7 @@ add("")
 add(sprintf(paste0("**已确认可分发 %s 层（%.2f%%）**；受限不可分发 %s 层；",
                   "**待核实 %s 层**（未读到许可文本，不等于已确认受限）。"),
             fmt(sum(reg$layers[reg$redistributable])),
-            100 * sum(reg$layers[reg$redistributable]) / 21110,
+            100 * sum(reg$layers[reg$redistributable]) / 21788,
             fmt(sum(reg$layers[reg$licence_class == "RESTRICTED"])),
             fmt(sum(reg$layers[reg$licence_class == "UNVERIFIED"]))), "",
     "---", "",
@@ -108,7 +108,7 @@ add("", "---", "", "## 六、变更记录", "",
     "- **2026-10-21**：本文件改为由 `LICENCE_REGISTRY.csv` 自动生成；",
     "  新增许可证名称、版本、SPDX 标识、链接、署名文本、证据等级与核查日期；",
     "  逐层只注入 4 列（`licence` / `licence_url` / `attribution` / `licence_status`），
-  详细证据保留在数据集级的 `LICENCE_REGISTRY.csv`，不复制到 21,110 行。",
+  详细证据保留在数据集级的 `LICENCE_REGISTRY.csv`，不复制到 21,788 行。",
     "  `dist/gsw`（1 层）由 UNVERIFIED 改为 **OPEN**：JRC 下载页面明示",
     "  \"free of charge, without restriction of use\"（Copernicus Programme），",
     "  要求署名并引用 Pekel et al. 2016。UNVERIFIED 因此从 233 层降为 232 层。",

@@ -1,16 +1,29 @@
 # =============================================================================
 # R/13_make_provenance.R  --  溯源表生成
 #
-# 与早期 Python 版 make_provenance_table.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
+# 与早期 Python 版 make_provenance_table.py 逐项对齐；后者已不能重建全表（层域来自
+# 一份已删除的迁移映射），已于 2026-11-11 从 scripts/ 删除
 #
-# 设计（与 Python 版不同，更稳）：
-#   现有 00_docs/provenance_table.csv 的 1,608 行**已逐行人工校对通过**，
+# 设计：
+#   现有 00_docs/provenance_table.csv 的行**已逐行人工校对通过**，
 #   故不重推已有行，而是：
 #     1) 读入现有表
 #     2) 剔除已撤出的 anthro/landscan（125）与 anthro/foothii（100）
 #     3) 按各数据集清单生成新行（anthro/hfp 125、lulc/clcd 1,170、lulc/hlu1km 18,440）
 #     4) 合并写出
 #   这样既保留已校对内容，又保证新数据集元数据完整。
+#
+#   ⚠ 本脚本产出的新行**不完整**：mk_row() 没有 source_file 与证据等级参数，
+#     时间不变性注记也不在这里生成。**生成后必须紧接着运行**
+#
+#         E:\CHECO26\.venv\Scripts\python.exe scripts/enrich_provenance.py
+#
+#     该脚本补齐 source_file、variable_definition 的 [doc]/[std]/[name] 等级与类别的
+#     源图例代码、hlu1km urban/water 的时间不变性注记，以及 19 个 _max/_min 层的重采样
+#     声明。它是幂等的，可反复运行（--check 只报告不写盘）。两步都跑完，表才是
+#     21,118 行 × 25 列全部填充的状态。
+#
+#     验证：scripts/enrich_provenance.py --check 应输出四项改动数全为 0。
 #
 # 新数据集的源元数据（全部已核实）：
 #   Mu HFP        CC BY 4.0  DOI 10.6084/m9.figshare.16571064.v8
@@ -19,7 +32,7 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(terra) })
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 PROV_PATH <- function() file.path(PATH_DOCS(), "provenance_table.csv")
@@ -208,6 +221,109 @@ rows_hlu <- function() {
   do.call(rbind, out)
 }
 
+# ---- CHELSA v2.1 bioclim（2026-11-12 替换 cnclim1km）----------------------
+META_CHELSA <- list(
+  source_dataset = "CHELSA v2.1 bioclimatic variables (global, 30 arc-sec; WSL/EnviDat)",
+  source_provider = "Karger D.N. et al., Swiss Federal Institute for Forest, Snow and Landscape Research (WSL)",
+  source_doi_url = "10.16904/envidat.228.v2.1",
+  source_citation = paste0("Karger, D.N., Conrad, O., Bohner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W., ",
+                           "Zimmermann, N.E., Linder, H.P., Kessler, M. (2021). Climatologies at high resolution ",
+                           "for the earth's land surface areas. EnviDat. https://doi.org/10.16904/envidat.228 ",
+                           "(v2.1: https://doi.org/10.16904/envidat.228.v2.1, CC0-1.0)"),
+  source_crs = "EPSG:4326",
+  source_resolution = "0.00833333 degree (30 arc-seconds, ~1 km)",
+  source_extent = "global; 43200 x 20880 cells (84N to 90S)",
+  source_nodata = "65535 (UInt16)",
+  source_scale_offset = paste0("per-variable GDAL scale/offset applied by terra to physical units ",
+                               "(temperature scale 0.1 offset -273.15 -> degC; bio03 scale 0.001 -> fraction, ",
+                               "then x100 -> percent; precipitation mm; gdd degree-days)"),
+  processing_steps = paste0("1) read CHELSA v2.1 source raster. 2) crop to China window (70-138E, 15-56N). ",
+                            "3) reproject to the CHECO26 grid (China_Albers equal-area, WGS84 lon_0=105 lat_1=25 lat_2=47, 1 km) ",
+                            "with terra::project bilinear; terra applies the source scale/offset to physical units. ",
+                            "4) bio03 multiplied by 100 to percent (WorldClim convention). 5) mask to the national boundary ",
+                            "(mask_china.tif). 6) write float32, nodata -9999, DEFLATE, 256x256 tiles. ",
+                            "Future ensmean = pixel-wise equal-weight arithmetic mean of the 5 GCM layers."),
+  missing_boundary_rule = paste0("Source nodata 65535 is excluded before reprojection; cells outside the China mask ",
+                                 "are nodata in every delivered layer."),
+  script_function = "R/03_ingest_static.R : warp_to_template",
+  license = "CC0-1.0"
+)
+
+# 22 个变量的标准定义 / 单位 / 物理值域（CHELSA 与 WorldClim 标准 BioClim 口径一致）
+CHELSA_VARS <- list(
+  bio01 = list(def="Annual mean temperature", unit="degC", rng="[-90, 60]"),
+  bio02 = list(def="Mean diurnal range (mean of monthly max temp - min temp)", unit="degC", rng="[0, 50]"),
+  bio03 = list(def="Isothermality (bio02/bio07 x 100)", unit="percent", rng="[0, 100]"),
+  bio04 = list(def="Temperature seasonality (standard deviation x 100)", unit="degC x100", rng="[0, 20000]"),
+  bio05 = list(def="Max temperature of warmest month", unit="degC", rng="[-90, 60]"),
+  bio06 = list(def="Min temperature of coldest month", unit="degC", rng="[-90, 60]"),
+  bio07 = list(def="Temperature annual range (bio05 - bio06)", unit="degC", rng="[0, 100]"),
+  bio08 = list(def="Mean temperature of wettest quarter", unit="degC", rng="[-90, 60]"),
+  bio09 = list(def="Mean temperature of driest quarter", unit="degC", rng="[-90, 60]"),
+  bio10 = list(def="Mean temperature of warmest quarter", unit="degC", rng="[-90, 60]"),
+  bio11 = list(def="Mean temperature of coldest quarter", unit="degC", rng="[-90, 60]"),
+  bio12 = list(def="Annual precipitation", unit="mm", rng="[0, 20000]"),
+  bio13 = list(def="Precipitation of wettest month", unit="mm", rng="[0, 20000]"),
+  bio14 = list(def="Precipitation of driest month", unit="mm", rng="[0, 20000]"),
+  bio15 = list(def="Precipitation seasonality (coefficient of variation)", unit="percent", rng="[0, 300]"),
+  bio16 = list(def="Precipitation of wettest quarter", unit="mm", rng="[0, 20000]"),
+  bio17 = list(def="Precipitation of driest quarter", unit="mm", rng="[0, 20000]"),
+  bio18 = list(def="Precipitation of warmest quarter", unit="mm", rng="[0, 20000]"),
+  bio19 = list(def="Precipitation of coldest quarter", unit="mm", rng="[0, 20000]"),
+  gdd0  = list(def="Growing degree days above 0 degC", unit="degC day", rng="[0, 20000]"),
+  gdd5  = list(def="Growing degree days above 5 degC", unit="degC day", rng="[0, 20000]"),
+  gdd10 = list(def="Growing degree days above 10 degC", unit="degC day", rng="[0, 20000]")
+)
+
+rows_chelsa <- function() {
+  clim <- CFG()$climate
+  vars <- c(sprintf("bio%02d", 1:as.integer(clim$n_bio)), as.character(unlist(clim$extra_vars)))
+  chains <- as.character(unlist(clim$chains))
+  ssps <- as.character(unlist(clim$ssps))
+  cyears <- names(clim$periods)
+  src <- as.character(clim$source)
+  pp <- as.character(clim$present_period)
+  out <- list()
+  add <- function(parts, v, script_fn, src_file, note = "") {
+    cv <- CHELSA_VARS[[v]]
+    r <- mk_row(parts, "", META_CHELSA,
+                sprintf("%s [CHELSA v2.1 standard definition]", cv$def),
+                cv$unit, cv$rng,
+                "reprojected to 1 km China_Albers (bilinear); standard CHELSA bioclimatic definition",
+                note)
+    r$script_function <- script_fn
+    r$source_file <- src_file
+    out[[length(out) + 1L]] <<- r
+  }
+  for (v in vars) {
+    parts <- c("reg", "bioclim", src, "present", v)
+    sf <- sprintf("[path] %s/bioclim/%s/%s/CHELSA_%s_%s_V.2.1.tif", P("chelsa"), v, pp, v, pp)
+    add(parts, v, "R/03_ingest_static.R : warp_to_template", sf, "present climatology 1981-2010")
+  }
+  for (chain in chains) {
+    is_ens <- chain == "ensmean"
+    dsname <- paste0(src, "-", chain)
+    for (cy in cyears) {
+      sp <- as.character(clim$periods[[cy]])
+      for (ssp in ssps) for (v in vars) {
+        parts <- c("reg", "bioclim", dsname, "scenario", cy, ssp, v)
+        if (is_ens) {
+          sf <- paste0("[selector] equal-weight mean of 5 GCM layers ",
+                       "(GFDL-ESM4, IPSL-CM6A-LR, MPI-ESM1-2-HR, MRI-ESM2-0, UKESM1-0-LL)")
+          add(parts, v, "R/10_future_chains.R : run_ensmean", sf,
+              sprintf("ensemble mean of 5 CMIP6 GCMs; %s %s", ssp, sp))
+        } else {
+          sf <- sprintf("[path] %s/bioclim/%s/%s/%s/%s/CHELSA_%s_%s_%s_%s_V.2.1.tif",
+                        P("chelsa"), v, sp, toupper(chain), ssp, chain, ssp, v, sp)
+          add(parts, v, "R/10_future_chains.R : run_gcm", sf,
+              sprintf("CMIP6 %s; %s %s", chain, ssp, sp))
+        }
+      }
+    }
+  }
+  do.call(rbind, out)
+}
+
 # ---- 主流程 --------------------------------------------------------------
 main <- function(fill_actual = FALSE) {
   base <- read.csv(PROV_PATH(), fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE,
@@ -215,17 +331,19 @@ main <- function(fill_actual = FALSE) {
   cat(sprintf("现有溯源表: %d 行 x %d 列\n", nrow(base), ncol(base)))
 
   drop <- grepl("^reg/anthro/(landscan|foothii)/", base$layer_path)
-  cat(sprintf("  剔除 LandScan/footHII: %d 行\n", sum(drop)))
-  base <- base[!drop, ]
+  drop_bio <- grepl("^reg/bioclim/cnclim1km", base$layer_path)
+  cat(sprintf("  剔除 LandScan/footHII: %d 行；旧 cnclim1km bioclim: %d 行\n", sum(drop), sum(drop_bio)))
+  base <- base[!drop & !drop_bio, ]
 
   cat("生成新数据集行...\n")
   t0 <- Sys.time()
   hfp  <- rows_hfp();  cat(sprintf("  anthro/hfp      %5d 行\n", nrow(hfp)))
   clcd <- rows_clcd(); cat(sprintf("  lulc/clcd       %5d 行\n", nrow(clcd)))
   hlu  <- rows_hlu();  cat(sprintf("  lulc/hlu1km     %5d 行\n", nrow(hlu)))
+  chelsa <- rows_chelsa(); cat(sprintf("  bioclim/chelsa21 %5d 行\n", nrow(chelsa)))
 
   # 幂等：若基准表已含某层（重复运行时），跳过该层
-  new <- do.call(rbind, list(hfp, clcd, hlu))
+  new <- do.call(rbind, list(hfp, clcd, hlu, chelsa))
   dup <- new$layer_path %in% base$layer_path
   if (any(dup)) cat(sprintf("  基准表已含，跳过 %d 行（幂等）\n", sum(dup)))
   new <- new[!dup, , drop = FALSE]
@@ -234,7 +352,7 @@ main <- function(fill_actual = FALSE) {
   align <- function(d) { for (nm in names(base)) if (!nm %in% names(d)) d[[nm]] <- NA
                          d[, names(base), drop = FALSE] }
   out <- rbind(align(base), align(new))
-  cat(sprintf("\n合并后: %d 行（期望 21,110）\n", nrow(out)))
+  cat(sprintf("\n合并后: %d 行（期望 21,796 = 21,788 active + 8 withdrawn）\n", nrow(out)))
   stopifnot(!anyDuplicated(out$layer_path))
 
   # 可选：读取已存在层填 actual_range
@@ -243,6 +361,7 @@ main <- function(fill_actual = FALSE) {
     root <- PATH_COV()
     n <- 0L
     for (i in seq_len(nrow(out))) {
+      if (!is.na(out$actual_range[i]) && out$actual_range[i] != "not yet computed") next
       p <- file.path(root, out$layer_path[i])
       if (!file.exists(p)) next
       st <- tryCatch(raster_stats(p), error = function(e) NULL)

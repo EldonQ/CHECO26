@@ -1,9 +1,9 @@
 # R/tools/check_table2.R -- 核验论文 Table 2 的每个数据集层数与磁盘一致
 #
 # 2026-10-21 新增。动机：`check_docs_consistency.R` 只检查**主题合计**
-# （lulc 20,150 / bioclim 532 / ...），不检查**数据集层级**。
+# （lulc 20,150 / bioclim 1,210 / ...），不检查**数据集层级**。
 # 若某数据集少一层、另一处多一层，主题合计仍然对得上，现有检查不会报警。
-# Table 2 有 21 个数据集 x 一个数字，值得单独核。
+# Table 2 有 25 个数据集 x 一个数字，值得单独核。
 #
 # 为什么用显式映射表而不是从 Markdown 解析：
 #   · `smod` 在两个主题下各有一个（anthro/smod 12、dist/smod 1）；
@@ -12,16 +12,20 @@
 #   自动解析在这些情形下会错配或漏配，所以这里把"论文行 -> 磁盘键"写死。
 #
 # 用法：Rscript R/tools/check_table2.R
-ROOT <- Sys.getenv("CHECO_ROOT", getwd())
+ROOT <- "E:/CHECO26/N-SDM"
 
 # 论文 Table 2 的行  ->  磁盘上的 theme/dataset 键（多个键表示论文里合并成一行）
 MAP <- list(
   "hlu1km"                = "lulc/hlu1km",
   "clcd"                  = "lulc/clcd",
   "glu1km"                = "lulc/glu1km",
-  "cnclim1km"             = "bioclim/cnclim1km",
-  "cnclim1km-ensmean"     = "bioclim/cnclim1km-ensmean",
-  "cnclim1km-bcc-csm2-mr" = "bioclim/cnclim1km-bcc-csm2-mr",
+  "chelsa21"              = "bioclim/chelsa21",
+  "chelsa21-gfdl-esm4"    = "bioclim/chelsa21-gfdl-esm4",
+  "chelsa21-ipsl-cm6a-lr" = "bioclim/chelsa21-ipsl-cm6a-lr",
+  "chelsa21-mpi-esm1-2-hr"= "bioclim/chelsa21-mpi-esm1-2-hr",
+  "chelsa21-mri-esm2-0"   = "bioclim/chelsa21-mri-esm2-0",
+  "chelsa21-ukesm1-0-ll"  = "bioclim/chelsa21-ukesm1-0-ll",
+  "chelsa21-ensmean"      = "bioclim/chelsa21-ensmean",
   "csdlv2"                = "soil/csdlv2",
   "hfp"                   = "anthro/hfp",
   "smod"                  = "anthro/smod",
@@ -38,7 +42,9 @@ MAP <- list(
 # 论文 Table 2 里写下的数字（必须与文档逐字一致，改文档时同步改这里）
 PAPER_N <- c(
   hlu1km = 18440, clcd = 1170, glu1km = 540,
-  cnclim1km = 28, `cnclim1km-ensmean` = 252, `cnclim1km-bcc-csm2-mr` = 252,
+  chelsa21 = 22, `chelsa21-gfdl-esm4` = 198, `chelsa21-ipsl-cm6a-lr` = 198,
+  `chelsa21-mpi-esm1-2-hr` = 198, `chelsa21-mri-esm2-0` = 198,
+  `chelsa21-ukesm1-0-ll` = 198, `chelsa21-ensmean` = 198,
   csdlv2 = 196, hfp = 125, smod = 12, h90m = 39, hydrosheds = 5,
   glassndvi = 15, ch2019 = 5, agb2019 = 5, catcd = 5, chinadem = 4,
   `dist (grip4/gsw/osm/smod)` = 17

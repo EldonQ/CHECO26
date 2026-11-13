@@ -1,11 +1,11 @@
 # CHECO26
 
 <a href="LICENSE"><img src="https://img.shields.io/badge/licence-CC%20BY%204.0-79C83D.svg" alt="Licence"></a>
-<a href="data/CHECO26_datalayers_details.csv"><img src="https://img.shields.io/badge/layers-21%2C110-4E79A7.svg" alt="Layers"></a>
-<a href="database_validation/DATA_QUALITY_AUDIT.md"><img src="https://img.shields.io/badge/audited-21%2C110%20%2F%2021%2C110-brightgreen.svg" alt="Audited"></a>
+<a href="data/CHECO26_datalayers_details.csv"><img src="https://img.shields.io/badge/layers-21%2C788-4E79A7.svg" alt="Layers"></a>
+<a href="database_validation/DATA_QUALITY_AUDIT.md"><img src="https://img.shields.io/badge/audited-21%2C788%20%2F%2021%2C788-brightgreen.svg" alt="Audited"></a>
 <a href="database_validation/"><img src="https://img.shields.io/badge/FAIR-black.svg" alt="FAIR"></a>
 
-CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research, gathering **21,110 layers** in **21 dataset entries** drawn from **19 distinct source products** across **eight environmental categories**. (GHS-SMOD and Hydrography90m each enter under two categories, so the entry count exceeds the product count.) CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as a ready-to-use environmental covariate base for species distribution modelling and other cross-thematic ecological applications.
+CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research, gathering **21,788 layers** in **25 dataset entries** drawn from **19 distinct source products** across **eight environmental categories**. (GHS-SMOD and Hydrography90m each enter under two categories, so the entry count exceeds the product count.) CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as a ready-to-use environmental covariate base for species distribution modelling and other cross-thematic ecological applications.
 
 The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_datalayers_details.csv) of every layer present in CHECO26 is available in this repository — one semicolon-separated row per delivered layer, with category, dataset, variable, period, scenario, year range, focal radius, physical unit and path. The database is described in a data manuscript currently in preparation.
 
@@ -28,23 +28,23 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 | Data type                   | float32, every layer without exception |
 | NoData                      | -9999, every layer |
 | Storage                     | GeoTIFF, DEFLATE compressed, 256 x 256 tiles |
-| Volume                      | 166.9 GB (155.5 GiB) |
+| Volume                      | 183.1 GB (170.6 GiB) |
 
 ## Layer inventory
 
 | Category | Layers | Content |
 |---|---:|---|
 | lulc | 20,150 | Three complementary products: **clcd** annual observed cover 2000–2025 (1,170 = 26 years x 9 classes x 5 scales) · **glu1km** China-relevant projection 2020 + 2030/2050/2100 under three SSPs (540) · **hlu1km** harmonised yearly reconstruction 1960–2020 plus 2021–2100 under five SSP-RCPs (18,440) |
-| bioclim | 532 | **cnclim1km** 28 present layers (1991–2020) plus two future chains — a 10-model CMIP6 ensemble mean and BCC-CSM2-MR — at 2030/2055/2085 under three SSPs (252 + 252) |
+| bioclim | 1,210 | **CHELSA v2.1** 22 present layers (bio01–19 + gdd0/5/10, 1981–2010) plus six future chains — five CMIP6 GCMs (GFDL-ESM4, IPSL-CM6A-LR, MPI-ESM1-2-HR, MRI-ESM2-0, UKESM1-0-LL) and their equal-weight ensemble mean — at 2025/2055/2085 under SSP1-2.6/3-7.0/5-8.5 (6 × 198) |
 | soil | 196 | **csdlv2** 28 attributes x (six standard depths + one whole-profile aggregate) |
 | anthro | 137 | **hfp** annual Human Footprint 2000–2024 x 5 scales (125) · **smod** built-up proportion 1975–2030 x 12 epochs (12) |
 | hydro | 44 | **h90m** 39 continuous Hydrography90m layers · **hydrosheds** 5 flow-accumulation layers |
 | vege | 30 | forest aboveground biomass (**agb2019**), forest canopy height (**ch2019**), tree canopy cover (**catcd**), GLASS NDVI 2020–2022 (**glassndvi**), each with focal windows |
 | dist | 17 | distance to roads and major roads (**grip4**), trails (**osm**), urban areas (**smod**), surface water (**gsw**), and four stream-distance surfaces (**h90m**) |
 | topo | 4 | elevation, slope, aspect, terrain ruggedness index (**chinadem**) |
-| **Total** | **21,110** | **21 dataset entries from 19 source products** |
+| **Total** | **21,788** | **25 dataset entries from 19 source products** |
 
-Of the 21,110 layers, 4,824 are delivered at the native 1-km resolution and 16,286 are focal variants — 4,064 at 1 km and 4,074 at each of 5, 10 and 20 km. 3,982 of the native-resolution layers are class proportions; the remaining 842 are source layers plus 18 multi-source extrema. 16,990 layers describe a future scenario and 4,120 describe the present. Every one of these counts is reproducible from the manifest's `focal`, `attribute` and `period` columns.
+Of the 21,788 layers, 5,502 are delivered at the native 1-km resolution and 16,286 are focal variants — 4,064 at 1 km and 4,074 at each of 5, 10 and 20 km. 3,982 of the native-resolution layers are class proportions; the remaining 1,520 are source layers plus 18 multi-source extrema. 17,674 layers describe a future scenario and 4,114 describe the present. Every one of these counts is reproducible from the manifest's `focal`, `attribute` and `period` columns.
 
 <p align="center">
   <img src="https://github.com/EldonQ/CHECO26/blob/main/database_validation/figures/layers_per_theme.png" width="520" />
@@ -74,7 +74,7 @@ pipeline is in [`pipeline_r/`](pipeline_r/).
 
 ## Data availability
 
-CHECO26 is a database of 166.9 GB and 21,110 float32 GeoTIFF layers on the China_Albers
+CHECO26 is a database of 183.1 GB and 21,788 float32 GeoTIFF layers on the China_Albers
 1-km grid. It is described in a data manuscript currently in preparation and is not yet
 publicly released. This repository provides everything needed to
 understand, audit and reproduce the database:
@@ -87,11 +87,13 @@ understand, audit and reproduce the database:
 
 ## Data validation
 
+> **Bioclim replacement (2026-11-13).** The bioclim theme was rebuilt from **CHELSA v2.1** (1,210 layers, standard BioClim calibre, CC0-1.0), replacing the earlier cnclim1km product whose bio02/03/05/06/07 used a non-standard monthly-extreme definition; the 532 cnclim1km layers were archived. The exhaustive audit below was run on the pre-replacement 21,110-layer tree: its 20,578 non-bioclim layers are unchanged, and the 1,210 CHELSA bioclim layers passed a dedicated acceptance (per-layer geometry/mask/NoData/value-range, standard-calibre checks on bio02/03/05/06, and four-way disk = manifest = provenance = dictionary consistency at 21,788 layers — `pipeline_r/scripts/tools/accept_chelsa.R`, 0 failures). All 21,788 current layers are therefore validated.
+
 The delivery was checked along four independent lines, each answering a
 different question. Tables and code are in [`database_validation/`](database_validation/).
 
 **Full-archive audit — exhaustive, every pixel, second toolchain.** 21,110 / 21,110
-layers pass ten checks: opens with one band, float32, NoData −9999, grid invariants
+layers of the pre-replacement tree passed ten checks (the 20,578 non-bioclim layers are unchanged and the 1,210 CHELSA bioclim layers were re-validated by acceptance — see note above): opens with one band, float32, NoData −9999, grid invariants
 (CRS, transform, 4,861 x 4,062), DEFLATE with 256 x 256 tiles, no valid cell outside
 the China mask, no Inf/NaN among valid cells, values inside the documented range,
 agreement with `variable_dictionary.csv`, and agreement with the `MANIFEST.csv`
@@ -128,8 +130,8 @@ distance to rivers and 7.75% for flow accumulation, while the within-cell
 coefficient of variation of the sources is 77–277% — the 1-km value is an average
 over a heterogeneous neighbourhood, not a statement about every point inside it.
 
-Counting distinct SHA-256 digests, 14,050 of the 21,110 layers are byte-distinct
-(66.6%); the redundancy is confined to the projected land-use family, where the
+Counting distinct SHA-256 digests, 14,728 of the 21,788 layers are byte-distinct
+(67.6%); the redundancy is confined to the projected land-use family, where the
 projected urban extent is frozen across scenarios.
 
 See [`database_validation/README.md`](database_validation/README.md) for the
@@ -139,7 +141,7 @@ unusable.
 
 ## Running the code
 
-Two things run without the 166.9 GB archive:
+Two things run without the 183.1 GB archive:
 
 - **The three worked examples** in `layer_standardization_example/`, `focal_statistics_example/`
   and `distance_layers_example/`. They are R scripts that call the production functions from
@@ -148,8 +150,8 @@ Two things run without the 166.9 GB archive:
   use only the public files in `data/`, and each ends with a check: the focal example
   recomputes two delivered focal layers cell by cell (maximum difference 3.0e-8, i.e. float32
   rounding, and one of them exercises the wide-window code path), the standardization example
-  reprojects a raw 0.01 deg climate source onto the grid and reproduces the delivered layer
-  (sd 0.03 degC, no systematic offset), and the distance example rebuilds the settlement
+  applies the CHELSA scale/offset to a raw 30 arc-sec climate source and reprojects it onto
+  the grid, reproducing the delivered layer (sd 0.40 degC, no systematic offset), and the distance example rebuilds the settlement
   distance surface from the GHS-SMOD source (97.9% of the delivered feature cells recovered,
   mean distance difference 69 m) while verifying the distance transform itself against
   closed-form Euclidean values (maximum error 0.002 m).
@@ -176,14 +178,14 @@ data disk rather than the system disk.
 | Directory | Content |
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
-| [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — 20 stage scripts, 16 tools, 70 tests, 8 figure scripts, configuration |
+| [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — stage scripts 00–16 plus CHELSA production/metadata entry points, tools, 70 tests, figure scripts, configuration |
 | [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports, and the [layer-by-layer data quality audit](database_validation/DATA_QUALITY_AUDIT.md) |
 | [`layer_standardization_example/`](layer_standardization_example/) | standardization worked example (R, calls production `warp_to_template()`) |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example (R, calls production `focal_all()`) |
 | [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example (R, calls production `dist_from_feature()`) |
 | [`figs/`](figs/) | README figures |
 
-The delivered rasters are not in this repository: 166.9 GB cannot live in git.
+The delivered rasters are not in this repository: 183.1 GB cannot live in git.
 What ships here is the layer manifest, the grid definition, the pipeline that
 produced the layers, and the validation evidence — enough to understand, audit
 and reproduce the database without holding a copy of it.

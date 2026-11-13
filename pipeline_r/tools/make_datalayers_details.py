@@ -60,6 +60,9 @@ BIO_LONG = {
     "tave": "Mean temperature",
     "tmax": "Max temperature",
     "tmin": "Min temperature",
+    "gdd0": "Growing degree days above 0 degC",
+    "gdd5": "Growing degree days above 5 degC",
+    "gdd10": "Growing degree days above 10 degC",
 }
 
 SOIL_LONG = {
@@ -203,9 +206,13 @@ LULC_METRIC_LONG = {
 }
 
 DATASET_LONG = {
-    "cnclim1km": "CNClim1km China climate",
-    "cnclim1km-ensmean": "CNClim1km ensemble-mean future climate",
-    "cnclim1km-bcc-csm2-mr": "CNClim1km BCC-CSM2-MR future climate",
+    "chelsa21": "CHELSA v2.1 present-day bioclimatic variables (1981-2010)",
+    "chelsa21-gfdl-esm4": "CHELSA v2.1 downscaled GFDL-ESM4 future climate",
+    "chelsa21-ipsl-cm6a-lr": "CHELSA v2.1 downscaled IPSL-CM6A-LR future climate",
+    "chelsa21-mpi-esm1-2-hr": "CHELSA v2.1 downscaled MPI-ESM1-2-HR future climate",
+    "chelsa21-mri-esm2-0": "CHELSA v2.1 downscaled MRI-ESM2-0 future climate",
+    "chelsa21-ukesm1-0-ll": "CHELSA v2.1 downscaled UKESM1-0-LL future climate",
+    "chelsa21-ensmean": "CHELSA v2.1 ensemble-mean (5 GCMs) future climate",
     "csdlv2": "CSDLv2 China soil database",
     "chinadem": "China DEM 1 km",
     "agb2019": "Forest aboveground biomass 2019",
@@ -233,6 +240,7 @@ UNIT_EN = {
     "比例(0-1)": "proportion (0-1)",
     "degC": "degC",
     "°C·d": "degC day",
+    "°C·day": "degC day",
     "(-)": "(-)",
     "变异系数(-)": "coefficient of variation (-)",
     "mm": "mm",
@@ -263,12 +271,12 @@ UNIT_EN = {
 
 # Future climate centre year -> source sub-period folder and year range
 CLIMATE_PERIOD = {
-    "2030": ("2021_2040", 2021, 2040),
-    "2055": ("2041_2070", 2041, 2070),
-    "2085": ("2071_2100", 2071, 2100),
+    "2025": ("2011-2040", 2011, 2040),
+    "2055": ("2041-2070", 2041, 2070),
+    "2085": ("2071-2100", 2071, 2100),
 }
 
-BIOCLIM_PRESENT = ("1991_2020", 1991, 2020)
+BIOCLIM_PRESENT = ("1981-2010", 1981, 2010)
 
 NA = "NA"
 

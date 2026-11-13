@@ -1,6 +1,6 @@
 # CHECO26 pipeline (R)
 
-This is the pipeline that produced the delivered archive: 21,110 layers, 166.9 GB,
+This is the pipeline that produced the delivered archive: 21,788 layers, 183.1 GB,
 float32 on the China_Albers 1-km grid.
 
 It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That
@@ -35,7 +35,10 @@ pipeline_r/
 │   ├── 14_manifest.R                SHA-256 manifest
 │   ├── 15_ingest_h90m_accumulation.R  HydroSHEDS flow accumulation
 │   ├── run_all.R                    runs the stages in order
-│   ├── tools/               20 verification and reporting utilities
+│   ├── run_bioclim_chelsa.R         CHELSA bioclim production entry (present + future)
+│   ├── run_bioclim_shard.R          sharded CHELSA future production
+│   ├── run_metadata_chelsa.R        post-CHELSA metadata regeneration entry
+│   ├── tools/               verification and reporting utilities (incl. accept_chelsa.R)
 │   ├── tests/               70 unit and integration tests
 │   └── figs/                11 figure scripts used by the manuscript
 └── tools/
@@ -78,6 +81,6 @@ sampled, and the script says so in its own output so the distinction cannot be
 lost in transcription.
 
 ```bash
-Rscript scripts/11_validate.R header      # V1/V2 over all 21,110 layers
+Rscript scripts/11_validate.R header      # V1/V2 over all 21,788 layers
 Rscript scripts/11_validate.R full 400    # V3/V4 on a 400-layer probe
 ```

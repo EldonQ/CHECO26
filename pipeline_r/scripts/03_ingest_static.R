@@ -1,7 +1,7 @@
 # =============================================================================
 # R/03_ingest_static.R  --  静态主题入库
 #
-# 与早期 Python 版 02_ingest_static.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
+# 与早期 Python 版 02_ingest_static.py 逐项对齐（该脚本已归档于 archive/removed_python_pipeline_20261025/）
 #   本脚本负责的基底（不含焦点、不含派生统计）：
 #     bioclim 28  (0.01° WGS84 -> 1km Albers, bilinear)
 #     soil   168  (28 属性 x 6 深度, 1km, int16, scale 见 units_scale)
@@ -19,11 +19,12 @@
 
 suppressPackageStartupMessages({ library(terra) })
 
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 # ---- 常量（与 Python 完全一致） --------------------------------------------
-BIOCLIM_VARS <- c(sprintf("bio%02d", 1:23), "prec", "sunp", "tave", "tmax", "tmin")
+BIOCLIM_VARS <- c(sprintf("bio%02d", 1:as.integer(CFG()$climate$n_bio)),
+                  as.character(unlist(CFG()$climate$extra_vars)))
 
 SOIL_DEPTHS <- list(c("0-5", "0"), c("5-15", "5"), c("15-30", "15"),
                     c("30-60", "30"), c("60-100", "60"), c("100-200", "100"))
@@ -52,13 +53,21 @@ build_manifest <- function() {
   withdrawn <- unlist(hcfg$withdrawn)
   tasks <- list()
 
-  # bioclim 28
+  # bioclim 22 (CHELSA v2.1, 1981-2010, 30" WGS84 -> 1km Albers, bilinear)
+  # terra 自动施加 CHELSA scale/offset → 物理单位；bio03 额外 ×bio03_scale 转百分数
+  clim <- CFG()$climate
+  bds <- as.character(clim$source)
+  bpp <- as.character(clim$present_period)
+  b03sc <- as.numeric(clim$bio03_scale)
+  cw <- as.numeric(unlist(clim$crop_lonlat))
+  bcrop <- terra::ext(cw[1], cw[2], cw[3], cw[4])
   for (v in BIOCLIM_VARS) {
     tasks[[length(tasks) + 1L]] <- list(
-      parts = c("reg", "bioclim", "cnclim1km", "present", v),
-      src = file.path(P("bioclim"), "cnclim1km/present/1991_2020", v,
-                      sprintf("bioclim_cnclim1km_present_1991_2020_%s.tif", v)),
-      rule = "continuous", scale = NULL, src_nodata = NULL, sentinel = NULL)
+      parts = c("reg", "bioclim", bds, "present", v),
+      src = file.path(P("chelsa"), "bioclim", v, bpp,
+                      sprintf("CHELSA_%s_%s_V.2.1.tif", v, bpp)),
+      rule = "continuous", scale = if (v == "bio03") b03sc else NULL,
+      src_nodata = NULL, sentinel = NULL, crop_ext = bcrop)
   }
 
   # soil 168
@@ -166,7 +175,7 @@ run_task <- function(t) {
                                                        sub("\\.tif$", "", basename(dst)))
   if (!file.exists(src)) return(list(status = "error", dst = dst, note = paste("src missing:", src)))
   warp_to_template(src, dst, method = method, src_nodata = t$src_nodata,
-                   scale = t$scale)
+                   scale = t$scale, crop_ext = t$crop_ext)
   if (!check_alignment(dst)) return(list(status = "error", dst = dst, note = "alignment failed"))
   st <- raster_stats(dst)
   list(status = "ok", dst = dst, n = st$n, vmin = st$min, vmax = st$max)

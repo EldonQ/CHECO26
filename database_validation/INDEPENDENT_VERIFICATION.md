@@ -4,6 +4,8 @@
 脚本：`R/tools/verify_independent.R`
 结果：**PASS 16 / FAIL 0**
 
+> **更新（2026-11-13）**：本复核针对替换前的 21,110 层（bioclim 为旧 cnclim1km）。bioclim 已替换为 CHELSA v2.1，全库现为 21,788 层；非 bioclim 层未变动，CHELSA bioclim 层经 `accept_chelsa.R` 专项验收通过。下文保留为历史记录。
+
 ---
 
 ## 一、为什么需要这份复核
