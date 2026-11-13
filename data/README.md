@@ -1,20 +1,20 @@
 # CHECO26 data artefacts
 
 Light-weight data assets that ship with the repository. The full database
-(166.9 GB) is not yet publicly released (see the main
+(183.1 GB) is not yet publicly released (see the main
 [README](../README.md#data-availability)); these artefacts let you audit the
 inventory, build the exact grid, and inspect representative layers without
 downloading anything.
 
 | File | What it is |
 |---|---|
-| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,110 rows), in the shared 14-column semicolon layout |
+| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,788 rows), in the shared 14-column semicolon layout |
 | `CHECO26-standardgrid.tif` | the template grid every layer is aligned to (China_Albers, 1000 m, 4861 x 4062, value 1) |
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
 | `table2_dataset_layer_counts.csv` | machine-readable version of Table 1 in the manuscript: layer counts per dataset entry |
 | `table3_resampling_effect.csv` | machine-readable version of Table 2: the resampling check on three representative layers |
-| `sample_layers/reg/...` | seven representative delivered layers, checked cell by cell against the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
-| `source_layers/cnclim1km/...` | the raw 0.01° source of one sample layer (CNClim1km bio01), used by the standardization example to demonstrate reprojection from EPSG:4326 |
+| `sample_layers/reg/...` | nine representative delivered layers, checked cell by cell against the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
+| `source_layers/chelsa21/...` | the raw 30 arc-sec CHELSA v2.1 source of one sample layer (bio01, packed INT2U with scale 0.1 / offset −273.15), used by the standardization example to demonstrate reprojection from EPSG:4326 |
 | `source_layers/smod/...` | GHS-SMOD 2020 settlement classes cropped to the China window (30 arc-sec, CC BY 4.0), the public input of the distance example |
 
 ## Naming convention
@@ -33,11 +33,11 @@ not part of CHECO26.
 | Column | Meaning |
 |---|---|
 | `category` | theme: bioclim, soil, topo, vege, hydro, lulc, anthro, dist |
-| `dataset` | source product (e.g. `cnclim1km`, `csdlv2`, `h90m`, `glu1km`, `foothii`) |
+| `dataset` | source product (e.g. `chelsa21`, `csdlv2`, `h90m`, `glu1km`, `hfp`) |
 | `variable` | variable token (e.g. `bio01`, `ph`, `elev`, `forest`, `hii`, `spi`, `road`) |
 | `period` | `present` or `future` |
-| `scenario` | `ssp126` / `ssp245` / `ssp585` for future layers, else `NA` |
-| `sub_period` | period identifier: `1991_2020` (present climate), centre year for future layers, year for time series, else `NA` |
+| `scenario` | `ssp126` / `ssp370` / `ssp585` for future climate, `ssp126` / `ssp245` / `ssp585` for future land use, else `NA` |
+| `sub_period` | period identifier: `1981-2010` (present climate), centre year for future layers, year for time series, else `NA` |
 | `start_year` / `end_year` | source year range of the layer |
 | `attribute` | sub-variable qualifier: soil depth code (0/5/15/30/60/100), derivation (`prop`, `profile`, `min`, `max`, `all`/`forest` patch scope), else `NA` |
 | `focal` | focal window size in metres (1000 / 5000 / 10000 / 20000), else `NA` |
@@ -55,10 +55,10 @@ the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](
 
 | Sample | Theme | Dataset | Why this layer |
 |---|---|---|---|
-| `reg/bioclim/cnclim1km/present/bio01/...` | bioclim | CNClim1km | the template-defining climate layer (annual mean temperature) |
+| `reg/bioclim/chelsa21/present/bio01/...` | bioclim | CHELSA v2.1 | annual mean temperature, the present-day climate sample |
 | `reg/soil/csdlv2/ph/...` | soil | CSDLv2 | whole-profile pH, shows the soil depth convention |
 | `reg/topo/chinadem/elev/...` | topo | China DEM | national elevation |
-| `reg/anthro/foothii/2020/hii/...` | anthro | WCS footHII | human footprint index, 2020 |
+| `reg/anthro/hfp/2020/hfp/...` | anthro | Human Footprint | human footprint index, 2020 |
 | `reg/lulc/glu1km/2020/forest/..._prop.tif` | lulc | Global LULC projection | the base proportion layer, focal input of the example below |
 | `reg/lulc/glu1km/2020/forest/..._prop_f5000.tif` | lulc | Global LULC projection | flagship discrete-to-continuous derivation (forest proportion, 5-km window) |
 | `reg/lulc/glu1km/2020/forest/..._prop_f20000.tif` | lulc | Global LULC projection | same derivation at the widest window (41 x 41), which uses the explicit count path |

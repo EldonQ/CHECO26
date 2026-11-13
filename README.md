@@ -81,7 +81,7 @@ understand, audit and reproduce the database:
 
 - the full layer manifest ([`data/CHECO26_datalayers_details.csv`](data/CHECO26_datalayers_details.csv), one row per layer with category, dataset, variable, period, scenario, year range, focal radius, unit and path),
 - the standard grid and China mask,
-- six representative sample layers under [`data/sample_layers/`](data/sample_layers/),
+- nine representative sample layers under [`data/sample_layers/`](data/sample_layers/),
 - the production pipeline ([`pipeline_r/`](pipeline_r/)) and its configuration,
 - the validation code, result dataframes and figures ([`database_validation/`](database_validation/)).
 
