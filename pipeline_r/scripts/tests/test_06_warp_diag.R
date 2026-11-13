@@ -4,9 +4,9 @@
 #   B) R bilinear vs Python bilinear -> 若不一致而 A 一致，则插值实现不同
 #   C) Python bilinear vs 既有交付层  -> 顺带验证既有层确实是 bilinear 产物
 
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
+source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
 
 read_clean <- function(path) {
   r <- terra::rast(path)
@@ -35,11 +35,11 @@ compare <- function(a, b, tag) {
 }
 
 cfg <- CFG()
-src <- file.path(P("bioclim"), "cnclim1km/present/1991_2020/bio01",
-                 "bioclim_cnclim1km_present_1991_2020_bio01.tif")
+src <- file.path(P("chelsa"), "bioclim/bio01/1981-2010",
+                 "CHELSA_bio01_1981-2010_V.2.1.tif")
 diag <- file.path(PATH_SCRATCH(), "diag_warp")
-ref_existing <- file.path(PATH_COV(), "reg/bioclim/cnclim1km/present/bio01",
-                          "reg_bioclim_cnclim1km_present_bio01.tif")
+ref_existing <- file.path(PATH_COV(), "reg/bioclim/chelsa21/present/bio01",
+                          "reg_bioclim_chelsa21_present_bio01.tif")
 
 cat("=== warp 差异来源判定 ===\n\n")
 

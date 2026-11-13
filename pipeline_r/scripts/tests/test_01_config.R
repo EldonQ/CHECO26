@@ -1,7 +1,7 @@
 # R/tests/test_01_config.R -- 校验 00_config.R 与 01_common.R 的网格/掩膜是否与现有产物一致
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
+source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
 
 print_grid()
 
@@ -35,7 +35,7 @@ print(FOCAL_SPEC())
 
 cat("\n=== check_alignment 对既有层的判定（抽 3 层应全 TRUE）===\n")
 probe <- c(
-  "data/covariates/reg/bioclim/cnclim1km/present/bio01/reg_bioclim_cnclim1km_present_bio01.tif",
+  "data/covariates/reg/bioclim/chelsa21/present/bio01/reg_bioclim_chelsa21_present_bio01.tif",
   "data/covariates/reg/anthro/smod/2020/urbanprop/reg_anthro_smod_2020_urbanprop.tif",
   "data/covariates/reg/lulc/glu1km/2020/urban/reg_lulc_glu1km_2020_urban_prop_f5000.tif"
 )

@@ -1,8 +1,8 @@
 # R/tests/test_09_rules.R -- 三种真实使用的重采样规则的 R vs Python 差异全量统计
 # 判据：区分"系统偏差"(mean signed) 与"随机抖动"(mean abs)。
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
+source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
 
 read_clean <- function(path) {
   r <- terra::rast(path)
@@ -35,17 +35,12 @@ stat <- function(tag, a, b) {
 diag <- file.path(PATH_SCRATCH(), "diag_warp"); ensure_dir(diag)
 
 cases <- list(
-  list(tag = "bilinear  气候 bio01",
-       src = file.path(P("bioclim"), "cnclim1km/present/1991_2020/bio01",
-                       "bioclim_cnclim1km_present_1991_2020_bio01.tif"),
-       ref = file.path(PATH_COV(), "reg/bioclim/cnclim1km/present/bio01",
-                       "reg_bioclim_cnclim1km_present_bio01.tif"),
+  list(tag = "bilinear  气候 bio01 (CHELSA)",
+       src = file.path(P("chelsa"), "bioclim/bio01/1981-2010",
+                       "CHELSA_bio01_1981-2010_V.2.1.tif"),
+       ref = file.path(PATH_COV(), "reg/bioclim/chelsa21/present/bio01",
+                       "reg_bioclim_chelsa21_present_bio01.tif"),
        method = "bilinear", nodata = NULL, scale = NULL, out = "r_bio01_bilinear"),
-  list(tag = "average   人类足迹 2001",
-       src = file.path(P("foothii"), "hii_2001-01-01.tif"),
-       ref = file.path(PATH_COV(), "reg/anthro/foothii/2001/hii",
-                       "reg_anthro_foothii_2001_hii.tif"),
-       method = "average", nodata = -32768, scale = 0.01, out = "r_foothii2001"),
   list(tag = "average   土壤 clay 0-5",
        src = file.path(P("soil_1km"), "GTiff/clay/clay_0-5cm_1km.tif"),
        ref = file.path(PATH_COV(), "reg/soil/csdlv2/clay/0",

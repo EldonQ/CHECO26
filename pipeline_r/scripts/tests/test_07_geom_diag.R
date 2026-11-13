@@ -1,7 +1,7 @@
 # R/tests/test_07_geom_diag.R -- 检查 terra::project 输出的几何是否与模板严格一致
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/00_config.R"), encoding = "UTF-8")
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/01_common.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
+source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
 
 g <- GRID()
 diag <- file.path(PATH_SCRATCH(), "diag_warp")
@@ -33,8 +33,8 @@ cat(sprintf("  R ext   : %s\n", paste(sprintf("%.4f", as.vector(terra::ext(r))),
 cat(sprintf("  模板 ext: %s\n", paste(sprintf("%.4f", c(g$xmin, g$xmax, g$ymin, g$ymax)), collapse = ", ")))
 
 cat("\n=== terra::project 的不同写法对照 ===\n")
-src <- file.path(P("bioclim"), "cnclim1km/present/1991_2020/bio01",
-                 "bioclim_cnclim1km_present_1991_2020_bio01.tif")
+src <- file.path(P("chelsa"), "bioclim/bio01/1981-2010",
+                 "CHELSA_bio01_1981-2010_V.2.1.tif")
 s <- terra::rast(src)
 # 写法1：直接投影到模板 SpatRaster（当前实现）
 p1 <- terra::project(s, g$rast, method = "near", align = FALSE)

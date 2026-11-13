@@ -39,7 +39,7 @@ pipeline_r/
 │   ├── run_bioclim_shard.R          sharded CHELSA future production
 │   ├── run_metadata_chelsa.R        post-CHELSA metadata regeneration entry
 │   ├── tools/               verification and reporting utilities (incl. accept_chelsa.R)
-│   ├── tests/               70 unit and integration tests
+│   ├── tests/               67 unit and integration tests
 │   └── figs/                8 figure scripts used by the manuscript
 └── tools/
     └── make_datalayers_details.py   renders ../data/CHECO26_datalayers_details.csv

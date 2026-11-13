@@ -2,7 +2,7 @@
 # R/10_future_chains.R  --  bioclim 未来情景链（CHELSA v2.1，1,188 层）
 #
 # 2026-11-12 起改用 CHELSA v2.1，替代 cnclim1km（旧版 bio02/03/05/06/07 为月极值
-# 口径，非标准；CHELSA 为标准 BioClim 口径，CC BY 4.0）。
+# 口径，非标准；CHELSA 为标准 BioClim 口径，CC0-1.0）。
 #
 # 目录口径（N-SDM 2.0.1）：
 #   reg/bioclim/chelsa21-<chain>/scenario/<cyear>/<ssp>/<var>/
