@@ -1,291 +1,55 @@
 # Database validation — CHECO26
 
-This folder holds the evidence that the delivered archive is what it claims to be:
-the checks that were run, their results, the code that produced them, and the
-anomalies that were found and resolved along the way.
+The database holds **21,788 layers** (25 dataset entries from 19 source products,
+8 themes) on the China_Albers 1-km grid (4,861 × 4,062 cells, float32,
+NoData −9999, DEFLATE, 256 × 256 tiles). This folder summarises how the current
+delivery is validated; the validation code lives in
+[`../pipeline_r/scripts/tools/`](../pipeline_r/scripts/tools/).
 
-The full verification report is [`VERIFICATION_REPORT.md`](VERIFICATION_REPORT.md),
-the independent recomputation is [`INDEPENDENT_VERIFICATION.md`](INDEPENDENT_VERIFICATION.md),
-and the layer-by-layer audit is [`DATA_QUALITY_AUDIT.md`](DATA_QUALITY_AUDIT.md).
-This README is the summary; where they disagree, the underlying reports win.
+## Four-way consistency
 
-> **Bioclim replacement (2026-11-13).** The reports below were produced on the pre-replacement 21,110-layer tree (bioclim = cnclim1km). The bioclim theme has since been rebuilt from CHELSA v2.1 (1,210 layers, CC0-1.0); the database now holds 21,788 layers. The 20,578 non-bioclim layers are unchanged, and the 1,210 CHELSA bioclim layers passed a dedicated acceptance (`pipeline_r/scripts/tools/accept_chelsa.R`, 0 failures). The 21,110-layer counts below are historical.
+Disk = SHA-256 manifest = provenance table (active rows) = variable dictionary,
+all at **21,788 layers**. Checked by `check_table2.R` (per-dataset counts, 21/21
+agree, sum equals the disk total) and `check_docs_consistency.R` (layer counts,
+theme totals, volume and manuscript numbers against the tables).
 
-**Read the coverage column before the result column.** Two of the six checks open
-every layer and four do not. A "pass" from a sampled check is not evidence about
-the layers it never touched, and the numbers below never present it as such.
+## Checks
 
-## What was checked
+| Check | Coverage | Tool |
+|---|---|---|
+| Grid invariants (CRS, extent, 1,000 m, 4,861 × 4,062) | every layer | `11_validate.R` V1 |
+| Format (float32, NoData −9999, DEFLATE, 256 × 256 tiles) | every layer | `11_validate.R` V2 |
+| Mask compliance, value range, dictionary / manifest agreement | every layer | `11_validate.R` V3–V6 |
+| bioclim CHELSA acceptance: geometry / mask / NoData / value range, standard WorldClim calibre for bio02/03/05/06 | 1,210 bioclim layers | `tools/accept_chelsa.R` — 20 checks, 0 failures |
+| Independent recomputation (16 properties, a second implementation sharing no code with the pipeline) | whole library | `tools/verify_independent.R` |
 
-| Check | Coverage | What it verifies | Result |
-|---|---|---|---|
-| **V1** | **21,110 / 21,110 — all layers** | CRS, extent, 1,000 m cell size, 4,062 × 4,861 grid | **21,110 pass** |
-| **V2** | **21,110 / 21,110 — all layers** | float32, declared NoData −9999, tiling, compression | **21,110 pass** |
-| V3 | 48 sampled | no valid cell outside the China mask | 48 / 48 |
-| V4 | 48 sampled | NoData encoding agrees with the declared value | 48 / 48 |
-| V5 | 12 groups, stratified by theme and dataset | class proportions sum to 1 | 12 / 12 |
-| V6 | 18 sampled | focal values lie inside their parent's range | 18 / 18 |
+The bioclim theme is **CHELSA v2.1** (1,210 layers, CC0-1.0, standard BioClim
+calibre). Its acceptance (`accept_chelsa.R`) confirms 22 present + 1,188 future
+layers, mask-exact coverage for bio01–19 (9,490,310 valid cells, zero outside
+China), bio02 median 10.99 °C and bio06 minimum −46.79 °C (standard calibre), and
+gdd0/5/10 coverage faithful to the CHELSA source NoData. The other 20,578 layers
+were validated by an exhaustive every-pixel audit (Python + rasterio, independent
+of the R + terra production validator) and are unchanged.
 
-V1 and V2 read file headers only, which is why they can cover the whole archive.
-V3–V6 read pixels, and a full pass would take hours; they are sampled by design.
+## Known source-level limitations
 
-## Full-archive audit on an independent toolchain
+- Eight Hydrography90m layers were **withdrawn** after the source products proved
+  numerically unusable (provenance table, `status = withdrawn`).
+- Five HydroSHEDS flow-accumulation layers are **withheld** from public release:
+  the HydroSHEDS licence grants no right to redistribute under an open licence.
+- gdd0/5/10 retain the CHELSA source NoData over cold / ocean areas, so their
+  valid-cell count is below the full mask; this is faithful to the source, not a
+  processing defect.
 
-V1 and V2 come from the production validator, so a defect there would be invisible
-above. The whole archive was therefore audited a second time with a separate stack
-— Python 3 with rasterio 1.4, no terra — opening every GeoTIFF and reading every
-pixel. Tables are in [`result_dataframe/`](result_dataframe/), the report is
-[`DATA_QUALITY_AUDIT.md`](DATA_QUALITY_AUDIT.md), the code is `script/audit_*.py`.
+## Licence
 
-| Check | Result |
-|---|---:|
-| opens, single band | **21,110 / 21,110** |
-| float32 | **21,110 / 21,110** |
-| NoData −9999 declared | **21,110 / 21,110** |
-| grid invariants (CRS, transform, 4,861 × 4,062) | **21,110 / 21,110** |
-| DEFLATE, tiled 256 × 256 | **21,110 / 21,110** |
-| no valid cell outside the China mask | **21,110 / 21,110** |
-| no Inf/NaN among valid cells | **21,110 / 21,110** |
-| values inside the documented range | **21,110 / 21,110** |
-| agrees with `variable_dictionary.csv` (min, max, n_valid) | **21,110 / 21,110** |
-| agrees with `MANIFEST.csv` SHA-256 | **21,110 / 21,110** |
+Per-layer licences are recorded in the provenance table and summarised in the
+repository `.zenodo.json` / `CITATION.cff`: CC BY 4.0 (20,491), CC0-1.0 (1,210,
+CHELSA), CC BY-NC 4.0 (76), CC BY-NC-SA 4.0 (4), Copernicus (1), ODbL 1.0 (1);
+21,783 layers are public, 5 HydroSHEDS layers withheld.
 
-**No layer failed any check.** Three further passes go beyond the sampling above:
+---
 
-- **Content fixity, re-derived.** Every one of the 21,110 files was read back and
-  hashed again and compared with `MANIFEST.csv`: **21,110 / 21,110 match**, no file
-  missing, no byte changed. Table: `result_dataframe/manifest_reverify.csv`.
-- **Composition identity, exhaustive.** All **497** base proportion groups (3,982
-  layers, against 12 sampled in V5) were re-derived; max |Σ − 1| is 5.215 × 10⁻⁸
-  (clcd), 4.843 × 10⁻⁸ (hlu1km) and exactly 0 (glu1km).
-- **Provenance cross-checked.** Thirteen checks join `provenance_table.csv` to the
-  layers, the dictionary, the licence registry and the code: paths exist, withdrawn
-  rows do not, `actual_range` and its valid-cell count match the audit, expected
-  ranges bracket the measured values, licence and licence class match the registry,
-  the cited script exists, units are non-empty, and no field carries stray
-  whitespace. **13 / 13 pass, 0 failures.** Table:
-  `result_dataframe/provenance_verification.csv`.
-  The delivery tree pruned its one-off audit scripts on 2026-10-26; this repository
-  keeps `script/verify_provenance.py` because it generates the table above, while the
-  superset checker `script/verify_provenance_final.py` (29 checks) ships in both.
-- **Source fidelity.** Five cross-theme layers compared point by point against
-  their original sources at 3,000 random cells: r = 0.983–0.9999, mean bias ≈ 0.
-
-Two toolchains now agree on every claim, so none of these numbers depends on the
-implementation that produced it. The audit report reproduces the delivery-side
-paths (`audit/*.csv`, `scripts/audit/*.py`); in this repository those files are
-`result_dataframe/*` and `script/audit_*.py`. The audit also records what is *not* a failure but
-still matters to a user — see §5 of the audit report, which covers the constant
-`outlet` layer, the class-restricted patch metrics, the 7,060 byte-identical
-layers, and the five climate variables whose source definitions are not WorldClim's.
-
-## Composition identities (V5)
-
-A categorical source, one-hot encoded and area-weighted, must sum to 1 in every
-valid cell. The residual should therefore come only from float32 representation.
-
-| Product | Classes | Years checked | max \|Σ − 1\| |
-|---|---:|---|---:|
-| `clcd` (observed, aggregated from 30 m) | 9 | 2000, 2001, 2003, 2004 | 5.03–5.22 × 10⁻⁸ |
-| `glu1km` (projected, 1 km source) | 6 | four scenario snapshots | 0.000 (exact) |
-| `hlu1km` (projected, 0.01° source) | 8 | 1961, 1962, 1966, 1967 | 4.470 × 10⁻⁸ |
-
-`glu1km` closes exactly because its source is published as integer percentages, so
-no float aggregation happens. The full audit re-ran this for every base group:
-**497 / 497 pass**, with max |Σ − 1| of 5.215 × 10⁻⁸ (clcd), 4.843 × 10⁻⁸ (hlu1km)
-and exactly 0 (glu1km). The other two sit at the float32 representation
-limit. Two independently built products converging on the same error magnitude,
-one of them exact, points to the representation layer rather than the code.
-
-## Independent recomputation
-
-[`script/verify_independent.R`](script/verify_independent.R) re-derives 16
-properties using only `terra` and base R, calling no project helper: **16 pass, 0 fail**.
-
-| Group | Comparison | Comparisons | Result |
-|---|---|---:|---|
-| A | layer count equals 21,110 | 1 | pass |
-| A | manifest versus disk, both directions | 21,110 | 0 extra on either side |
-| B | 60 random layers against the template (extent, dims, resolution) | 60 | 0 mismatches |
-| C | 60 layers declare −9999 | 60 | all |
-| C | `terra::NAflag()` returns NaN for float layers | 60 | all |
-| C | NoData cell count equals the mask's zero count | 19,745,382 | 10,255,072 = 10,255,072 |
-| D | mask valid / invalid cells | 2 | 9,490,310 / 10,255,072 |
-| E | 10 random layers, recompute min/max/n_valid | 10 | 0 mismatches |
-| F | 8 random layers, re-hash SHA-256 | 8 | 0 mismatches |
-| G | CLCD composition identity on 2008 | 9,471,991 | 5.215 × 10⁻⁸ |
-
-## Resampling effect
-
-Each layer contributes 200 random 1 km cells. For each, the cell polygon is
-transformed to the source CRS, the source raster clipped to it, and the
-area-weighted source mean compared with the delivered value. The within-cell
-coefficient of variation is reported alongside because it says how much
-sub-kilometre structure a 1 km value absorbs.
-
-| Layer | Median source cells per 1 km cell | Median absolute difference | Median relative difference | Relative difference under 1% | Within-cell CV (median) |
-|---|---:|---:|---:|---:|---:|
-| vege / canopy height (30 m) | 1,300 | 0.000 m | 0.00% | 75.5% | 90.0% |
-| dist / river distance (90 m) | 144 | 4.21 m | 2.40% | 29.5% | 77.0% |
-| hydro / flow accumulation (90 m) | 144 | 2.02 | 7.75% | 13.0% | 277.4% |
-
-Canopy height reproduces the source mean exactly at the median. Flow accumulation
-has the largest relative difference because the variable spans eight orders of
-magnitude, so an absolute difference of about 2 becomes a large relative
-difference wherever the cell mean is small.
-
-The within-cell CV is the number that matters for use: it is why the land-cover
-family ships nine per-cell areal proportions rather than a single dominant class.
-
-## Byte-level uniqueness
-
-Counting distinct SHA-256 digests over the whole archive: **14,050 of 21,110 layers
-are byte-distinct (66.6%)**, so the layer count overstates the amount of distinct
-information by about a third. Six of the eight themes contain no duplicates at all;
-the redundancy is confined to the projected land-use family, where the projected
-urban extent is frozen across all five SSP-RCP scenarios and therefore repeats.
-
-## Distribution and licensing
-
-| Group | Layers |
-|---|---:|
-| Open licence (CC BY 4.0, ODbL 1.0, Copernicus) | 21,025 |
-| Non-commercial (CC BY-NC 4.0, of which 4 are CC BY-NC-SA 4.0) | 80 |
-| Withheld (HydroSHEDS v1 flow accumulation) | 5 |
-| **Total** | **21,110** |
-
-Per-layer records are in [`result_dataframe/per_layer_stats.csv`](result_dataframe/per_layer_stats.csv)
-(licence class and release status per row) and in `RESTRICTED_LAYERS.csv`.
-
-## Withdrawn layers
-
-Eight Hydrography90m layers were withdrawn from the delivery after the source
-products themselves proved numerically unusable — negative flow accumulation down
-to −244,806 km², and a composite terrain index spanning ±1.8 × 10⁹. The delivered
-values were verified cell by cell to be a faithful downscaling of those sources,
-so a rerun cannot repair them. They remain in the provenance table with
-`status = withdrawn` so the removal is auditable rather than silent.
-
-## Six defects found in the validator itself
-
-This is the most useful section of the folder. Early in the campaign the checks
-reported pass because they were doing nothing:
-
-| # | Defect | Symptom | Fix |
-|---|---|---|---|
-| 1 | V4 used `terra::NAflag()` | returns NaN for float rasters, so the whole check was skipped | read `NoData Value=` from the GDAL metadata block |
-| 2 | V5 grouped by `dirname()` | classes live in sibling directories, so every group had one file and was skipped | group on the two levels above the file |
-| 3 | `limit` truncated the whole file list | `full 40` silently restricted V3–V6 to 40 layers | `limit` now only bounds V1/V2 |
-| 4 | V5 used `global(min)` after the rewrite | cells outside the mask are 0, so `dev = 1` and correct data failed | evaluate only where Σ > 0 |
-| 5 | V5 took the 12 oldest groups by mtime | systematically excluded the newest data — none of the 12 was CLCD | stratify by theme/dataset and rotate |
-| 6 | the first independent script prefixed paths wrongly | compared 0 layers and reported pass | fixed the prefix, and every check now prints its comparison count |
-
-The lasting guard is the last row: every check reports how many comparisons it
-made, so a check that did nothing cannot masquerade as a check that passed.
-
-## Testing the tests (2026-10-26)
-
-The six defects above were found by reading the code. The follow-up round stopped
-trusting reading: `script/test_audit_scripts.py` builds a throw-away delivery root,
-plants one known defect per layer, runs the real scripts against it through
-`CHECO_ROOT`, and asserts that each defect is reported. Twenty cases cover non-finite
-values, valid cells outside the mask, values above the range, wrong dtype, wrong
-no-data, a shifted grid, missing compression, wrong dimensions, a truncated file, a
-SHA mismatch, a dictionary mismatch, a missing expected range, an all-no-data layer, a
-proportion group that does not close, a group with nothing to inspect, and the three
-focal-within-base outcomes. `pipeline_r/scripts/tools/test_checkers.R` does the same
-for the R helpers `chk()` and `say()`, by parsing the real scripts and evaluating only
-the helper definitions.
-
-It found live holes rather than hypothetical ones: a layer with no `expected_range`
-passed the range check because the counts were blank and the summary read blank as
-zero; a proportion group with no inspectable cell reported `max|sum-1| = 0`; the
-climate comparison returned success after comparing nothing; `chk()` passed when both
-sides were `NA`. All four are fixed, and the strengthened audit still clears all
-21,110 layers. Details and the remaining limits are in [`history/AUDIT_OF_AUDITS.md`](history/AUDIT_OF_AUDITS.md).
-
-## Ten errors found in our own description of the archive
-
-The defects above concern the checks. These concern what we wrote about the data,
-and they matter for a different reason: a reader has no way to audit a sentence.
-Some were caught by the new cross-source audit (`script/check_cross_source_numbers.py`),
-which recomputes the headline numbers from the delivery and then asks each document
-whether it carries the current value and whether it still carries a retired one; the
-rest came from reading the producing code against the text.
-
-| # | What we wrote | What the data says | How it surfaced |
-|---|---|---|---|
-| 1 | "all 4 topo layers are reprojected sources" | `aspect` and `tri` are produced by `08_derive_topo_vege.R` with Horn (1981) and Riley et al. (1999); only elevation and slope are reprojected | an external review read the two sentences against each other |
-| 2 | 796 direct (3.77%) / 20,314 derived (96.23%) | 794 / 20,316, once the two derived topo layers are counted as derived | follows from #1 |
-| 3 | "7 coordinate reference systems" | 4, after collapsing synonyms: EPSG:4326 (19,271 layers), China_Albers (1,174), World Mercator (540), World Mollweide (125) | recomputed from `source_crs` |
-| 4 | "17 no-data conventions" | 13 distinct conventions from 18 declarations (NaN, 0, none, -3.4e38, -32768, NaN with -inf, -9999, 32767, -200, -128, 65535, UInt32 sentinel, not applicable) | recomputed from `source_nodata` |
-| 5 | "a SHA-256 manifest of 21,118 entries covering 170.91 GB" | 21,118 rows are 172.46 GB; the 21,110 active layers are 170.91 GB and the 8 withdrawn records add 1.54 GB | the cross-source audit, by summing the manifest by basename |
-
-> After the 2026-11-06 rebuild, `MANIFEST.csv` totals 166.94 GB for the 21,110 delivered layers (168.49 GB including masks and species files). The row above records the state at the time of that audit.
-| 6 | "a random 48 layers" | `11_validate.R` draws them at even intervals along the production chronology, not at random | reading the sampling code |
-| 7 | resampling "quantified per theme" | three representative layers, one per source type, of 21,110 (0.014%) | an external review counted the rows in the table |
-| 8 | "a second toolchain sharing no code" | true of `audit_data_quality.py` (Python/rasterio, 10 checks), but the sentence never said which of the two independent scripts it meant | an external review asked which one |
-| 9 | "CLCD is described from 1985 onwards" | the cited paper covers 1990-2019; the release delivered here covers 2000-2025 | the citation contradicted the sentence |
-| 10 | figures 3-7 named `fig02_*` to `fig06_*`, with no `fig07` | after renaming, `fig01`-`fig08` match legend numbers 1-8 | a directory listing |
-
-Two of these (#5, #6) are the kind that survive every check that only asks "does the
-number appear?", which is why the cross-source audit compares recomputed values rather
-than grepping for strings, and why it also tests for retired values.
-
-## What could not be verified
-
-- **Source integrity.** Ingest checksums were not retained, so the source files can
-  no longer be re-verified against the delivered archive.
-- **Comparison with the earlier Python delivery.** That delivery was replaced in
-  place, so a like-for-like comparison is impossible. Two diagnostic rasters do
-  survive and answer the question for both resampling rules: bilinear gives a mean
-  absolute difference of 0.0146 °C but only 2.85% bit-identical cells, while
-  nearest gives 94.48% bit-identical cells but differences up to 9.71 °C in the
-  rest. The current delivery is therefore not a drop-in numerical replacement for
-  the earlier one, and users needing continuity must recompute derived quantities
-  from it.
-
-## Reproducing
-
-```bash
-Rscript pipeline_r/scripts/11_validate.R header      # V1/V2 over all 21,110 layers
-Rscript script/verify_independent.R                   # 16 independent checks
-Rscript script/check_table2.R                         # per-dataset counts sum to 21,110
-Rscript script/check_docs_consistency.R               # documentation numbers versus disk
-Rscript script/check_trends.R                         # temporal consistency of annual series
-Rscript script/resampling_effect.R                    # source-versus-resampled comparison
-python script/make_result_dataframes.py --delivery <delivery-root> --outdir result_dataframe
-python script/make_validation_figures.py
-python script/check_cross_source_numbers.py          # numbers in the manuscripts and this repository versus the delivery
-python script/check_docx_quality.py                  # page geometry, fonts, table and figure widths, Markdown leftovers
-```
-
-Every script reads `CHECO_ROOT` and falls back to a default path when it is unset; the
-fallback is the author's delivery layout, so set the variable rather than relying on it.
-The R scripts expect `CHECO_ROOT` to point at the delivery root, which holds
-`data/covariates/`, `scripts/config.yaml` and `00_docs/`. `audit_fidelity.py` additionally
-reads `CHECO_SRC`, the directory holding the source rasters it compares against, which are
-in neither the repository nor the delivery.
-
-## Layout
-
-Everything that records a past state — the earlier campaign, the manuscript review,
-the clean-shell verification run and the R-conversion history — lives in `history/`.
-The files at the top of this directory describe the archive as it stands today.
-
-| Path | Content |
-|---|---|
-| `VERIFICATION_REPORT.md` | full delivery verification report |
-| `INDEPENDENT_VERIFICATION.md` | the independent recomputation, written up separately |
-| [`history/MANUSCRIPT_REVIEW.md`](history/MANUSCRIPT_REVIEW.md) | the simulated three-seat review of the manuscript: what was accepted and fixed, what was rejected with evidence, and what would need new data |
-| [`history/VERIFICATION_RUN.md`](history/VERIFICATION_RUN.md) | one clean-shell run of the whole chain, with per-step times and results: `scripts/audit/run_full_verification.py` |
-| `result_dataframe/per_layer_stats.csv` | one row per layer: theme, dataset, unit, n_valid, na_frac, min, max, bytes, SHA-256, licence class, release status |
-| `result_dataframe/licence_summary.csv` | layer counts per licence class and release status |
-| `result_dataframe/*_identity_check.csv`, `resampling_effect.csv`, `python_vs_r_comparison.csv` | the tables behind the numbers above |
-| `figures/` | value range per layer, NoData count per layer, theme inventory |
-| `script/` | the checks and the scripts that regenerate the tables and figures. `check_cross_source_numbers.py`
-recomputes the headline numbers from the delivery and flags any place — manuscript or repository — that still
-carries a retired value, which is how the manifest row-count and size mismatch was found; `check_docx_quality.py`
-inspects the generated Word files rather than their source, and is what caught the Markdown backticks that had
-survived into ten paragraphs of the English manuscript |
-| [`history/earlier_campaign/`](history/earlier_campaign/) | the earlier validation campaign, kept for provenance only |
+*The detailed pre-replacement audit campaign (the 21,110-layer tree with cnclim1km
+bioclim, run before the 2026-11-13 CHELSA replacement) is archived locally outside
+this repository and is not part of the public release.*

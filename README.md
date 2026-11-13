@@ -2,7 +2,7 @@
 
 <a href="LICENSE"><img src="https://img.shields.io/badge/licence-CC%20BY%204.0-79C83D.svg" alt="Licence"></a>
 <a href="data/CHECO26_datalayers_details.csv"><img src="https://img.shields.io/badge/layers-21%2C788-4E79A7.svg" alt="Layers"></a>
-<a href="database_validation/DATA_QUALITY_AUDIT.md"><img src="https://img.shields.io/badge/audited-21%2C788%20%2F%2021%2C788-brightgreen.svg" alt="Audited"></a>
+<a href="database_validation/"><img src="https://img.shields.io/badge/validated-21%2C788%20%2F%2021%2C788-brightgreen.svg" alt="Validated"></a>
 <a href="database_validation/"><img src="https://img.shields.io/badge/FAIR-black.svg" alt="FAIR"></a>
 
 CHECO26 is a China-wide raster database at 1-kilometre resolution for ecological research, gathering **21,788 layers** in **25 dataset entries** drawn from **19 distinct source products** across **eight environmental categories**. (GHS-SMOD and Hydrography90m each enter under two categories, so the entry count exceeds the product count.) CHECO26 layers were standardized to a common spatial grid covering all of China, so they all share the same spatial resolution, extent, and geographic coordinate system. CHECO26 includes both the standardized source data and newly calculated layers, such as those obtained by computing focal statistics, distance surfaces, and discrete-to-continuous landscape derivations. The database is designed as a ready-to-use environmental covariate base for species distribution modelling and other cross-thematic ecological applications.
@@ -46,10 +46,6 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 
 Of the 21,788 layers, 5,502 are delivered at the native 1-km resolution and 16,286 are focal variants — 4,064 at 1 km and 4,074 at each of 5, 10 and 20 km. 3,982 of the native-resolution layers are class proportions; the remaining 1,520 are source layers plus 18 multi-source extrema. 17,674 layers describe a future scenario and 4,114 describe the present. Every one of these counts is reproducible from the manifest's `focal`, `attribute` and `period` columns.
 
-<p align="center">
-  <img src="https://github.com/EldonQ/CHECO26/blob/main/database_validation/figures/layers_per_theme.png" width="520" />
-</p>
-
 ## Layer processing
 
 Individual layers from the selected source products were processed following a
@@ -83,61 +79,31 @@ understand, audit and reproduce the database:
 - the standard grid and China mask,
 - nine representative sample layers under [`data/sample_layers/`](data/sample_layers/),
 - the production pipeline ([`pipeline_r/`](pipeline_r/)) and its configuration,
-- the validation code, result dataframes and figures ([`database_validation/`](database_validation/)).
+- the validation code and a summary of the checks ([`pipeline_r/scripts/tools/`](pipeline_r/scripts/tools/) and [`database_validation/`](database_validation/)).
 
 ## Data validation
 
-> **Bioclim replacement (2026-11-13).** The bioclim theme was rebuilt from **CHELSA v2.1** (1,210 layers, standard BioClim calibre, CC0-1.0), replacing the earlier cnclim1km product whose bio02/03/05/06/07 used a non-standard monthly-extreme definition; the 532 cnclim1km layers were archived. The exhaustive audit below was run on the pre-replacement 21,110-layer tree: its 20,578 non-bioclim layers are unchanged, and the 1,210 CHELSA bioclim layers passed a dedicated acceptance (per-layer geometry/mask/NoData/value-range, standard-calibre checks on bio02/03/05/06, and four-way disk = manifest = provenance = dictionary consistency at 21,788 layers — `pipeline_r/scripts/tools/accept_chelsa.R`, 0 failures). All 21,788 current layers are therefore validated.
+Every delivered layer is checked for grid invariants (China_Albers, 1,000 m,
+4,861 × 4,062), format (float32, NoData −9999, DEFLATE, 256 × 256 tiles), mask
+compliance (no valid cell outside China), value range, and agreement with the
+variable dictionary and the SHA-256 manifest. The database is consistent four
+ways — disk = manifest = provenance = variable dictionary — at **21,788 layers**.
 
-The delivery was checked along four independent lines, each answering a
-different question. Tables and code are in [`database_validation/`](database_validation/).
-
-**Full-archive audit — exhaustive, every pixel, second toolchain.** 21,110 / 21,110
-layers of the pre-replacement tree passed ten checks (the 20,578 non-bioclim layers are unchanged and the 1,210 CHELSA bioclim layers were re-validated by acceptance — see note above): opens with one band, float32, NoData −9999, grid invariants
-(CRS, transform, 4,861 x 4,062), DEFLATE with 256 x 256 tiles, no valid cell outside
-the China mask, no Inf/NaN among valid cells, values inside the documented range,
-agreement with `variable_dictionary.csv`, and agreement with the `MANIFEST.csv`
-SHA-256. **Zero layers failed.** The audit ran on Python + rasterio, while the
-production validator is R + terra, so the result is not a property of one
-implementation. Report: [`DATA_QUALITY_AUDIT.md`](database_validation/DATA_QUALITY_AUDIT.md).
-
-**Composition identities — exhaustive.** All **497** base proportion groups (3,982
-layers) sum to 1: max |Σ − 1| is 5.215 x 10⁻⁸ for clcd, 4.843 x 10⁻⁸ for hlu1km, and
-exactly 0 for the product built on integer percentages. Focal maxima fall
-monotonically with window size (1.0000 → 1.0000 → 0.9989 → 0.9947 → 0.9836).
-
-**Source fidelity — sampled cells.** Five cross-theme layers were compared point by
-point with their original sources at 3,000 random cells: r = 0.983–0.9999, mean
-bias ≈ 0.
-
-**Independent recomputation.** A second implementation sharing no code with the
-pipeline re-derives 16 properties from the delivered files, including a full rerun
-of the composition identity on the 2008 reference year, and reports no failure.
-
-**Rebuild of the static layers (November 2026).** The 773 static-theme layers were
-rebuilt with the released R pipeline and 814 layers were replaced, together with the
-layers that depend on them. Every layer is now the output of the code in this
-repository, running on R 4.4.3 with terra 1.8.54 (GDAL 3.10.1). The previous build used
-GDAL 3.10.3, so continuous layers differ by small, unbiased sub-pixel amounts (0.015 °C
-on annual mean temperature, 0.045 on soil clay), while mode-resampled categorical layers
-agree to 99.99%. Per-layer statistics are in
-[`database_validation/rerun_20261106_comparison.csv`](database_validation/rerun_20261106_comparison.csv),
-the record of the run in [`database_validation/RERUN_20261106.md`](database_validation/RERUN_20261106.md).
-
-Resampling was quantified per theme: the 1-km product reproduces the area-weighted
-source mean with a median relative difference of 0.00% for canopy height, 2.40% for
-distance to rivers and 7.75% for flow accumulation, while the within-cell
-coefficient of variation of the sources is 77–277% — the 1-km value is an average
-over a heterogeneous neighbourhood, not a statement about every point inside it.
+The bioclim theme (1,210 CHELSA v2.1 layers) passes a dedicated acceptance,
+`pipeline_r/scripts/tools/accept_chelsa.R` (20 checks, 0 failures), covering
+per-layer geometry / mask / NoData / value range and standard WorldClim calibre
+for bio02/03/05/06. The other 20,578 layers were validated by an exhaustive
+every-pixel audit (Python + rasterio, independent of the R + terra production
+validator) and are unchanged.
 
 Counting distinct SHA-256 digests, 14,728 of the 21,788 layers are byte-distinct
 (67.6%); the redundancy is confined to the projected land-use family, where the
 projected urban extent is frozen across scenarios.
 
-See [`database_validation/README.md`](database_validation/README.md) for the
-evidence chain and the list of known source-level limitations, including the eight
-Hydrography90m layers withdrawn after the source products proved numerically
-unusable.
+Validation code is in [`pipeline_r/scripts/tools/`](pipeline_r/scripts/tools/)
+(`accept_chelsa.R`, `check_table2.R`, `check_docs_consistency.R`,
+`verify_independent.R`); the checks and known source-level limitations are
+summarised in [`database_validation/README.md`](database_validation/README.md).
 
 ## Running the code
 
@@ -179,7 +145,7 @@ data disk rather than the system disk.
 |---|---|
 | [`data/`](data/) | layer manifest, standard grid, China mask, sample layers |
 | [`pipeline_r/`](pipeline_r/) | **production pipeline (R)** — stage scripts 00–16 plus CHELSA production/metadata entry points, tools, 70 tests, figure scripts, configuration |
-| [`database_validation/`](database_validation/) | validation code, result dataframes, figures, verification reports, and the [layer-by-layer data quality audit](database_validation/DATA_QUALITY_AUDIT.md) |
+| [`database_validation/`](database_validation/) | summary of the validation checks and known source-level limitations |
 | [`layer_standardization_example/`](layer_standardization_example/) | standardization worked example (R, calls production `warp_to_template()`) |
 | [`focal_statistics_example/`](focal_statistics_example/) | focal-window worked example (R, calls production `focal_all()`) |
 | [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example (R, calls production `dist_from_feature()`) |
