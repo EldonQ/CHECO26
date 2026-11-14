@@ -2,8 +2,8 @@
 #
 # Why this exists: those five layers came from an external Python script
 # (E:/HydroSHEDS Core Data/work/step8_finalize.py), which is the last piece of the
-# delivery not produced by the R pipeline. R/15_ingest_h90m_accumulation.R tried a
-# different route -- rebuilding from Hydrography90m -- and was rejected on 2026-10-21
+# delivery not produced by the R pipeline. An earlier route -- rebuilding from
+# Hydrography90m -- was tried and rejected on 2026-10-21
 # because channel peaks came out 6.2x low. That rejection says nothing about this
 # route: here the source is the same as_acc_3s.tif the delivered layers came from,
 # so the job is to reproduce the transformation, not to replace the data.

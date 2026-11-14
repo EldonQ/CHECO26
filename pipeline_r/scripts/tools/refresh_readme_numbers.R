@@ -4,14 +4,14 @@
 # 动机：本会话有 4 次因手填数字而被实际值打回：
 #   1) hlu1km 基底缺 632 层（实际 12）      2) 68.6% vs 1.97% 口径不同
 #   3) 78 测试 / 6 工具 / 6 绘图（实际 70/7/5）  4) 论文行数 264/1218（实际 266/1220）
-# 每一次都是"能算出来的数字却手填了"。与 report_status.R 自动生成完成度表同理，
+# 每一次都是"能算出来的数字却手填了"。与自动完成度统计同理，
 # 这里把 README 的计数也交给脚本。
 #
 # 用法：
 #   Rscript R/tools/refresh_readme_numbers.R        # 只报告差异
 #   Rscript R/tools/refresh_readme_numbers.R write  # 写回
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
 
 readme_path <- function() file.path(PATH_DOCS(), "README.md")
 
@@ -19,9 +19,8 @@ readme_path <- function() file.path(PATH_DOCS(), "README.md")
 actual_counts <- function() {
   root <- CHECO_ROOT
   docs <- PATH_DOCS()
-  papers <- c("PAPER_ABSTRACT_AND_BACKGROUND.md", "PAPER_DATA_RECORDS.md",
-              "PAPER_METHODS.md", "PAPER_TECHNICAL_VALIDATION.md")
-  nlines <- function(f) length(readLines(file.path(docs, f), encoding = "UTF-8", warn = FALSE))
+  # 论文只有一处正文（SUBMISSION/），不再有分节草稿，因此这里不再统计行数；
+  # 图件也只在 SUBMISSION/figures 下，00_docs/figures 已于 2026-10-25 清理。
   un_txt <- paste(readLines(file.path(docs, "USAGE_NOTES_AND_LIMITATIONS.md"),
                             encoding = "UTF-8", warn = FALSE), collapse = "\n")
   list(
@@ -29,10 +28,7 @@ actual_counts <- function() {
     test  = length(list.files(file.path(root, "R", "tests"), pattern = "\\.R$")),
     tool  = length(list.files(file.path(root, "R", "tools"), pattern = "\\.R$")),
     fig_r = length(list.files(file.path(root, "R", "figs"),  pattern = "\\.R$")),
-    fig_p = length(list.files(file.path(docs, "figures"), pattern = "\\.png$")),
-    lim   = length(regmatches(un_txt, gregexpr("\n## B[0-9]+", un_txt, fixed = FALSE))[[1]]),
-    paper = setNames(vapply(papers, nlines, 0L), papers),
-    ptotal = sum(vapply(papers, nlines, 0L))
+    lim   = length(regmatches(un_txt, gregexpr("\n## B[0-9]+", un_txt, fixed = FALSE))[[1]])
   )
 }
 
@@ -59,16 +55,8 @@ main <- function(mode = c("report", "write")) {
   sub1("([0-9]+) 个工具",   sprintf("%d 个工具",   a$tool), "工具脚本数")
   sub1("([0-9]+) 个绘图脚本", sprintf("%d 个绘图脚本", a$fig_r), "绘图脚本数")
 
-  cat("\n2) 图件与限制\n")
-  sub1("figures/`，([0-9]+) 张", sprintf("figures/`，%d 张", a$fig_p), "图件张数")
+  cat("\n2) 限制条数\n")
   sub1("([0-9]+) 项已知限制", sprintf("%d 项已知限制", a$lim), "限制条数")
-
-  cat("\n3) 论文行数\n")
-  for (f in names(a$paper)) {
-    sub1(paste0("`", f, "` \\| ([0-9]+) \\|"),
-         sprintf("`%s` | %d |", f, a$paper[[f]]), f)
-  }
-  sub1("\\*\\*合计 ([0-9,]+) 行", sprintf("**合计 %s 行", format(a$ptotal, big.mark = ",")), "论文合计")
 
   if (mode == "write" && length(changes)) {
     writeLines(s, readme_path(), useBytes = TRUE)

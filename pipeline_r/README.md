@@ -24,7 +24,6 @@ pipeline_r/
 │   ├── 04_ingest_timeseries.R  annual series: human footprint, settlement epochs
 │   ├── 05_derive_lulc.R     land-cover proportions and landscape metrics
 │   ├── 06_derive_lulc_clcd.R        CLCD annual cover
-│   ├── 06_derive_lulc_clcd_focal.R  CLCD focal variants
 │   ├── 07_derive_lulc_hlu1km.R      harmonised 1960–2100 reconstruction
 │   ├── 08_derive_topo_vege.R        terrain and vegetation derivatives
 │   ├── 09_derive_dist.R             distance surfaces
@@ -33,7 +32,7 @@ pipeline_r/
 │   ├── 12_make_docs.R               variable dictionary and layer index
 │   ├── 13_make_provenance.R         per-layer provenance table
 │   ├── 14_manifest.R                SHA-256 manifest
-│   ├── 15_ingest_h90m_accumulation.R  HydroSHEDS flow accumulation
+│   ├── 16_ingest_hydrosheds_accum.R   HydroSHEDS accumulation reproduction (scratch)
 │   ├── run_all.R                    runs the stages in order
 │   ├── run_bioclim_chelsa.R         CHELSA bioclim production entry (present + future)
 │   ├── run_bioclim_shard.R          sharded CHELSA future production
