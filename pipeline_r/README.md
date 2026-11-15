@@ -31,7 +31,7 @@ pipeline_r/
 │   ├── 11_validate.R                whole-library validation (V1–V6)
 │   ├── 12_make_docs.R               variable dictionary and layer index
 │   ├── 13_make_provenance.R         per-layer provenance table
-│   ├── 14_manifest.R                SHA-256 manifest
+│   ├── 14_manifest.R                SHA-256 manifest (CHECO release: covariates + mask_china.tif + template)
 │   ├── 16_ingest_hydrosheds_accum.R   HydroSHEDS accumulation reproduction (scratch)
 │   ├── run_all.R                    runs the stages in order
 │   ├── run_bioclim_chelsa.R         CHELSA bioclim production entry (present + future)

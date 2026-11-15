@@ -4,7 +4,9 @@
 # 与早期 qa2 工作区的 r16_manifest.py、r18_public_release.py 对齐（两脚本不在交付树内）
 #
 # 产出（均在 00_docs/）：
-#   MANIFEST.csv                  data/ 下每个文件的 relpath / bytes / sha256 / mtime
+#   MANIFEST.csv                  CHECO 发布文件的 relpath / bytes / sha256 / mtime
+#                                 （covariates/ + 生产掩膜 mask_china.tif + 网格模板 template_albers1km.tif；
+#                                   species/ 物种记录与 masks/ 备选掩膜非本发布内容，不列）
 #   PUBLIC_RELEASE_MANIFEST.csv   每层的许可证分级（OPEN / NC / UNVERIFIED）
 #   RESTRICTED_LAYERS.csv         不可再分发的层及理由
 #
@@ -75,9 +77,14 @@ main <- function(mode = c("all", "hash", "release"), workers = 8L) {
 
   # ---- 1) SHA-256 清单 ----
   if (mode %in% c("all", "hash")) {
-    fs <- list.files(data_root, recursive = TRUE, full.names = TRUE)
+    # CHECO 环境变量发布清单：仅 covariates/ + 生产掩膜 mask_china.tif + 网格模板
+    # template_albers1km.tif。species/（物种出现记录）与 masks/（备选掩膜）与本发布无关，不列。
+    fs <- c(list.files(file.path(data_root, "covariates"), recursive = TRUE, full.names = TRUE),
+            file.path(data_root, "mask_china.tif"),
+            file.path(data_root, "template_albers1km.tif"))
+    fs <- fs[file.exists(fs)]
     fs <- fs[!grepl("\\.(aux\\.xml|tmp\\.tif|tif\\.ovr)$", fs)]
-    cat(sprintf("扫描 data/ 下文件: %d\n", length(fs)))
+    cat(sprintf("扫描 CHECO 发布文件: %d\n", length(fs)))
     total <- sum(file.size(fs))
     cat(sprintf("总大小: %.2f GB\n", total / 1e9))
 
@@ -119,7 +126,7 @@ main <- function(mode = c("all", "hash", "release"), workers = 8L) {
     # 2026-10-21：源表已注入 4 列许可信息
     #   licence / licence_url / attribution / licence_status
     # 其中 licence_status 形如 "VERIFIED (OPEN)"，括号内是分级。
-    # 详细证据在 LICENCE_REGISTRY.csv（21 行），不在逐层表里。
+    # 详细证据在 LICENCE_REGISTRY.csv（25 行），不在逐层表里。
     has_cols <- all(c("licence", "licence_url", "attribution", "licence_status") %in% names(prov))
     if (has_cols && all(!is.na(prov$licence_status))) {
       cat("\n\u8bb8\u53ef\u4fe1\u606f\u6765\u6e90: provenance_table.csv \u7684 4 \u4e2a\u8bb8\u53ef\u5217\n")
