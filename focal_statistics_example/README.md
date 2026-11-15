@@ -66,12 +66,28 @@ in this repository:
 | Check | What it verifies |
 |---|---|
 | G1 | a window mean cannot leave the base range (0 violations) |
-| G2 | recomputing `_f5000` from the base layer reproduces the delivered layer cell by cell |
+| G2 | recomputing the focal layers from the base reproduces the delivered layers cell by cell |
 
-G2 currently reports a maximum difference of 3.0e-8 over 9,490,284 cells and
-zero cells above 1e-6 — that is float32 rounding, so the production function
-reproduces the archive exactly. The script exits non-zero if either check fails,
-so it doubles as a regression test of `focal_mean()`.
+### G2 comparison scope
+
+`focal_all()` recomputes all four windows (1, 5, 10, 20 km). G2 compares each
+recomputed window against the delivered reference **when that reference is
+shipped**. The repository ships only the `_f5000` and `_f20000` references for
+the sample layer, so:
+
+| Window | G2 |
+|---|---|
+| `_f5000` (5 km, 11 × 11) | compared with the delivered reference |
+| `_f20000` (20 km, 41 × 41) | compared with the delivered reference |
+| `_f1000` (1 km, 3 × 3) | skipped — no reference shipped |
+| `_f10000` (10 km, 21 × 21) | skipped — no reference shipped |
+
+Measured with the production stack (R 4.4.3, terra 1.8.54, GDAL 3.10.1): the
+5 km window reproduces the delivered layer to a maximum absolute difference of
+2.96e-8 and the 20 km window to 2.98e-8, with zero cells above 1e-6 in either —
+float32 rounding, so the production function reproduces the archive exactly. The
+script exits non-zero if any compared check fails, so it doubles as a regression
+test of `focal_mean()`.
 
 ## A note on the sample layers
 

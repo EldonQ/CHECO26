@@ -16,6 +16,8 @@
 # Usage:  Rscript focal_statistics_example/focal_statistics.R [--radius-km 5]
 # =============================================================================
 
+invisible(try(Sys.setlocale("LC_CTYPE", ".65001"), silent = TRUE))
+
 # ---- 定位仓库并载入生产代码 -------------------------------------------------
 .this_dir <- (function() {
   args <- commandArgs(trailingOnly = FALSE)
@@ -82,11 +84,13 @@ if (n_above + n_below != 0L) stop("G1 violated: focal statistics left the base r
 ref_dir <- dirname(sample_layer("reg", "lulc", "glu1km", "2020", "forest",
                                 "reg_lulc_glu1km_2020_forest_prop_f5000.tif"))
 worst <- 0
+compared <- character(); skipped <- character()
 for (i in seq_len(nrow(fs))) {
   sfx <- fs$suffix[i]
   ref_p <- file.path(ref_dir, sprintf("reg_lulc_glu1km_2020_forest_prop%s.tif", sfx))
   if (!file.exists(ref_p)) {
-    cat(sprintf("check G2 %-8s: reference missing, skipped\n", sfx)); next
+    cat(sprintf("check G2 %-8s: reference missing, skipped\n", sfx))
+    skipped <- c(skipped, sfx); next
   }
   ref <- terra::rast(ref_p)
   if (!isTRUE(terra::compareGeom(layers[[sfx]], ref, stopOnError = FALSE))) {
@@ -96,11 +100,14 @@ for (i in seq_len(nrow(fs))) {
   dv <- dv[is.finite(dv)]
   mx <- max(dv); n_bad <- sum(dv > 1e-6)
   worst <- max(worst, mx)
+  compared <- c(compared, sfx)
   cat(sprintf("check G2 %-8s vs delivered: max |diff| = %.3g, %d cells > 1e-6 -> %s\n",
               sfx, mx, n_bad, if (mx <= 1e-6) "PASS" else "FAIL"))
   if (mx > 1e-6) stop("recomputed focal layer does not reproduce the delivered layer: ", sfx)
 }
-cat(sprintf("check G2 summary : worst difference over the four scales = %.3g (float32 rounding)\n", worst))
+cat(sprintf("check G2 scope   : compared %s; skipped (no reference shipped) %s\n",
+            paste(compared, collapse = ", "), paste(skipped, collapse = ", ")))
+cat(sprintf("check G2 summary : worst difference over the compared scales = %.3g (float32 rounding)\n", worst))
 
 # ---- 写出（生产写盘函数：float32 / DEFLATE / 256 分块 / 原子写）------------
 outdir <- example_outdir("focal")

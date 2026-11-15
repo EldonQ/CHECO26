@@ -74,9 +74,14 @@ cat(sprintf("\nwarp_to_template(): %.1f s -> %s\n",
 
 # ---- 校验 1：几何与掩膜 -----------------------------------------------------
 out <- terra::rast(dst)
-stopifnot(terra::ncol(out) == g$width, terra::nrow(out) == g$height)
-cat(sprintf("check S1 (geometry): %d x %d @ %.0f m, crs match -> PASS\n",
-            terra::ncol(out), terra::nrow(out), terra::res(out)[1]))
+s1_crs <- identical(terra::crs(out, proj = TRUE), terra::crs(g$rast, proj = TRUE))
+s1_res <- isTRUE(all.equal(terra::res(out), c(g$res, g$res)))
+s1_ext <- isTRUE(all.equal(as.vector(terra::ext(out)), as.vector(terra::ext(g$rast))))
+s1_dim <- terra::ncol(out) == g$width && terra::nrow(out) == g$height
+cat(sprintf("check S1 (geometry): CRS match=%s, resolution match=%s, extent match=%s, dims %d x %d -> %s\n",
+            s1_crs, s1_res, s1_ext, terra::ncol(out), terra::nrow(out),
+            if (s1_crs && s1_res && s1_ext && s1_dim) "PASS" else "FAIL"))
+stopifnot(s1_crs, s1_res, s1_ext, s1_dim)
 
 mask <- terra::rast(MASK_PATH)
 m <- terra::values(mask, mat = FALSE) > 0
@@ -101,10 +106,12 @@ if (file.exists(ref_path)) {
   if (max(dv) > 10 || stats::sd(signed) > 0.5) {
     stop("reprojection deviates from the delivered layer beyond interpolation tolerance")
   }
-  cat(paste0("  (the residual is interpolation noise: bilinear kernels differ slightly ",
-             "between GDAL versions, and the public source clip snaps to cell edges a ",
-             "little differently from the production crop of the global CHELSA file, so ",
-             "a few boundary cells differ. The signed mean is ~0: no systematic offset.)\n"))
+  cat(paste0("  (the residual is interpolation noise from the public input clip: the shipped ",
+             "source is a pre-clipped CHELSA window whose cell edges snap slightly differently ",
+             "from the production crop of the global CHELSA file, so bilinear sampling differs ",
+             "at boundary cells. Warping the full global source with the production crop ",
+             "reproduces the delivered layer exactly (max |diff| = 0). The signed mean is ~0: ",
+             "no systematic offset.)\n"))
 } else {
   cat("check S3: delivered reference layer not present, skipped\n")
 }

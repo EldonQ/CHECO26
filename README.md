@@ -114,8 +114,9 @@ Two things run without the 183.1 GB archive:
   `pipeline_r/scripts/01_common.R` -- the same code that produced the archive, with parameters
   read from `pipeline_r/config.yaml` rather than restated. They need R with `terra` and `yaml`,
   use only the public files in `data/`, and each ends with a check: the focal example
-  recomputes two delivered focal layers cell by cell (maximum difference 3.0e-8, i.e. float32
-  rounding, and one of them exercises the wide-window code path), the standardization example
+  recomputes the 5 km and 20 km delivered focal layers cell by cell (maximum difference
+  2.98e-8, i.e. float32 rounding; the 20 km layer exercises the wide-window code path),
+  while the 1 km and 10 km windows have no shipped reference and are skipped; the standardization example
   applies the CHELSA scale/offset to a raw 30 arc-sec climate source and reprojects it onto
   the grid, reproducing the delivered layer (sd 0.40 degC, no systematic offset), and the distance example rebuilds the settlement
   distance surface from the GHS-SMOD source (97.9% of the delivered feature cells recovered,

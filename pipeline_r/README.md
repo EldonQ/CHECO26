@@ -64,7 +64,24 @@ without the archive.
 
 ## Requirements
 
-R 4.4.3, terra 1.8.54 (GDAL 3.10.1), sf, exactextractr, scales.
+The delivery was produced with the following stack (versions verified on the
+production machine):
+
+| Component | Version |
+|---|---|
+| R | 4.4.3 (2025-02-28 ucrt) |
+| terra | 1.8.54 |
+| GDAL | 3.10.1 |
+| PROJ | 9.5.1 |
+| GEOS | 3.13.0 |
+| sf | 1.1.0 |
+| exactextractr | 0.10.1 |
+| yaml | 2.3.12 |
+
+The figure scripts additionally use `scales`. Byte-for-byte reproduction of the
+continuous layers requires this GDAL version: bilinear resampling weights differ
+slightly between GDAL releases, so a different GDAL can leave sub-pixel
+residuals on continuous layers.
 
 Reproducing the aggregation stages needs more disk than the delivery itself: each
 worker spills about 18.5 GB into `tempdir()` while mosaicking the 30 m sources,
