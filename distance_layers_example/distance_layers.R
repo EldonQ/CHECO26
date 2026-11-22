@@ -6,7 +6,7 @@
 # dist theme of CHECO26 is built. Every step calls the production code:
 #
 #   step 1  mirrors feat_smod_urban() in 09_derive_dist.R: settlement classes
-#           21/22/23 -> 1, everything else 0, projected onto the grid with max
+#           21/22/23/30 -> 1, everything else 0, projected onto the grid with max
 #           resampling (any urban source cell marks the output cell)
 #   step 2  dist_from_feature() from 01_common.R -- the helper used by
 #           09_derive_dist.R -- then apply_china_mask()
@@ -17,7 +17,7 @@
 # Reference (public):         data/sample_layers/reg/dist/smod/urban/
 #                             reg_dist_smod_urban.tif (the delivered layer)
 #
-# Checks: D1 reproduces the delivered layer cell by cell; D2 verifies the
+# Checks: D1 compares the result with the delivered layer; D2 verifies the
 # distance transform against closed-form Euclidean values.
 #
 # Usage:  Rscript distance_layers_example/distance_layers.R
@@ -79,7 +79,7 @@ if (file.exists(ref_path)) {
               mad, sum(ok), if (recall >= 0.95 && mad < 2000) "PASS" else "FAIL"))
   if (recall < 0.95 || mad >= 2000) stop("distance surface deviates from the delivered layer")
   cat(paste0("  (the delivered layer and this example both use the GHS-SMOD 2020 epoch,\n",
-             "   so D1 is an exact reproduction, not a statistical agreement. The distance\n",
+             "   with source-window coverage and float32 storage reflected in the D1 comparison. The distance\n",
              "   transform itself is additionally verified by the analytic check D2.)\n"))
 } else {
   cat("check D1: delivered reference layer not present, skipped\n")

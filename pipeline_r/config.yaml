@@ -130,7 +130,7 @@ hydro90m_vars:                 # Hydrography90m China Final 全量变量（零�
     channel_elv_up_cel: 50000
   scale_cm2m: []                    # 已废弃：2026-10-18 证实源已是 m，原 0.01 为误判
 
-smmod_urban_classes: [21, 22, 23]   # GHS-SMOD 城市类别（低/中/高密度建成区）
+smmod_urban_classes: [21, 22, 23, 30]
 
 # 距离要素固定定义（实测源结构后定案，代码零魔法数）
 grip4_field: "GP_RTP"            # GRIP4_region6.shp 道路类型字段（大写，整型编码）

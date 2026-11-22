@@ -1,7 +1,7 @@
 # =============================================================================
 # R/02b_hydro_stats.R  --  hydro 精选统计增补（窗口极值）
 #
-# 与早期 Python 版 02b_hydro_stats_addon.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
+# 与早期 Python 版 02b_hydro_stats_addon.py 逐项对齐（该脚本已归档于 archive/removed_python_pipeline_20261025/）
 #
 # 产出 18 层（config hydro_stats_addon，撤出变量已排除）：
 #   minmax 组  8 变量 x (min,max) = 16
@@ -21,7 +21,7 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(terra) })
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 DIST_VARS <- c("stream_dist_proximity", "stream_dist_dw_near",
@@ -35,7 +35,7 @@ build_manifest <- function() {
   withdrawn <- unlist(cfg$hydro90m_vars$withdrawn)
   tasks <- list()
   add <- function(v, st) {
-    if (v %in% withdrawn) return(invisible())
+    if (v %in% c(withdrawn, "channel_elv_up_cel")) return(invisible())
     parts <- if (v %in% DIST_VARS) c("reg", "dist", "h90m", gsub("_", "-", v))
              else c("reg", "hydro", "h90m", gsub("_", "-", v))
     tasks[[length(tasks) + 1L]] <<- list(
@@ -81,7 +81,7 @@ main <- function(shard = 1L, nshard = 1L) {
   print_grid()
   tasks <- build_manifest()
   if (nshard > 1L) tasks <- tasks[seq.int(shard, length(tasks), by = nshard)]
-  cat(sprintf("hydro stats addon: 本片 %d 任务（总 %d 应为 18）\n",
+  cat(sprintf("hydro stats addon: 本片 %d 任务（总 %d，upstream-cell elevation 由阶段 17 处理）\n",
               length(tasks), length(build_manifest())))
   t0 <- Sys.time(); nok <- 0L; nskip <- 0L; nerr <- 0L
   for (t in tasks) {

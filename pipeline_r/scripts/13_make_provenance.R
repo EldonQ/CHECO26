@@ -293,6 +293,33 @@ rows_chelsa <- function() {
                 note)
     r$script_function <- script_fn
     r$source_file <- src_file
+    if (startsWith(v, "gdd")) {
+      if (parts[3] == "chelsa21-ensmean") {
+        r$source_file <- sprintf("[selector] Five CHECO26 GCM chains, all gdd0/gdd5/gdd10 at %s/%s",
+                                 parts[5], parts[6])
+        r$source_crs <- "CHECO26 China Albers"
+        r$source_resolution <- "1000 metres"
+        r$source_extent <- "CHECO26 1 km China delivery grid"
+        r$source_nodata <- "-9999 (CHECO26 member layers)"
+        r$source_scale_offset <- "None (CHECO26 members in degree-days)"
+        r$processing_steps <- "For each target cell, retain only models with values at all three thresholds and average selected members."
+        r$derivation_formula <- "Equal-weight mean using the same per-cell subset of models for all three GDD thresholds."
+        r$missing_boundary_rule <- "NoData outside mask or when no member supplies all three thresholds."
+      } else {
+        r$source_nodata <- "2147483647 (Int32)"
+        r$source_scale_offset <- "Scale 0.1, offset 0"
+        r$processing_steps <- paste("Decode the GDD source to degree-days, crop and project bilinearly",
+                                    "to China Albers, apply the national mask and write float32.")
+        r$missing_boundary_rule <- "Exclude source Int32 NoData 2147483647 before resampling."
+      }
+    }
+    if (parts[3] == "chelsa21-mpi-esm1-2-hr" && v %in% c("bio05", "bio06", "bio07") &&
+        (parts[5] == "2085" || (parts[5] == "2055" && parts[6] != "ssp126"))) {
+      r$script_function <- "R/10_future_chains.R : warp_mpi_temperature"
+      r$processing_steps <- paste("Decode the three aligned source bands to a float stack, jointly project",
+                                  "with bilinear resampling, mask and store as float32.")
+      r$derivation_formula <- "BIO05, BIO06 and BIO07 share interpolation support."
+    }
     out[[length(out) + 1L]] <<- r
   }
   for (v in vars) {

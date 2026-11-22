@@ -60,6 +60,7 @@ Sys.setenv(CHECO_ROOT = .run_root)
 
 # 直接载入生产脚本（_bootstrap.R 走的是交付树布局，这里是仓库布局）
 source(file.path(.p_scr, "00_config.R"), encoding = "UTF-8")
+R_DIR <- .p_scr
 source(file.path(.p_scr, "01_common.R"), encoding = "UTF-8")
 
 # ---- 3) 样例路径 ------------------------------------------------------------

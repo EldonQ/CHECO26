@@ -1,9 +1,9 @@
 # =============================================================================
 # R/04_ingest_timeseries.R  --  时序主题入库 + 全部焦点窗口
 #
-# 与早期 Python 版 03_ingest_timeseries.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
+# 与早期 Python 版 03_ingest_timeseries.py 逐项对齐（该脚本已归档于 archive/removed_python_pipeline_20261025/）
 #
-# 相对早期 Python 版的变更：
+# 相对 Python 版的变更：
 #   * footHII（100 层）**不再生成**，改由 anthro/hfp（Mu 版 HFP 2000-2024，125 层）承担
 #     —— 依据：footHII 非开源可再分发风险 + 两套 HFP 标度并存；见 LICENCE_MATRIX.md
 #   * 新增 hfp：Mollweide 1km float32 -> 1km Albers，average，无缩放
@@ -17,7 +17,7 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(terra) })
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 # ---- 焦点任务：由基底层派生 ----
@@ -75,7 +75,7 @@ build_manifest <- function() {
 }
 
 # ---- SMOD 城市化比例 -------------------------------------------------------
-#' 30 arc-sec 分类层 -> 城市类(21/22/23)=1 的指示层（截取中国窗口）-> average 聚合 = 比例
+#' 30 arc-sec 分类层 -> 配置中的 GHS-SMOD 城市/城郊类别指示层 -> average 聚合
 do_smod <- function(t) {
   cfg <- CFG()
   dst <- layer_path(t$parts, t$suffix)

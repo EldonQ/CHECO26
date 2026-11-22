@@ -1,7 +1,7 @@
 # =============================================================================
 # R/08_derive_topo_vege.R  --  topo 坡向/TRI + 土壤剖面加权
 #
-# 与早期 Python 版 06_derive_topo_vege.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
+# 与早期 Python 版 06_derive_topo_vege.py 逐项对齐（该脚本已归档于 archive/removed_python_pipeline_20261025/）
 #
 # 产出（30 层）：
 #   topo/chinadem/aspect   1 层   Horn (1981) 坡向，度 0-360（北=0，顺时针）
@@ -16,7 +16,7 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(terra) })
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 SOIL_ATTR_DIR <- c(
@@ -135,30 +135,9 @@ main <- function(which = c("topo", "profile")) {
   print_grid()
 
   if (which == "topo") {
-    ep <- layer_path(c("reg", "topo", "chinadem", "elev"))
-    if (!file.exists(ep)) stop("elev 层不存在，请先跑 03_ingest_static.R")
-    elev <- terra::as.matrix(read_clean_r(ep), wide = TRUE)
-    res <- as.numeric(CFG()$grid$resolution)
-    cat(sprintf("  elev: %d x %d, 有效 %s\n", nrow(elev), ncol(elev),
-                format(sum(!is.na(elev)), big.mark = ",")))
-    g <- GRID()
-
-    t0 <- Sys.time()
-    asp <- horn_aspect(elev, res)
-    d1 <- layer_path(c("reg", "topo", "chinadem", "aspect"))
-    atomic_write_raster(d1, terra::rast(asp, extent = terra::ext(g$rast), crs = g$crs), dtype = "float32")
-    cat(sprintf("  aspect: %.1f 秒, 值域 [%.2f, %.2f]\n",
-                as.numeric(difftime(Sys.time(), t0, units = "secs")),
-                min(asp, na.rm = TRUE), max(asp, na.rm = TRUE)))
-
-    t0 <- Sys.time()
-    tri <- riley_tri(elev)
-    d2 <- layer_path(c("reg", "topo", "chinadem", "tri"))
-    atomic_write_raster(d2, terra::rast(tri, extent = terra::ext(g$rast), crs = g$crs), dtype = "float32")
-    cat(sprintf("  tri   : %.1f 秒, 值域 [%.2f, %.2f]\n",
-                as.numeric(difftime(Sys.time(), t0, units = "secs")),
-                min(tri, na.rm = TRUE), max(tri, na.rm = TRUE)))
-    cat(sprintf("  四查 aspect=%s tri=%s\n", check_alignment(d1), check_alignment(d2)))
+    terrain_stage <- new.env(parent = globalenv())
+    sys.source(file.path(R_DIR, "18_ingest_copdem90.R"), envir = terrain_stage)
+    terrain_stage$main()
   } else {
     t0 <- Sys.time(); nok <- 0L; nskip <- 0L; nerr <- 0L
     for (adir in unname(SOIL_ATTR_DIR)) {

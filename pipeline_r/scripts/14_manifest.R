@@ -158,8 +158,11 @@ main <- function(mode = c("all", "hash", "release"), workers = 8L) {
     write.csv(res, file.path(PATH_DOCS(), "RESTRICTED_LAYERS.csv"),
               row.names = FALSE, fileEncoding = "UTF-8")
 
-    # 公开清单：排除 RESTRICTED
-    pub <- rel[rel$licence_class != "RESTRICTED", ]
+    # Withhold legacy outputs with unusable topology, IDs or all-class patch metrics.
+    withheld <- grepl("^reg/hydro/h90m/(direction|segment|sub-catchment)/", rel$relpath) |
+      (grepl("^reg/lulc/glu1km/", rel$relpath) &
+       grepl("patch(density|size)-all", rel$relpath))
+    pub <- rel[rel$licence_class != "RESTRICTED" & !withheld, ]
     write.csv(pub, file.path(PATH_DOCS(), "PUBLIC_RELEASE_MANIFEST.csv"),
               row.names = FALSE, fileEncoding = "UTF-8")
 

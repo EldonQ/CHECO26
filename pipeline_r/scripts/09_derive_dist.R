@@ -64,7 +64,7 @@ feat_osm_trail <- function() {
 }
 
 feat_smod_urban <- function() {
-  # 该距离层的定义是"到 GHS-SMOD 2020 城市类 21/22/23 的距离"（见溯源表）。
+  # See the configured GHS-SMOD 2020 urban/peri-urban categories.
   # smod_epochs 是逐年 urbanprop 层的全集（1975-2030），取末值会得到 2030，
   # 与图层定义不符（2026-11-10 修正）。改读专用键 dist_smod_epoch。
   ep <- as.integer(unlist(CFG()$dist_smod_epoch))[1]
@@ -95,22 +95,12 @@ feat_smod_urban <- function() {
   terra::ifel(out >= 1, 1, 0)
 }
 
-feat_gsw_water <- function() {
-  invalid <- as.integer(CFG()$gsw_invalid_value)
-  tiles <- sort(Sys.glob(file.path(P("gsw_extent"), "extent_*.tif")))
-  if (length(tiles) != 42) stop("GSW extent tiles != 42: ", length(tiles))
-  union <- GRID()$rast
-  terra::values(union) <- 0
-  for (t in tiles) {
-    dst <- terra::project(terra::rast(t), GRID()$rast,
-                          method = terra_method("nearest"), align = FALSE)
-    v <- terra::values(dst, mat = FALSE)
-    hit <- !is.na(v) & v > 0 & v != invalid
-    terra::values(dst) <- as.integer(hit)
-    union <- terra::ifel(terra::ifel(dst == 1, 1, 0) > terra::ifel(union == 1, 1, 0),
-                         1, terra::ifel(union == 1, 1, 0))
-  }
-  union
+write_gsw_water_distance <- function(dst) {
+  python <- Sys.getenv("CHECO_PYTHON", "python")
+  args <- c("-B", shQuote(c(file.path(R_DIR, "gsw_source_distance.py"),
+                            PATH_MASK(), P("gsw_extent"), dst)))
+  if (system2(python, args) != 0L || !check_alignment(dst))
+    stop("Native JRC water distance failed: ", dst)
 }
 
 # ---- 单任务 --------------------------------------------------------------
@@ -125,12 +115,18 @@ run_task <- function(tag) {
     return(list(status = "skip", dst = dst))
 
   t0 <- Sys.time()
+  if (tag == "gsw_water") {
+    write_gsw_water_distance(dst)
+    st <- raster_stats(dst)
+    return(list(status = "ok", dst = dst, nfeat = NA_integer_,
+                vmin = st$min, vmax = st$max,
+                sec = as.numeric(difftime(Sys.time(), t0, units = "secs"))))
+  }
   feat <- switch(tag,
     grip4_road      = feat_grip4(FALSE),
     grip4_majorroad = feat_grip4(TRUE),
     osm_trail       = feat_osm_trail(),
-    smod_urban      = feat_smod_urban(),
-    gsw_water       = feat_gsw_water())
+    smod_urban      = feat_smod_urban())
   nfeat <- as.integer(terra::global(feat, "sum", na.rm = TRUE)[1, 1])
   if (nfeat == 0) return(list(status = "error", dst = dst, note = "feature raster empty"))
 

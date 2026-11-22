@@ -88,19 +88,10 @@ build_manifest <- function() {
     }
   }
 
-  # topo 2
-  tasks[[length(tasks) + 1L]] <- list(
-    parts = c("reg", "topo", "chinadem", "elev"),
-    src = "E:/CHECO26/DEM/China_DEM_1km/Albers_105/DEM/chdem_105.tif",
-    rule = "continuous", scale = NULL, src_nodata = -32768, sentinel = NULL)
-  tasks[[length(tasks) + 1L]] <- list(
-    parts = c("reg", "topo", "chinadem", "slope"),
-    src = "E:/CHECO26/DEM/China_DEM_1km/Albers_105/TIFF/chdem_Slope.tif",
-    rule = "continuous", scale = NULL, src_nodata = NULL, sentinel = NULL)
-
   # hydro 40
   for (v in c(unlist(hcfg$categorical), unlist(hcfg$continuous))) {
-    if (v %in% withdrawn) next
+    # The three upstream-cell elevation statistics share stage 17.
+    if (v %in% c(withdrawn, "channel_elv_up_cel")) next
     src <- file.path(P("hydro_final"), v, sprintf("%s_china.tif", v))
     is_cat <- v %in% unlist(hcfg$categorical)
     parts <- if (v %in% DIST_VARS) {

@@ -1,6 +1,6 @@
 # CHECO26 pipeline (R)
 
-This is the pipeline that produced the delivered archive: 21,788 layers, 183.1 GB,
+This is the pipeline that produced the delivered archive: 21,788 layers, 183.2 GB,
 float32 on the China_Albers 1-km grid.
 
 It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That
@@ -25,7 +25,7 @@ pipeline_r/
 │   ├── 05_derive_lulc.R     land-cover proportions and landscape metrics
 │   ├── 06_derive_lulc_clcd.R        CLCD annual cover
 │   ├── 07_derive_lulc_hlu1km.R      harmonised 1960–2100 reconstruction
-│   ├── 08_derive_topo_vege.R        terrain and vegetation derivatives
+│   ├── 08_derive_topo_vege.R        soil profiles and legacy terrain helpers
 │   ├── 09_derive_dist.R             distance surfaces
 │   ├── 10_future_chains.R           future climate chains
 │   ├── 11_validate.R                whole-library validation (V1–V6)
@@ -33,6 +33,8 @@ pipeline_r/
 │   ├── 13_make_provenance.R         per-layer provenance table
 │   ├── 14_manifest.R                SHA-256 manifest (CHECO release: covariates + mask_china.tif + template)
 │   ├── 16_ingest_hydrosheds_accum.R   HydroSHEDS accumulation reproduction (scratch)
+│   ├── 17_rebuild_h90m_upstream.R    upstream-cell elevation mean, min and max
+│   ├── 18_ingest_copdem90.R          Copernicus GLO-90 terrain
 │   ├── run_all.R                    runs the stages in order
 │   ├── run_bioclim_chelsa.R         CHELSA bioclim production entry (present + future)
 │   ├── run_bioclim_shard.R          sharded CHELSA future production
@@ -55,7 +57,7 @@ the pipeline but cannot execute it — the rasters are not here.
 ```bash
 export CHECO_ROOT=/path/to/delivery      # or set it in scripts/_bootstrap.R
 Rscript scripts/02_template.R
-Rscript scripts/run_all.R                # or run the stages one at a time
+Rscript scripts/run_all.R 04 09 10 17 18  # revised stages with their production sources
 ```
 
 `config.yaml` in this folder is a copy of the delivery configuration, so the grid
@@ -100,3 +102,9 @@ lost in transcription.
 Rscript scripts/11_validate.R header      # V1/V2 over all 21,788 layers
 Rscript scripts/11_validate.R full 400    # V3/V4 on a 400-layer probe
 ```
+
+## Revision stages
+
+Stage 09 uses an Rcpp exact Euclidean grid transform. The native JRC water step uses Python with rasterio, NumPy, SciPy and pyproj. Stage 17 rebuilds the three Hydrography90m upstream elevation statistics. Set `CHECO_H90M_RAW` and `CHECO_H90M_BOUNDARY` to the raw tiles and clipping boundary. Stage 18 reads the versioned Copernicus GLO-90 tiles from `CHECO_COPDEM90_SRC`. Use `tools/fetch_copdem90.py` and compare its tile SHA-256 records with `data/COPDEM90_source_tiles.csv`. To reproduce the release selection pass the production public manifest to `make_datalayers_details.py --release-manifest`. Pass `--production-manifest` with the full SHA-256 inventory to include file sizes and hashes.
+
+The JRC revision used NumPy 1.26.4, SciPy 1.11.4, rasterio 1.4.4 (GDAL 3.10.3) and pyproj 3.7.2. The complete historical inventory uses additional source-specific entry points and pinned intermediate assets.

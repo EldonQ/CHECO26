@@ -203,6 +203,10 @@ LULC_METRIC_LONG = {
     "edge": "Landscape edge density",
     "patchdensity": "Landscape patch density",
     "patchsize": "Mean patch size",
+    "patchdensity-all": "All-class landscape patch density (internal)",
+    "patchsize-all": "All-class mean patch size (internal)",
+    "patchdensity-forest": "Forest patch density from the nearest projection anchor",
+    "patchsize-forest": "Mean forest patch size from the nearest projection anchor",
 }
 
 DATASET_LONG = {
@@ -435,6 +439,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--input", required=True, help="variable_dictionary.csv")
     ap.add_argument("--output", required=True, help="CHECO26_datalayers_details.csv")
+    ap.add_argument("--release-manifest", help="PUBLIC_RELEASE_MANIFEST.csv")
+    ap.add_argument("--production-manifest", help="MANIFEST.csv with file size and SHA-256")
     args = ap.parse_args()
 
     with open(args.input, newline="", encoding="utf-8-sig") as f:
@@ -444,11 +450,36 @@ def main():
 
     manifest = [parse_row(r) for r in rows]
     manifest.sort(key=lambda r: r["path"])
+    fields = HEADER
+    if args.release_manifest:
+        with open(args.release_manifest, newline="", encoding="utf-8-sig") as f:
+            public = {r["relpath"] for r in csv.DictReader(f)}
+        available = {r["path"].removeprefix("./") for r in manifest}
+        if public - available:
+            sys.exit("Release manifest lists files missing from the dictionary")
+        fields = list(HEADER) + ["release_status"]
+        for r in manifest:
+            r["release_status"] = "deposit-candidate" if r["path"].removeprefix("./") in public else "internal"
+
+    if args.production_manifest:
+        with open(args.production_manifest, newline="", encoding="utf-8-sig") as f:
+            hashes = {
+                row["relpath"].removeprefix("covariates/"): row
+                for row in csv.DictReader(f)
+                if row["relpath"].startswith("covariates/")
+            }
+        if {row["path"].removeprefix("./") for row in manifest} != hashes.keys():
+            sys.exit("Production manifest and dictionary cover different rasters")
+        fields = list(fields) + ["bytes", "sha256"]
+        for row in manifest:
+            record = hashes[row["path"].removeprefix("./")]
+            row["bytes"] = record["bytes"]
+            row["sha256"] = record["sha256"]
 
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
     # utf-8-sig keeps Excel happy with the semicolon-separated layout
     with open(args.output, "w", newline="", encoding="utf-8-sig") as f:
-        w = csv.DictWriter(f, fieldnames=HEADER, delimiter=";", lineterminator="\n")
+        w = csv.DictWriter(f, fieldnames=fields, delimiter=";", lineterminator="\n")
         w.writeheader()
         w.writerows(manifest)
 

@@ -27,18 +27,20 @@
 # 因此可反复运行本脚本；要强制重建，设环境变量 CHECO_FORCE=1。
 # =============================================================================
 
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
 STAGES <- list(
   "02"  = list(script = "02_template.R",            args = list(), shardable = FALSE),
   "03"  = list(script = "03_ingest_static.R",       args = list(), shardable = FALSE),
   "02b" = list(script = "02b_hydro_stats.R",        args = list(1L, 1L), shardable = TRUE),
+  "17"  = list(script = "17_rebuild_h90m_upstream.R", args = list(), shardable = FALSE),
   "04"  = list(script = "04_ingest_timeseries.R",   args = list(), shardable = FALSE),
   "05"  = list(script = "05_derive_lulc.R",         args = list(), shardable = FALSE),
   "06"  = list(script = "06_derive_lulc_clcd.R",    args = list("base", 1L, 1L), shardable = TRUE),
   "07"  = list(script = "07_derive_lulc_hlu1km.R",  args = list("base", 1L, 1L), shardable = TRUE),
-  "08"  = list(script = "08_derive_topo_vege.R",    args = list("topo"), shardable = FALSE),
+  "08"  = list(script = "08_derive_topo_vege.R",    args = list("profile"), shardable = FALSE),
+  "18"  = list(script = "18_ingest_copdem90.R",      args = list(), shardable = FALSE),
   "09"  = list(script = "09_derive_dist.R",         args = list(), shardable = FALSE),
   "10"  = list(script = "10_future_chains.R",       args = list(1L, 1L), shardable = TRUE),
   "11"  = list(script = "11_validate.R",            args = list("header"), shardable = FALSE),

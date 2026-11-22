@@ -48,7 +48,7 @@ not part of CHECO26.
 
 Soil depth codes: `0` = 0–5 cm, `5` = 5–15 cm, `15` = 15–30 cm,
 `30` = 30–60 cm, `60` = 60–100 cm, `100` = 100–200 cm; `profile` is the
-thickness-weighted whole-profile aggregate. The manifest is regenerated from
+0–100 cm thickness-weighted mean of five depth intervals. The manifest is regenerated from
 the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](../pipeline_r/tools/make_datalayers_details.py).
 
 ## Sample layers
@@ -64,3 +64,7 @@ the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](
 | `reg/lulc/glu1km/2020/forest/..._prop_f20000.tif` | lulc | Global LULC projection | same derivation at the widest window (41 x 41), which uses the explicit count path |
 | `reg/dist/grip4/road/...` | dist | GRIP4 | distance to the road network |
 | `reg/dist/smod/urban/...` | dist | GHS-SMOD | distance to settlements, reproduced by the distance example |
+
+`release_status` identifies the proposed deposit candidates and internal layers.
+The GLO-90 source tile URLs and SHA-256 hashes are pinned in `COPDEM90_source_tiles.csv`.
+The bytes and SHA-256 columns come from the production inventory and allow verification of the sample files or deposited rasters.

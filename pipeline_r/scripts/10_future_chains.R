@@ -87,6 +87,10 @@ run_gcm <- function(t) {
   force <- identical(Sys.getenv("CHECO_FORCE"), "1")
   if (file.exists(dst) && !force && check_alignment(dst))
     return(list(status = "skip", dst = dst))
+  if (mpi_temperature_group(t)) {
+    warp_mpi_temperature(t)
+    return(list(status = "ok", dst = dst))
+  }
   if (!file.exists(t$src)) return(list(status = "error", dst = dst, note = paste("missing", t$src)))
   warp_to_template(t$src, dst, method = cfg$resampling$continuous,
                    src_nodata = NULL, scale = t$scale, crop_ext = t$crop_ext)
@@ -94,17 +98,57 @@ run_gcm <- function(t) {
   list(status = "ok", dst = dst)
 }
 
-run_ensmean <- function(t) {
+mpi_temperature_group <- function(t) {
+  t$chain == "mpi-esm1-2-hr" && t$v %in% c("bio05", "bio06", "bio07") &&
+    (t$cyear == "2085" || (t$cyear == "2055" && t$ssp != "ssp126"))
+}
+
+warp_mpi_temperature <- function(t, output_vars = t$v) {
+  vars <- c("bio05", "bio06", "bio07")
+  siblings <- Filter(function(x) x$chain == t$chain && x$cyear == t$cyear &&
+    x$ssp == t$ssp && x$v %in% vars, build_manifest())
+  files <- setNames(vapply(siblings, function(x) x$src, ""), vapply(siblings, function(x) x$v, ""))
+  if (!all(file.exists(files))) stop("Missing MPI temperature inputs")
+  source <- terra::crop(terra::rast(unname(files[vars])), t$crop_ext, snap = "out")
+  # Decode all packed bands into a float stack. A joint GDAL warp uses the
+  # same interpolation support for all three terms of BIO05 - BIO06 = BIO07.
+  tmp <- tempfile("mpi_temperature_", fileext = ".tif")
+  on.exit(unlink(tmp), add = TRUE)
+  unpacked <- terra::rast(nrows = nrow(source), ncols = ncol(source), nlyrs = length(vars),
+                          extent = terra::ext(source), crs = terra::crs(source))
+  unpacked <- terra::setValues(unpacked, terra::values(source))
+  decoded <- terra::writeRaster(unpacked, tmp, datatype = "FLT4S",
+                                gdal = c("TILED=YES", "COMPRESS=DEFLATE"))
+  warped <- terra::project(decoded, GRID()$rast,
+                            method = terra_method(CFG()$resampling$continuous), align = FALSE)
+  for (index in match(output_vars, vars)) {
+    dst <- layer_path(chain_parts(t$chain, t$cyear, t$ssp, vars[index]))
+    atomic_write_raster(dst, apply_china_mask(warped[[index]], NA), dtype = "float32")
+    if (!check_alignment(dst)) stop("MPI temperature alignment failed: ", dst)
+  }
+}
+
+run_ensmean <- function(t, member_path = layer_path) {
   dst <- layer_path(t$parts)
   force <- identical(Sys.getenv("CHECO_FORCE"), "1")
   if (file.exists(dst) && !force && check_alignment(dst))
     return(list(status = "skip", dst = dst))
-  srcs <- vapply(gcm_chains(), function(ch)
-    layer_path(chain_parts(ch, t$cyear, t$ssp, t$v)), "")
-  if (!all(file.exists(srcs)))
+  members <- gcm_chains()
+  gdd <- c("gdd0", "gdd5", "gdd10")
+  variables <- if (t$v %in% gdd) gdd else t$v
+  inputs <- lapply(members, function(ch) setNames(vapply(variables, function(v)
+    member_path(chain_parts(ch, t$cyear, t$ssp, v)), ""), variables))
+  if (!all(file.exists(unlist(inputs))))
     return(list(status = "pending", dst = dst, note = "GCM layers not all ready"))
-  stk <- terra::rast(srcs)
-  m <- terra::mean(stk, na.rm = TRUE)        # 逐像元等权平均（5 模式）
+  layers <- lapply(inputs, function(paths) {
+    selected <- terra::rast(paths[[t$v]])
+    if (length(paths) == 1L) return(selected)
+    # A model contributes to each GDD threshold only where it has all three.
+    others <- terra::rast(unname(paths[names(paths) != t$v]))
+    complete <- sum(!is.na(others)) == terra::nlyr(others)
+    terra::ifel(complete, selected, NA)
+  })
+  m <- terra::mean(terra::rast(layers), na.rm = TRUE)
   m <- apply_china_mask(m, NA)
   atomic_write_raster(dst, m, dtype = "float32")
   if (!check_alignment(dst)) return(list(status = "error", dst = dst, note = "alignment"))
