@@ -52,7 +52,7 @@ fixed, variable-type-driven standardization procedure:
 1. rasterization of vector layers (roads, trails, water bodies, urban areas, stream networks)
 2. reprojection to the China_Albers equal-area geographic reference system
 3. resampling to the common 1-km grid — `bilinear` for continuous, proportion and distance layers; `nearest` for categorical layers; `average` / `mode` window aggregation when downscaling fine-resolution sources (30 m / 90 m)
-4. transformation of discrete data to continuous ones — land-cover classes become class proportions, edge density, Shannon diversity, and patch density / mean patch size over square windows
+4. transformation of discrete data to continuous ones — land-cover classes become class proportions, edge density, Shannon diversity, and patch metrics. Proportions and edge use square focal windows, and the GLU patch metrics use disks
 5. computation of distance statistics for linear and areal features (Euclidean distance, metres)
 6. computation of focal statistics — equal-weight means over four square windows (3 x 3 to 41 x 41 cells, i.e. 1, 5, 10 and 20 km radii); a window containing no valid cell receives NoData rather than zero
 7. unification of the 13 NoData conventions found in the sources (18 declarations, including 0, 255, 65535, -9999, NaN and ±inf) to -9999, setting class-0 source pixels to NoData before aggregation where 0 doubles as both a class value and the background
@@ -81,7 +81,7 @@ inspect the database and run its worked examples:
 
 ## Data validation
 
-The production inventory contains 21,788 rasters (183.2 GB). The proposed data deposit covers 21,710 layers (21,637 open and 73 noncommercial). Five HydroSHEDS layers are withheld for source licence terms. Three legacy h90m topology or ID layers and 70 degenerate GLU all-class patch layers are retained internally. The full raster deposit is pending.
+The production inventory contains 21,788 rasters (183.2 GB). The proposed data deposit covers 21,710 layers (21,637 open and 73 noncommercial). Five HydroSHEDS layers are withheld for source licence terms. Three legacy h90m topology or ID layers and 70 degenerate GLU all-class patch layers are retained internally. The full raster deposit is pending. The v2.2 source input inventory records the 660 pinned h90m tiles and four boundary files.
 
 MPI temperature triplets in five affected combinations are jointly warped from decoded source bands. The revised triplets have a maximum identity residual of 7.63 × 10⁻⁶ °C. The 27 future GDD ensembles use common eligible models across the three thresholds and agree with independent recomputation. GHS-SMOD includes classes 21, 22, 23 and 30. The four gridded feature distances match a second exact Euclidean transform. JRC water distance uses native maximum-extent pixel centres, verified in three regional source windows. The h90m upstream-cell elevation trio shares one cleaned 20-tile mosaic and obeys min ≤ mean ≤ max. Terrain uses Copernicus GLO-90 with EGM2008 heights. Derivatives use a complete 3×3 neighbourhood.
 
@@ -142,3 +142,5 @@ A data manuscript describing CHECO26 is in preparation. Until it is available,
 please cite the database through this repository:
 
 CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research. https://github.com/EldonQ/CHECO26
+
+Native-tile replay was audited on all 48 legacy h90m rasters. Version 2.2 updates nine extrema and the sparse outlet flag. The 22 historical means are retained after a comparison against independently coverage-weighted values. Three direction or ID layers remain internal. Native input checksums are in `data/H90M_SOURCE_MANIFEST.csv`.

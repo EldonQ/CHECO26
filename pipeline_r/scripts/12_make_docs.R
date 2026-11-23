@@ -78,7 +78,7 @@ mk_vd_rows <- function(prov) {
 }
 
 # ---- 主流程 --------------------------------------------------------------
-main <- function(fill_stats = TRUE) {
+main <- function(fill_stats = TRUE, refresh_paths = character()) {
   prov <- read.csv(file.path(PATH_DOCS(), "provenance_table.csv"),
                    fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
   base <- read.csv(VD_PATH(), fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE)
@@ -110,14 +110,18 @@ main <- function(fill_stats = TRUE) {
   cat(sprintf("合并后: %d 行（期望 21,788）\n", nrow(out)))
   stopifnot(!anyDuplicated(out$relpath))
 
-  if (fill_stats) {
+  if (fill_stats || length(refresh_paths)) {
+    stopifnot(all(refresh_paths %in% out$relpath))
     cat("读取已存在层填 value_min/max/n_valid ...\n")
     root <- PATH_COV(); n <- 0L; t0 <- Sys.time()
     for (i in seq_len(nrow(out))) {
-      if (!is.na(out$n_valid[i])) next
+      refresh <- out$relpath[i] %in% refresh_paths
+      if (!refresh && !is.na(out$n_valid[i])) next
       p <- file.path(root, out$relpath[i])
+      if (refresh && !file.exists(p)) stop("Missing raster to refresh: ", p)
       if (!file.exists(p)) next
       st <- tryCatch(raster_stats(p), error = function(e) NULL)
+      if (refresh && (is.null(st) || st$n == 0)) stop("Cannot refresh raster statistics: ", p)
       if (is.null(st) || st$n == 0) next
       out$value_min[i] <- st$min; out$value_max[i] <- st$max; out$n_valid[i] <- st$n
       n <- n + 1L
@@ -137,6 +141,7 @@ main <- function(fill_stats = TRUE) {
           "",
           sprintf("Total layers: **%d**. Grid: 1 km China_Albers, 4861 x 4062.", nrow(out)),
           "",
+          "Use `PUBLIC_RELEASE_MANIFEST.csv` for the proposed deposit scope.", "",
           "| theme / dataset | layers |", "|---|---:|")
   for (nm in names(tab)) md <- c(md, sprintf("| `%s` | %d |", nm, tab[[nm]]))
   md <- c(md, sprintf("| **total** | **%d** |", nrow(out)))
@@ -149,5 +154,5 @@ main <- function(fill_stats = TRUE) {
 
 if (sys.nframe() == 0L) {
   a <- commandArgs(trailingOnly = TRUE)
-  main(!identical(a[1], "nostats"))
+  main(!identical(a[1], "nostats"), a[-1])
 }

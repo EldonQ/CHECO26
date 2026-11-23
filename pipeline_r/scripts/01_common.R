@@ -285,3 +285,14 @@ append_log <- function(path, row) {
               quote = TRUE, fileEncoding = "UTF-8")
   invisible(path)
 }
+
+glu_snapshots <- function() {
+  # (year_dir, ssp_dir, src_file)
+  s <- list(list(y = "2020", ssp = NA_character_, f = "history_2020.tif"))
+  for (p in list(c("ssp126", "ssp1_26"), c("ssp245", "ssp2_45"), c("ssp585", "ssp5_85"))) {
+    for (yy in c(2030, 2050, 2100))
+      s[[length(s) + 1L]] <- list(y = as.character(yy), ssp = p[1],
+                                  f = sprintf("%s_%d.tif", p[2], yy))
+  }
+  s
+}

@@ -8,10 +8,11 @@ downloading anything.
 
 | File | What it is |
 |---|---|
-| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,788 rows), in the shared 14-column semicolon layout |
+| `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,788 rows), in the shared semicolon-delimited layout with release status, byte size and SHA-256 |
 | `CHECO26-standardgrid.tif` | the template grid every layer is aligned to (China_Albers, 1000 m, 4861 x 4062, value 1) |
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
 | `table2_dataset_layer_counts.csv` | machine-readable version of Table 1 in the manuscript: layer counts per dataset entry |
+| `H90M_SOURCE_MANIFEST.csv` | Native Hydrography90m input sizes and SHA-256 values, including the clipping boundary |
 | `table3_resampling_effect.csv` | machine-readable version of Table 2: the resampling check on three representative layers |
 | `sample_layers/reg/...` | nine representative delivered layers, checked cell by cell against the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
 | `source_layers/chelsa21/...` | the raw 30 arc-sec CHELSA v2.1 source of one sample layer (bio01, packed INT2U with scale 0.1 / offset −273.15), used by the standardization example to demonstrate reprojection from EPSG:4326 |
@@ -66,5 +67,5 @@ the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](
 | `reg/dist/smod/urban/...` | dist | GHS-SMOD | distance to settlements, reproduced by the distance example |
 
 `release_status` identifies the proposed deposit candidates and internal layers.
-The GLO-90 source tile URLs and SHA-256 hashes are pinned in `COPDEM90_source_tiles.csv`.
+The GLO-90 source tile URLs and SHA-256 hashes are pinned in `COPDEM90_source_tiles.csv`. `H90M_SOURCE_MANIFEST.csv` pins 660 native Hydrography90m rasters and the four components of the historical clipping boundary. Paths in that inventory are relative to the h90m source root.
 The bytes and SHA-256 columns come from the production inventory and allow verification of the sample files or deposited rasters.

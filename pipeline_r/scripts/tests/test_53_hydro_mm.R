@@ -1,14 +1,14 @@
 # R/tests/test_53_hydro_mm.R -- hydro min/max 增补层验证
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-OUT <- file.path(Sys.getenv("CHECO_ROOT", getwd()), "scratch/r_hydromm_test")
+Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+OUT <- "E:/CHECO26/N-SDM/scratch/r_hydromm_test"
 Sys.setenv(CHECO_OUT_ROOT = OUT)
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/_bootstrap.R"), encoding = "UTF-8")
-source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/tests/_helpers.R"), encoding = "UTF-8")
+source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+source("E:/CHECO26/N-SDM/R/tests/_helpers.R", encoding = "UTF-8")
 
 .ing <- new.env(parent = globalenv())
-sys.source(file.path(Sys.getenv("CHECO_ROOT", getwd()), "R/02b_hydro_stats.R"), envir = .ing)
+sys.source("E:/CHECO26/N-SDM/R/02b_hydro_stats.R", envir = .ing)
 tasks <- .ing$build_manifest()
-cat(sprintf("=== 清单: %d 任务（应为 18）===\n", length(tasks)))
+cat(sprintf("=== 清单: %d 任务（16 个旧极值，上游格三层由 17 处理）===\n", length(tasks)))
 for (t in tasks) cat(sprintf("  %-24s %-3s sentinel=%s scale=%s\n",
                              t$var, t$stat,
                              if (is.null(t$sentinel)) "none" else format(t$sentinel),
@@ -16,8 +16,6 @@ for (t in tasks) cat(sprintf("  %-24s %-3s sentinel=%s scale=%s\n",
 
 cat("\n=== 抽样验证 ===\n")
 pick <- list(
-  list(var="channel_elv_up_cel", stat="max"),   # 哨兵关键层
-  list(var="channel_elv_up_cel", stat="min"),
   list(var="spi",                stat="max"),
   list(var="stream_dist_proximity", stat="max")
 )

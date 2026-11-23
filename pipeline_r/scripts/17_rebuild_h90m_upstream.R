@@ -4,13 +4,11 @@ source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R")
        encoding = "UTF-8")
 
 rebuild_upstream_elevation <- function(raw_root, boundary_file) {
-  tiles <- sort(list.files(raw_root, pattern = "^channel_elv_up_cel_h[0-9]+v[0-9]+[.]tif$",
-                           full.names = TRUE, recursive = TRUE))
-  if (!length(tiles)) stop("Hydrography90m upstream elevation tiles not found")
-  tile_ids <- sub("^channel_elv_up_cel_", "", basename(tiles))
-  if (anyDuplicated(tile_ids)) stop("Duplicate Hydrography90m source tiles")
-  boundary <- terra::vect(boundary_file)
-  parent <- normalizePath(ensure_dir(PATH_SCRATCH()), winslash = "/", mustWork = TRUE)
+  legacy <- new.env(parent = globalenv())
+  sys.source(file.path(R_DIR, "19_rebuild_h90m_legacy.R"), envir = legacy)
+  tiles <- legacy$h90m_native_inputs(raw_root, "channel_elv_up_cel")
+  boundary <- legacy$h90m_boundary(boundary_file)
+  parent <- normalizePath(ensure_dir(Sys.getenv("CHECO_H90M_WORK", PATH_SCRATCH())), winslash = "/", mustWork = TRUE)
   scratch <- tempfile("h90m_upstream_", tmpdir = parent)
   dir.create(scratch, recursive = TRUE)
   scratch <- normalizePath(scratch, winslash = "/", mustWork = TRUE)

@@ -20,7 +20,7 @@ abstract: >-
   China-relevant projection (GLU1km, 540 layers) and a harmonised yearly
   reconstruction 1960-2100 under five SSP-RCP scenarios (18,440 layers). Total
   volume is 183.2 GB. The proposed public deposit contains 21,710 layers.
-version: "2.1"
+version: "2.2"
 license: "CC-BY-4.0"
 license-url: "https://creativecommons.org/licenses/by/4.0/"
 type: dataset

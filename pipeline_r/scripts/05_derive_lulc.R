@@ -1,7 +1,7 @@
 # =============================================================================
 # R/05_derive_lulc.R  --  LULC 派生（第一阶段：GLULC / glu1km 540 层）
 #
-# 与早期 Python 版 04_derive_lulc.py 逐项对齐（该脚本已归档于交付树的 archive/removed_python_pipeline_20261025/）
+# 与早期 Python 版 04_derive_lulc.py 逐项对齐（该脚本已归档于 archive/removed_python_pipeline_20261025/）
 #
 # 每个快照 54 层：
 #   6 类比例  x (1 + 4 focal)            = 30
@@ -21,19 +21,10 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(terra) })
-source(file.path(Sys.getenv("CHECO_ROOT", Sys.getenv("CHECO_ROOT", getwd())), "R/_bootstrap.R"),
+source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
        encoding = "UTF-8")
 
-SNAPSHOTS <- local({
-  # (year_dir, ssp_dir, src_file)
-  s <- list(list(y = "2020", ssp = NA_character_, f = "history_2020.tif"))
-  for (p in list(c("ssp126", "ssp1_26"), c("ssp245", "ssp2_45"), c("ssp585", "ssp5_85"))) {
-    for (yy in c(2030, 2050, 2100))
-      s[[length(s) + 1L]] <- list(y = as.character(yy), ssp = p[1],
-                                  f = sprintf("%s_%d.tif", p[2], yy))
-  }
-  s
-})
+SNAPSHOTS <- glu_snapshots()
 
 snapshot_parts <- function(snap, extra = character()) {
   if (is.na(snap$ssp)) c("reg", "lulc", "glu1km", snap$y, extra)
@@ -162,9 +153,6 @@ derive_snapshot <- function(snap, which_parts = c("prop", "shannon", "edge", "pa
   if (!file.exists(src)) return(list(status = "error", note = paste("missing src", src)))
 
   # 1) 分类层 warp（nearest, src_nodata=0, uint8）
-  cls_tmp <- file.path(PATH_SCRATCH(), "glu1km_cls",
-                       sprintf("cls_%s_%s.tif", ifelse(is.na(snap$ssp), "hist", snap$ssp), snap$y))
-  ensure_dir(dirname(cls_tmp))
   r <- terra::rast(src)
   terra::NAflag(r) <- 0
   cls <- terra::project(r, GRID()$rast,
@@ -205,15 +193,15 @@ derive_snapshot <- function(snap, which_parts = c("prop", "shannon", "edge", "pa
   #  若误写成 1/NA，焦点均值的分母只剩该类像元，比例恒为 1（2026-10-19 踩过，
   #  water_prop_f20000 偏差 +0.98、urban_prop 掩膜不一致 98.5%）。
   focal_props <- list()
-  if ("prop" %in% which_parts) {
+  if (any(c("prop", "shannon") %in% which_parts)) {
     for (i in seq_along(codes)) {
       onehot <- cls
       terra::values(onehot) <- ifelse(!is.na(v) & v %in% codes,
                                       as.integer(v == codes[i]), NA)
-      wr(c(cnames[i]), "_prop", onehot)
+      if ("prop" %in% which_parts) wr(cnames[i], "_prop", onehot)
       for (k in seq_len(nrow(fs))) {
         fp <- focal_mean(onehot, fs$radius_cells[k], count = cnt[[k]])
-        wr(c(cnames[i]), paste0("_prop", fs$suffix[k]), fp)
+        if ("prop" %in% which_parts) wr(cnames[i], paste0("_prop", fs$suffix[k]), fp)
         focal_props[[fs$suffix[k]]][[cnames[i]]] <- fp
       }
     }
@@ -229,12 +217,11 @@ derive_snapshot <- function(snap, which_parts = c("prop", "shannon", "edge", "pa
       anyp <- terra::rast(cls); terra::values(anyp) <- 0
       for (nm in names(ps)) {
         p <- ps[[nm]]
-        pm <- terra::as.matrix(p, wide = TRUE)
         acc  <- acc + terra::ifel(is.na(p), 0, terra::ifel(p > 0, p * log(p), 0))
         anyp <- anyp + terra::ifel(is.na(p), 0, 1)
       }
       out <- terra::ifel(anyp > 0, -acc, NA)
-      wr(character(), paste0("_shannon", sfx), out)
+      wr("shannon", sfx, out)
     }
   }
 
@@ -242,9 +229,9 @@ derive_snapshot <- function(snap, which_parts = c("prop", "shannon", "edge", "pa
   if ("edge" %in% which_parts) {
     e <- edge_indicator(cls, valid)
     e <- terra::ifel(valid == 1, e, NA)
-    wr(character(), "_edge", e)
+    wr("edge", "", e)
     for (k in seq_len(nrow(fs)))
-      wr(character(), paste0("_edge", fs$suffix[k]), focal_mean(e, fs$radius_cells[k], count = cnt[[k]]))
+      wr("edge", fs$suffix[k], focal_mean(e, fs$radius_cells[k], count = cnt[[k]]))
   }
 
   # 5) 斑块指标
@@ -266,8 +253,8 @@ derive_snapshot <- function(snap, which_parts = c("prop", "shannon", "edge", "pa
         rc <- fs$radius_cells[k]
         pm <- patch_metric(binary, rc)
         if (!(scope == "all" && k == 1L))
-          wr(character(), sprintf("_patchdensity-%s%s", scope, fs$suffix[k]), pm$density)
-        wr(character(), sprintf("_patchsize-%s%s", scope, fs$suffix[k]), pm$msize)
+          wr(paste0("patchdensity-", scope), fs$suffix[k], pm$density)
+        wr(paste0("patchsize-", scope), fs$suffix[k], pm$msize)
         cat(sprintf("    %s r=%dkm done\n", scope, fs$radius_km[k]))
       }
     }
@@ -278,11 +265,15 @@ derive_snapshot <- function(snap, which_parts = c("prop", "shannon", "edge", "pa
 
 main <- function(snap_idx = 1, which_parts = c("prop", "shannon", "edge", "patch")) {
   print_grid()
+  if (length(snap_idx) > 1L) {
+    return(invisible(lapply(snap_idx, main, which_parts = which_parts)))
+  }
   s <- SNAPSHOTS[[snap_idx]]
   cat(sprintf("snapshot %d: year=%s ssp=%s src=%s\n", snap_idx, s$y,
               ifelse(is.na(s$ssp), "(hist)", s$ssp), s$f))
   t0 <- Sys.time()
   r <- derive_snapshot(s, which_parts)
+  if (!identical(r$status, "ok")) stop(r$note)
   cat(sprintf("  %s : %d 层, %.0f 秒\n", r$status, r$n %||% 0,
               as.numeric(difftime(Sys.time(), t0, units = "secs"))))
   invisible(r)

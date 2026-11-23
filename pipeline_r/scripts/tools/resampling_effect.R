@@ -1,7 +1,7 @@
 # R/tools/resampling_effect.R
-# 重采样效应分析（Technical Validation 的核心证据）
+# SWECO25 式重采样效应分析（Technical Validation 的核心证据）
 #
-# 做法：从源层与重采样层各抽随机格，报告两者差值的变异系数中位数。
+# SWECO25 的做法：从源层与重采样层各抽 15,000 个随机点，报告两者差值的变异系数中位数。
 # 我们的做法更强，分两部分：
 #   (a) 一致性：我们的 1 km 值是否等于源数据在该格内的面积加权均值（应≈0 差异）
 #   (b) 信息损失：源数据在每个 1 km 格内的变异系数（SD/mean），量化被平滑掉的细节
@@ -9,11 +9,22 @@
 # 只对**真正做过重采样**的主题做：(30 m 或 90 m 源)。1 km 源的重采样是恒等变换。
 #
 # 用法：Rscript R/tools/resampling_effect.R [n_cells]
-Sys.setenv(CHECO_ROOT = Sys.getenv("CHECO_ROOT", getwd()))
-
-ROOT <- Sys.getenv("CHECO_ROOT", getwd())
-COV  <- file.path(ROOT, "data/covariates")
-MASK <- file.path(ROOT, "data/mask_china.tif")
+ROOT <- Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM")
+stage <- new.env(parent = globalenv())
+source(file.path(ROOT, "R/19_rebuild_h90m_legacy.R"), local = stage, encoding = "UTF-8")
+COV <- PATH_COV()
+MASK <- file.path(dirname(COV), "mask_china.tif")
+candidate <- Sys.getenv("CHECO_EFFECT_CANDIDATES")
+work <- normalizePath(ensure_dir(Sys.getenv("CHECO_H90M_WORK", PATH_SCRATCH())),
+                      winslash = "/", mustWork = TRUE)
+native <- tempfile("effect_h90m_", tmpdir = work)
+if (!dir.create(native)) stop("Cannot create resampling workspace")
+native <- normalizePath(native, winslash = "/", mustWork = TRUE)
+stopifnot(identical(dirname(native), work))
+source_root <- Sys.getenv("CHECO_H90M_RAW", "E:/h90m/China_Hydrography90m/Raw")
+boundary_file <- Sys.getenv("CHECO_H90M_BOUNDARY", "E:/h90m/china/china.shp")
+h90m <- stage$h90m_clip_native(stage$h90m_native_inputs(source_root, "stream_dist_dw_near"),
+                              stage$h90m_boundary(boundary_file), native)
 
 n_cell <- if (length(commandArgs(TRUE))) as.integer(commandArgs(TRUE)[1]) else 300L
 
@@ -33,7 +44,7 @@ cases <- list(
        nd = NA_real_, scale = 1),
   list(key = "dist / stream distance downstream-near (90 m)",
        our = "reg/dist/h90m/stream-dist-dw-near/reg_dist_h90m_stream-dist-dw-near.tif",
-       src = "E:/h90m/Final/stream_dist_dw_near/stream_dist_dw_near_china.tif",
+       src = h90m,
        nd = NA_real_, scale = 1)
 )
 
@@ -56,7 +67,9 @@ res <- list()
 for (cs in cases) {
   cat(sprintf("---- %s ----\n", cs$key))
   if (!file.exists(cs$src)) { cat("  跳过：源文件不存在\n\n"); next }
-  ours <- terra::rast(file.path(COV, cs$our))
+  candidate_file <- file.path(candidate, cs$our)
+  ours <- terra::rast(if (nzchar(candidate) && file.exists(candidate_file)) candidate_file
+                      else file.path(COV, cs$our))
   src  <- terra::rast(cs$src)
   ov <- terra::values(ours)
   dx <- terra::res(ours)[1]; dy <- terra::res(ours)[2]
@@ -139,10 +152,12 @@ for (cs in cases) {
 
 if (length(res)) {
   out <- do.call(rbind, res)
-  f <- file.path(ROOT, "00_docs", "resampling_effect.csv")
+  f <- Sys.getenv("CHECO_EFFECT_CSV", file.path(PATH_DOCS(), "resampling_effect.csv"))
   write.csv(out, f, row.names = FALSE, fileEncoding = "UTF-8")
   cat("=== 汇总表 ===\n"); print(out, row.names = FALSE)
   cat(sprintf("\n已写出: %s\n", f))
 } else {
   cat("没有可分析的层。\n")
 }
+
+unlink(native, recursive = TRUE)

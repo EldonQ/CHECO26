@@ -6,7 +6,7 @@
 #     bioclim 28  (0.01° WGS84 -> 1km Albers, bilinear)
 #     soil   168  (28 属性 x 6 深度, 1km, int16, scale 见 units_scale)
 #     topo     2  (elev, slope)
-#     hydro   40  (h90m continuous 30 + categorical 10; 撤出变量跳过)
+#     hydro  32  (legacy native source route, stage 19)
 #     vege     3  (agb, ch, treecover)
 #     合计   241
 #
@@ -40,17 +40,9 @@ SOIL_ATTR_DIR <- c(
   sand = "sand", silt = "silt"
 )
 
-DIST_VARS <- c("stream_dist_proximity", "stream_dist_dw_near",
-               "stream_dist_up_near", "stream_dist_up_farth")
-
 # ---- 任务清单 --------------------------------------------------------------
 build_manifest <- function() {
   cfg <- CFG(); us <- cfg$units_scale$soil_csdlv2
-  hcfg <- cfg$hydro90m_vars
-  scale_map <- if (is.null(hcfg$scale_by_var)) list() else hcfg$scale_by_var
-  cm_exc    <- if (is.null(hcfg$scale_cm_exception)) list() else hcfg$scale_cm_exception
-  sent_map  <- if (is.null(hcfg$src_sentinel)) list() else hcfg$src_sentinel
-  withdrawn <- unlist(hcfg$withdrawn)
   tasks <- list()
 
   # bioclim 22 (CHELSA v2.1, 1981-2010, 30" WGS84 -> 1km Albers, bilinear)
@@ -88,26 +80,6 @@ build_manifest <- function() {
     }
   }
 
-  # hydro 40
-  for (v in c(unlist(hcfg$categorical), unlist(hcfg$continuous))) {
-    # The three upstream-cell elevation statistics share stage 17.
-    if (v %in% c(withdrawn, "channel_elv_up_cel")) next
-    src <- file.path(P("hydro_final"), v, sprintf("%s_china.tif", v))
-    is_cat <- v %in% unlist(hcfg$categorical)
-    parts <- if (v %in% DIST_VARS) {
-      c("reg", "dist", "h90m", gsub("_", "-", v))
-    } else c("reg", "hydro", "h90m", gsub("_", "-", v))
-    sc <- NULL
-    if (!is.null(cm_exc[[v]])) sc <- as.numeric(cm_exc[[v]])
-    else if (!is.null(scale_map[[v]])) sc <- as.numeric(scale_map[[v]])
-    tasks[[length(tasks) + 1L]] <- list(
-      parts = parts, src = src,
-      rule = if (is_cat) "downscale_categorical" else "downscale_continuous",
-      scale = sc,
-      sentinel = if (!is.null(sent_map[[v]])) as.numeric(sent_map[[v]]) else NULL,
-      src_nodata = if (is_cat) NULL else -9999)
-  }
-
   # vege 3
   tasks[[length(tasks) + 1L]] <- list(
     parts = c("reg", "vege", "agb2019", "agb"),
@@ -126,32 +98,6 @@ build_manifest <- function() {
   tasks
 }
 
-# ---- 源哨兵清理 ------------------------------------------------------------
-#' 把源中 >= sentinel 的值改成 nodata，再交给聚合。
-#' （Hydrography90m 的 channel_elv_up_cel 用 99999 标记出口像元，但该哨兵被 GRASS
-#'  累加扩散，实测 >50000 的像元区间为 [99,838, 105,245]，故阈值取 50,000 下界）
-#'
-#' 缓存键包含阈值：阈值一变必须重算，否则会命中旧缓存（2026-10-19 踩过）。
-mask_source_sentinel <- function(src, sentinel, tag) {
-  if (is.null(sentinel) || is.na(sentinel)) return(src)
-  dst <- file.path(PATH_SCRATCH(), "sentinel_masked",
-                   sprintf("%s__ge%.0f.tif", tag, sentinel))
-  if (file.exists(dst)) return(dst)
-  ensure_dir(dirname(dst))
-  r <- terra::rast(src)
-  v <- terra::values(r, mat = FALSE)
-  nd <- terra::NAflag(r)
-  bad <- !is.na(v) & v >= sentinel
-  n <- sum(bad)
-  if (n > 0) v[bad] <- if (is.na(nd)) NODATA() else nd
-  terra::values(r) <- v
-  if (is.na(nd)) { terra::NAflag(r) <- NODATA() }
-  terra::writeRaster(r, dst, overwrite = TRUE,
-                     datatype = .dtype_map[[if (terra::is.int(r)) "int32" else "float32"]])
-  cat(sprintf("  sentinel %.8g masked in %d source pixels -> %s\n", sentinel, n, basename(dst)))
-  dst
-}
-
 # ---- 单任务 ----------------------------------------------------------------
 run_task <- function(t) {
   cfg <- CFG()
@@ -162,8 +108,6 @@ run_task <- function(t) {
     return(list(status = "skip", dst = dst))
   }
   src <- t$src
-  if (!is.null(t$sentinel)) src <- mask_source_sentinel(src, t$sentinel,
-                                                       sub("\\.tif$", "", basename(dst)))
   if (!file.exists(src)) return(list(status = "error", dst = dst, note = paste("src missing:", src)))
   warp_to_template(src, dst, method = method, src_nodata = t$src_nodata,
                    scale = t$scale, crop_ext = t$crop_ext)
@@ -172,7 +116,7 @@ run_task <- function(t) {
   list(status = "ok", dst = dst, n = st$n, vmin = st$min, vmax = st$max)
 }
 
-main <- function(only = NULL) {
+main <- function(only = NULL, include_h90m = TRUE) {
   print_grid()
   tasks <- build_manifest()
   cat(sprintf("\nmanifest: %d 层\n", length(tasks)))
@@ -198,6 +142,16 @@ main <- function(only = NULL) {
   if (length(errs)) {
     cat("失败项:\n")
     for (e in head(errs, 20)) cat("  ", e$dst, "|", e$note, "\n")
+  }
+  if (length(errs)) stop(length(errs), " static inputs failed")
+  if (include_h90m) {
+    legacy <- new.env(parent = globalenv())
+    sys.source(file.path(R_DIR, "19_rebuild_h90m_legacy.R"), envir = legacy)
+    available <- legacy$h90m_legacy_manifest()
+    targets <- vapply(available, function(t) basename(layer_path(t$parts)), "")
+    names <- names(available)
+    if (!is.null(only)) names <- names[grepl(only, targets)]
+    if (length(names)) legacy$rebuild_h90m_legacy(names, c("average", "mode"))
   }
   invisible(res)
 }

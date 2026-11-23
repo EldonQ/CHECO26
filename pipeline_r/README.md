@@ -1,6 +1,6 @@
 # CHECO26 pipeline (R)
 
-This is the pipeline that produced the delivered archive: 21,788 layers, 183.2 GB,
+This pipeline supports the v2.2 delivery: 21,788 layers, 183.2 GB,
 float32 on the China_Albers 1-km grid.
 
 It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That
@@ -19,7 +19,7 @@ pipeline_r/
 │   ├── 01_common.R          shared raster utilities (write, mask, focal, reproject)
 │   ├── 01b_ccl.R            connected-component labelling used by the landscape metrics
 │   ├── 02_template.R        builds the 1-km template and the all-touched China mask
-│   ├── 02b_hydro_stats.R    hydrographic window statistics
+│   ├── 02b_hydro_stats.R    compatibility entry for legacy h90m extrema
 │   ├── 03_ingest_static.R   static sources: climate, soil, DEM, vegetation
 │   ├── 04_ingest_timeseries.R  annual series: human footprint, settlement epochs
 │   ├── 05_derive_lulc.R     land-cover proportions and landscape metrics
@@ -35,6 +35,7 @@ pipeline_r/
 │   ├── 16_ingest_hydrosheds_accum.R   HydroSHEDS accumulation reproduction (scratch)
 │   ├── 17_rebuild_h90m_upstream.R    upstream-cell elevation mean, min and max
 │   ├── 18_ingest_copdem90.R          Copernicus GLO-90 terrain
+│   ├── 19_rebuild_h90m_legacy.R     pinned native tiles and legacy h90m outputs
 │   ├── run_all.R                    runs the stages in order
 │   ├── run_bioclim_chelsa.R         CHELSA bioclim production entry (present + future)
 │   ├── run_bioclim_shard.R          sharded CHELSA future production
@@ -58,6 +59,7 @@ the pipeline but cannot execute it — the rasters are not here.
 export CHECO_ROOT=/path/to/delivery      # or set it in scripts/_bootstrap.R
 Rscript scripts/02_template.R
 Rscript scripts/run_all.R 04 09 10 17 18  # revised stages with their production sources
+Rscript scripts/19_rebuild_h90m_legacy.R stream_dist_proximity outlet
 ```
 
 `config.yaml` in this folder is a copy of the delivery configuration, so the grid
@@ -80,10 +82,7 @@ production machine):
 | exactextractr | 0.10.1 |
 | yaml | 2.3.12 |
 
-The figure scripts additionally use `scales`. Byte-for-byte reproduction of the
-continuous layers requires this GDAL version: bilinear resampling weights differ
-slightly between GDAL releases, so a different GDAL can leave sub-pixel
-residuals on continuous layers.
+The figure scripts additionally use `scales`. Use the recorded versions for comparison to the production rasters. Reprocessing legacy h90m averages from the pinned tiles preserves their valid masks and has localized boundary differences from the retained historical production values.
 
 Reproducing the aggregation stages needs more disk than the delivery itself: each
 worker spills about 18.5 GB into `tempdir()` while mosaicking the 30 m sources,
@@ -105,6 +104,6 @@ Rscript scripts/11_validate.R full 400    # V3/V4 on a 400-layer probe
 
 ## Revision stages
 
-Stage 09 uses an Rcpp exact Euclidean grid transform. The native JRC water step uses Python with rasterio, NumPy, SciPy and pyproj. Stage 17 rebuilds the three Hydrography90m upstream elevation statistics. Set `CHECO_H90M_RAW` and `CHECO_H90M_BOUNDARY` to the raw tiles and clipping boundary. Stage 18 reads the versioned Copernicus GLO-90 tiles from `CHECO_COPDEM90_SRC`. Use `tools/fetch_copdem90.py` and compare its tile SHA-256 records with `data/COPDEM90_source_tiles.csv`. To reproduce the release selection pass the production public manifest to `make_datalayers_details.py --release-manifest`. Pass `--production-manifest` with the full SHA-256 inventory to include file sizes and hashes.
+Stage 09 uses an Rcpp exact Euclidean grid transform. The native JRC water step uses Python with rasterio, NumPy, SciPy and pyproj. Stage 17 rebuilds the three Hydrography90m upstream elevation statistics. Stage 19 replays the legacy h90m statistics and accepts optional native variable names, such as `stream_dist_proximity` or `outlet`. Copy `data/H90M_SOURCE_MANIFEST.csv` to `<CHECO_ROOT>/00_docs/`, point `CHECO_H90M_RAW` and `CHECO_H90M_BOUNDARY` to the pinned raw directory and boundary, and set `CHECO_VERIFY_H90M_SOURCE=1` to verify SHA-256 as well as byte counts. For a candidate replay, set `CHECO_OUT_ROOT` and `CHECO_H90M_WORK` to separate output and work locations. Stage 18 reads the versioned Copernicus GLO-90 tiles from `CHECO_COPDEM90_SRC`. Use `tools/fetch_copdem90.py` and compare its tile SHA-256 records with `data/COPDEM90_source_tiles.csv`. To reproduce the release selection pass the production public manifest to `make_datalayers_details.py --release-manifest`. Pass `--production-manifest` with the full SHA-256 inventory to include file sizes and hashes.
 
 The JRC revision used NumPy 1.26.4, SciPy 1.11.4, rasterio 1.4.4 (GDAL 3.10.3) and pyproj 3.7.2. The complete historical inventory uses additional source-specific entry points and pinned intermediate assets.

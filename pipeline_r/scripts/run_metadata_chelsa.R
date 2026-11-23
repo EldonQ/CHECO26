@@ -28,7 +28,8 @@ run_r <- function(rel, ...) {
 }
 
 # 1) 溯源表（fill_actual=TRUE 读已产出层填 actual_range）
-run_r("R/13_make_provenance.R", TRUE)
+refresh_paths <- commandArgs(trailingOnly = TRUE)
+run_r("R/13_make_provenance.R", TRUE, refresh_paths)
 # 2) 许可注入
 run_r("R/tools/build_licence_registry.R", "write")
 # 3) enrich（Python，补 source_file/证据等级）
@@ -36,12 +37,12 @@ py <- "E:/CHECO26/.venv/Scripts/python.exe"
 if (file.exists(py)) {
   cat("\n########## scripts/enrich_provenance.py ##########\n")
   st <- system2(py, shQuote(file.path(root, "scripts/enrich_provenance.py")))
-  if (st != 0) cat("  WARN: enrich_provenance.py 退出码", st, "\n")
+  if (st != 0) stop("enrich_provenance.py failed: ", st)
 } else {
   cat("\nWARN: 未找到", py, "，跳过 enrich（chelsa21 的 source_file 已在 13 设好）\n")
 }
 # 4) 变量字典 + 索引
-run_r("R/12_make_docs.R", TRUE)
+run_r("R/12_make_docs.R", TRUE, refresh_paths)
 # 5) 清单
 run_r("R/14_manifest.R", "hash")
 run_r("R/14_manifest.R", "release")

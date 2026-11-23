@@ -1,8 +1,8 @@
 # R/tests/test_09_rules.R -- 三种真实使用的重采样规则的 R vs Python 差异全量统计
 # 判据：区分"系统偏差"(mean signed) 与"随机抖动"(mean abs)。
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/00_config.R", encoding = "UTF-8")
-source("E:/CHECO26/N-SDM/R/01_common.R", encoding = "UTF-8")
+root <- Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM")
+legacy <- new.env()
+source(file.path(root, "R/19_rebuild_h90m_legacy.R"), local = legacy, encoding = "UTF-8")
 
 read_clean <- function(path) {
   r <- terra::rast(path)
@@ -33,6 +33,20 @@ stat <- function(tag, a, b) {
 }
 
 diag <- file.path(PATH_SCRATCH(), "diag_warp"); ensure_dir(diag)
+native_root <- Sys.getenv("CHECO_H90M_RAW", "E:/h90m/China_Hydrography90m/Raw")
+boundary_file <- Sys.getenv("CHECO_H90M_BOUNDARY", "E:/h90m/china/china.shp")
+local({
+  base <- normalizePath(diag, winslash = "/", mustWork = TRUE)
+  out <- file.path(diag, "r_basin.tif")
+  task <- legacy$h90m_legacy_manifest()$basin
+  legacy$rebuild_h90m_variable(task, legacy$h90m_native_inputs(native_root, "basin"),
+                               legacy$h90m_boundary(boundary_file), base, "mode", out)
+  ref <- file.path(PATH_COV(), "reg/hydro/h90m/basin/reg_hydro_h90m_basin.tif")
+  current <- terra::values(terra::rast(ref), mat = FALSE)
+  rebuilt <- terra::values(terra::rast(out), mat = FALSE)
+  stopifnot(identical(rebuilt, current))
+  stat("mode      90m basin", read_clean(out), read_clean(ref))
+})
 
 cases <- list(
   list(tag = "bilinear  气候 bio01 (CHELSA)",
@@ -45,12 +59,7 @@ cases <- list(
        src = file.path(P("soil_1km"), "GTiff/clay/clay_0-5cm_1km.tif"),
        ref = file.path(PATH_COV(), "reg/soil/csdlv2/clay/0",
                        "reg_soil_csdlv2_clay_0.tif"),
-       method = "average", nodata = -32768, scale = 0.01, out = "r_clay0"),
-  list(tag = "mode      90m 分类 basin",
-       src = file.path(P("hydro_final"), "basin", "basin_china.tif"),
-       ref = file.path(PATH_COV(), "reg/hydro/h90m/basin",
-                       "reg_hydro_h90m_basin.tif"),
-       method = "mode", nodata = NULL, scale = NULL, out = "r_basin")
+       method = "average", nodata = -32768, scale = 0.01, out = "r_clay0")
 )
 
 cat("=== 三种真实规则的 R vs Python 差异 ===\n\n")

@@ -351,8 +351,164 @@ rows_chelsa <- function() {
   do.call(rbind, out)
 }
 
+reconcile_source_lineage <- function(d) {
+  paths <- d$layer_path
+  focal <- FOCAL_SPEC()
+  for (snap in glu_snapshots()) {
+    stem <- if (is.na(snap$ssp)) paste0("reg/lulc/glu1km/", snap$y, "/")
+            else paste0("reg/lulc/glu1km/scenario/", snap$y, "/", snap$ssp, "/")
+    i <- which(d$status == "active" & startsWith(paths, stem))
+    if (!length(i)) next
+    d$source_file[i] <- paste("[path]", file.path(P("lulc_raw"), snap$f))
+    d$script_function[i] <- "R/05_derive_lulc.R : derive_snapshot"
+    d$processing_steps[i] <- paste("Exclude source class 0. Reproject classes by nearest neighbour",
+      "to the CHECO26 grid, keep the six valid land-cover classes inside the national mask,",
+      "and compute the named indicator or landscape metric. Focal proportions use",
+      "square-window averages of one-hot indicators. Shannon uses those proportions.",
+      "Edge layers use four-neighbour class differences; patch layers use disk windows and anchors.")
+    for (j in i) {
+      name <- basename(paths[j])
+      part <- basename(dirname(paths[j]))
+      f <- which(endsWith(name, paste0(focal$suffix, ".tif")))
+      if (length(f)) {
+        radius <- focal$radius_cells[f]
+        window <- sprintf("%d x %d cells, %d km radius along each axis", 2L * radius + 1L,
+                          2L * radius + 1L, radius)
+      }
+      d$derivation_formula[j] <- if (startsWith(part, "patch")) {
+        statistic <- if (startsWith(part, "patchdensity")) "100 * patch count / (pi * radius^2)"
+                     else "sum of full included patch areas / patch count"
+        sprintf("%s. Use a disk of radius %d km, four-neighbour patches, and an anchor with an own-patch correction.",
+                statistic, radius)
+      } else if (part == "shannon") {
+        sprintf("-sum(p * ln(p)) over nonzero class proportions from the square window (%s).", window)
+      } else if (part == "edge") {
+        edge <- "Flag a valid cell if at least one valid four-neighbour has a different class."
+        if (length(f)) paste(edge, sprintf("Average flags over valid cells in the square window (%s).", window))
+        else edge
+      } else if (length(f)) {
+        sprintf("Average the class indicator over valid cells in the square window (%s).", window)
+      } else "Class indicator on the 1 km nearest-neighbour class grid (0 or 1)."
+      if (startsWith(part, "patch")) {
+        d$missing_boundary_rule[j] <- paste("Only valid class cells may belong to a patch.",
+          "NoData where no patch is counted or outside the national mask. A forest window may contain",
+          "forest cells and still have no counted patch under the anchor rule.")
+      } else {
+        d$missing_boundary_rule[j] <- paste("Class 0 and classes outside the legend are excluded.",
+          "A focal denominator counts valid cells only. Apply the national mask.")
+      }
+    }
+  }
+
+  i <- which(d$status == "active" & startsWith(paths, "reg/bioclim/chelsa21-ensmean/"))
+  if (length(i)) {
+    d$source_crs[i] <- "CHECO26 China Albers"
+    d$source_resolution[i] <- "1000 metres"
+    d$source_extent[i] <- "CHECO26 1 km China delivery grid"
+    d$source_nodata[i] <- "-9999 (CHECO26 member layers)"
+    d$source_scale_offset[i] <- "None (CHECO26 members already in physical units)"
+    nongdd <- i[!grepl("/gdd(0|5|10)/", paths[i])]
+    d$source_file[nongdd] <- vapply(strsplit(paths[nongdd], "/", fixed = TRUE), function(parts)
+      sprintf("[selector] Five CHECO26 GCM chains at scenario/%s/%s/%s, see R/10_future_chains.R",
+              parts[5], parts[6], parts[7]), "")
+    d$processing_steps[nongdd] <- "Average matching standardized GCM layers and apply the national mask."
+    d$derivation_formula[nongdd] <- "Equal-weight mean of available standardized GCM members."
+    d$missing_boundary_rule[nongdd] <- "Ignore missing members. NoData when no member is available or outside the national mask."
+  }
+  d
+}
+
+
+h90m_provenance <- function(d) {
+  path <- file.path(PATH_DOCS(), "H90M_SOURCE_MANIFEST.csv")
+  if (!file.exists(path)) stop("Missing pinned h90m source inventory: ", path)
+  catalog <- read.csv(path, stringsAsFactors = FALSE)
+  registry <- catalog[catalog$kind == "native", ]
+  layer <- d$layer_path
+  internal <- grepl("^reg/hydro/h90m/(direction|segment|sub-catchment)/", layer)
+  i <- which(d$status == "active" & grepl("^reg/(dist|hydro)/h90m/", layer) &
+             !grepl("/channel-elv-up-cel/", layer) & !internal)
+  for (j in i) {
+    var <- gsub("-", "_", strsplit(layer[j], "/", fixed = TRUE)[[1]][4])
+    ref <- registry[registry$variable == var, ]
+    expected <- as.character(unlist(CFG()$hydro90m_vars$tile_ids))
+    stopifnot(nrow(ref) == length(expected), setequal(ref$tile, expected),
+              length(unique(ref$nodata)) == 1L, length(unique(ref$data_type)) == 1L)
+    method <- if (endsWith(layer[j], "_min.tif")) "min"
+      else if (endsWith(layer[j], "_max.tif")) "max"
+      else if (var %in% unlist(CFG()$hydro90m_vars$categorical)) "mode" else "average"
+    scale <- CFG()$hydro90m_vars$scale_by_var[[var]]
+    if (is.null(scale)) scale <- 1
+    d$source_file[j] <- sprintf("[selector] H90M_SOURCE_MANIFEST.csv, kind=native, variable=%s (20 files), and kind=boundary", var)
+    d$source_crs[j] <- "EPSG:4326 (native Hydrography90m grid)"
+    d$source_resolution[j] <- "3 arc-seconds (approximately 90 m)"
+    d$source_extent[j] <- "Twenty source tiles listed in H90M_SOURCE_MANIFEST.csv; then clipped to China"
+    d$source_nodata[j] <- sprintf("%s (%s native source)", ref$nodata[1], ref$data_type[1])
+    d$source_scale_offset[j] <- sprintf("Multiply the aggregated value by %.9g; offset 0", scale)
+    d$processing_steps[j] <- paste("Mosaic the pinned native rasters. Clip on the 90 m grid, including",
+      "cells whose centres intersect the historical China boundary. Apply the",
+      method, "resampling statistic on the 1 km CHECO26 grid, then the configured",
+      "scale and national mask. Store float32 with NoData -9999.")
+    d$derivation_formula[j] <- sprintf("1 km %s of eligible native cells, multiplied by %.9g.", method, scale)
+    d$missing_boundary_rule[j] <- paste("Exclude source NoData and native cells outside the",
+      "historical boundary before aggregation. Apply the CHECO26 national mask after reprojection.")
+    d$script_function[j] <- "R/19_rebuild_h90m_legacy.R : rebuild_h90m_legacy"
+    if (method == "average") {
+      d$source_file[j] <- paste0("[historical] Deleted E:/h90m/Final/", var, "/", var,
+        "_china.tif; native tile and boundary lineage in H90M_SOURCE_MANIFEST.csv (variable=", var, ").")
+      d$source_extent[j] <- "Published legacy China intermediate; the native lineage spans twenty pinned tiles"
+      d$processing_steps[j] <- paste("The historical China mosaic was averaged to the 1 km CHECO26 grid,",
+        "then scaled and masked. Stage 19 reproduces the method from pinned raw inputs, with small",
+        "localized differences from this version of the historical delivery.")
+      d$missing_boundary_rule[j] <- paste("Exclude source NoData. The historical native China clip",
+        "precedes aggregation. Apply the CHECO26 national mask after reprojection.")
+      d$script_function[j] <- paste("Historical R/03_ingest_static.R : warp_to_template;",
+        "R/19_rebuild_h90m_legacy.R : replay from pinned native inputs")
+    }
+  }
+  modern <- which(d$status == "active" & grepl("^reg/hydro/h90m/channel-elv-up-cel/", layer))
+  d$source_file[modern] <-
+    "[selector] H90M_SOURCE_MANIFEST.csv, variable=channel_elv_up_cel (20 tiles), and kind=boundary"
+  h90_active <- c(i, modern, which(d$status == "active" & internal))
+  d$source_dataset[h90_active] <- "Hydrography90m, global 3-arc-second rasters, China subset"
+  d$source_provider[h90_active] <- "Giuseppe Amatulli et al. (Hydrography90m)"
+  d$notes[h90_active] <- "Raw raster lineage and historical China boundary are versioned in H90M_SOURCE_MANIFEST.csv."
+  average <- i[grepl("^\\[historical\\]", d$source_file[i])]
+  d$notes[average] <- paste("The historical 1 km mean is retained. The native-tile reconstruction",
+    "preserves the valid mask; localized boundary differences remain. See CODE_REVIEW_NOTES.md.")
+  d$notes[modern] <- "Stage 17 uses one cleaned 20-tile mosaic for the mean, minimum and maximum."
+  d$source_nodata[modern] <- "-9999999 (native Int32) and values >= 50000"
+  d$source_scale_offset[modern] <- "None (metres already)"
+  legacy_only <- which(d$status == "active" & internal)
+  d$source_file[legacy_only] <- paste0("[selector] Native tile lineage in H90M_SOURCE_MANIFEST.csv ",
+    "(variable=", gsub("-", "_", vapply(strsplit(layer[legacy_only], "/", fixed = TRUE), function(p) p[4], "")),
+    "). Historical export used the deleted E:/h90m/Final intermediates.")
+  d$processing_steps[legacy_only] <- paste("Historical 1 km categorical exports preserved internally.",
+    "The native tiles can be located from the inventory. Integer identities, flow direction and",
+    "connectivity on the resampled grid require separate validation.")
+  for (j in legacy_only) {
+    var <- gsub("-", "_", basename(dirname(layer[j])))
+    ref <- registry[registry$variable == var, ]
+    stopifnot(nrow(ref) == 20L, length(unique(ref$nodata)) == 1L, length(unique(ref$data_type)) == 1L)
+    d$source_extent[j] <- "Twenty pinned native tiles; historical intermediate clipped to China"
+    d$source_nodata[j] <- sprintf("%s (%s native source)", ref$nodata[1], ref$data_type[1])
+    d$source_scale_offset[j] <- "None (categorical code)"
+    d$derivation_formula[j] <- "1 km mode of eligible native cells."
+    d$missing_boundary_rule[j] <- "Exclude source NoData and apply the national mask."
+    d$notes[j] <- "Internal only. The historical output and native-tile replay have identical value and NoData arrays."
+  }
+  d$script_function[legacy_only] <- "R/19_rebuild_h90m_legacy.R : native-tile reconstruction (historical delivery retained)"
+  outlet <- i[basename(dirname(layer[i])) == "outlet"]
+  d$variable_definition[outlet] <- "Sparse raster flag for Hydrography90m outlet cells aggregated to 1 km. [proc]"
+  d$missing_boundary_rule[outlet] <- paste("Exclude native NoData and cells outside the historical boundary.",
+    "A 1 km cell with no eligible outlet flag is NoData. Apply the national mask.")
+  d$notes[outlet] <- paste("Valid cells have value 1. Use as a reference flag;",
+    "the layer does not define a continuous covariate or outlet network topology.")
+  d
+}
+
 # ---- 主流程 --------------------------------------------------------------
-main <- function(fill_actual = FALSE) {
+main <- function(fill_actual = FALSE, refresh_paths = character()) {
   base <- read.csv(PROV_PATH(), fileEncoding = "UTF-8-BOM", stringsAsFactors = FALSE,
                    check.names = FALSE)
   cat(sprintf("现有溯源表: %d 行 x %d 列\n", nrow(base), ncol(base)))
@@ -376,24 +532,28 @@ main <- function(fill_actual = FALSE) {
   new <- new[!dup, , drop = FALSE]
 
   # 列对齐（按 base 的列顺序）
-  align <- function(d) { for (nm in names(base)) if (!nm %in% names(d)) d[[nm]] <- NA
+  align <- function(d) { for (nm in names(base)) if (!nm %in% names(d)) d[[nm]] <- rep(NA_character_, nrow(d))
                          d[, names(base), drop = FALSE] }
-  out <- rbind(align(base), align(new))
+  out <- h90m_provenance(reconcile_source_lineage(rbind(align(base), align(new))))
   cat(sprintf("\n合并后: %d 行（期望 21,796 = 21,788 active + 8 withdrawn）\n", nrow(out)))
   stopifnot(!anyDuplicated(out$layer_path))
 
   # 可选：读取已存在层填 actual_range
-  if (fill_actual) {
+  if (fill_actual || length(refresh_paths)) {
+    stopifnot(all(refresh_paths %in% out$layer_path[out$status == "active"]))
     cat("填充 actual_range（读取已存在层）...\n")
     root <- PATH_COV()
     n <- 0L
     for (i in seq_len(nrow(out))) {
-      if (!is.na(out$actual_range[i]) && out$actual_range[i] != "not yet computed") next
+      refresh <- out$layer_path[i] %in% refresh_paths
+      if (!refresh && !is.na(out$actual_range[i]) && out$actual_range[i] != "not yet computed") next
       p <- file.path(root, out$layer_path[i])
+      if (refresh && !file.exists(p)) stop("Missing raster to refresh: ", p)
       if (!file.exists(p)) next
       st <- tryCatch(raster_stats(p), error = function(e) NULL)
+      if (refresh && (is.null(st) || st$n == 0)) stop("Cannot refresh raster statistics: ", p)
       if (is.null(st) || st$n == 0) next
-      out$actual_range[i] <- sprintf("[%.6g, %.6g] over %d valid cells", st$min, st$max, st$n)
+      out$actual_range[i] <- sprintf("[%.16g, %.16g] over %d valid cells", st$min, st$max, st$n)
       n <- n + 1L
     }
     cat(sprintf("  已填 %d / %d 行\n", n, nrow(out)))
@@ -407,5 +567,5 @@ main <- function(fill_actual = FALSE) {
 
 if (sys.nframe() == 0L) {
   a <- commandArgs(trailingOnly = TRUE)
-  main(identical(a[1], "fill"))
+  main(identical(a[1], "fill"), a[-1])
 }
