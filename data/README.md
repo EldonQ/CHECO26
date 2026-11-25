@@ -1,7 +1,7 @@
 # CHECO26 data artefacts
 
 Light-weight data assets that ship with the repository. The full database
-(183.1 GB) is not yet publicly released (see the main
+(183.2 GB) is not yet publicly released (see the main
 [README](../README.md#data-availability)); these artefacts let you audit the
 inventory, build the exact grid, and inspect representative layers without
 downloading anything.
@@ -9,6 +9,7 @@ downloading anything.
 | File | What it is |
 |---|---|
 | `CHECO26_datalayers_details.csv` | **Layer manifest** — one row per delivered layer (21,788 rows), in the shared semicolon-delimited layout with release status, byte size and SHA-256 |
+| `LICENCE_REGISTRY.csv` | Verified source terms and evidence for each theme and dataset, including the NESDC terms pending confirmation |
 | `CHECO26-standardgrid.tif` | the template grid every layer is aligned to (China_Albers, 1000 m, 4861 x 4062, value 1) |
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
 | `table2_dataset_layer_counts.csv` | machine-readable version of Table 1 in the manuscript: layer counts per dataset entry |
@@ -45,7 +46,9 @@ not part of CHECO26.
 | `variable_long` | English long name |
 | `unit` | physical unit |
 | `path` | path inside the delivery tree (relative to the covariates root) |
-| `valid` | `yes` for all delivered layers |
+| `valid` | `yes` for all inventory layers |
+| `release_status` | `deposit-candidate` for the 21,685 proposed layers, `internal` for the other production layers |
+| `bytes` / `sha256` | Production file size and SHA-256 |
 
 Soil depth codes: `0` = 0–5 cm, `5` = 5–15 cm, `15` = 15–30 cm,
 `30` = 30–60 cm, `60` = 60–100 cm, `100` = 100–200 cm; `profile` is the
@@ -66,6 +69,6 @@ the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](
 | `reg/dist/grip4/road/...` | dist | GRIP4 | distance to the road network |
 | `reg/dist/smod/urban/...` | dist | GHS-SMOD | distance to settlements, reproduced by the distance example |
 
-`release_status` identifies the proposed deposit candidates and internal layers.
+`release_status` identifies proposed deposit candidates and layers retained internally. Use the `category` and `dataset` columns together to locate `dataset_key` in `LICENCE_REGISTRY.csv`.
 The GLO-90 source tile URLs and SHA-256 hashes are pinned in `COPDEM90_source_tiles.csv`. `H90M_SOURCE_MANIFEST.csv` pins 660 native Hydrography90m rasters and the four components of the historical clipping boundary. Paths in that inventory are relative to the h90m source root.
 The bytes and SHA-256 columns come from the production inventory and allow verification of the sample files or deposited rasters.

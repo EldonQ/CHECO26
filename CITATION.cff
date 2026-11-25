@@ -1,10 +1,8 @@
 cff-version: 1.2.0
 message: >-
-  If you use CHECO26, please cite this database and the source products listed
-  under `references`. The repository's own code and documentation are CC BY 4.0,
-  but the data layers carry per-layer licences: 20,491 layers are CC BY 4.0, 1,210
-  CC0-1.0, 76 CC BY-NC 4.0, 4 CC BY-NC-SA 4.0, 1 Copernicus and 1 ODbL 1.0. Check the licence
-  fields of a layer before redistributing it.
+  Cite CHECO26 and the source products listed under references. For data reuse,
+  see the source-specific terms in data/LICENCE_REGISTRY.csv and the layer release
+  status in data/CHECO26_datalayers_details.csv.
 title: "CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research"
 abstract: >-
   A uniform-grid library of 21,788 environmental layers covering China at 1 km in
@@ -19,10 +17,8 @@ abstract: >-
   complementary depths: annual observed cover 2000-2025 (CLCD, 1,170 layers), a
   China-relevant projection (GLU1km, 540 layers) and a harmonised yearly
   reconstruction 1960-2100 under five SSP-RCP scenarios (18,440 layers). Total
-  volume is 183.2 GB. The proposed public deposit contains 21,710 layers.
+  volume is 183.2 GB. The proposed public deposit contains 21,685 layers.
 version: "2.2"
-license: "CC-BY-4.0"
-license-url: "https://creativecommons.org/licenses/by/4.0/"
 type: dataset
 keywords:
   - environmental covariates

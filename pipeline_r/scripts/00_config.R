@@ -35,6 +35,7 @@ CHECO_ROOT <- .checo_root()
 CFG <- function(reload = FALSE) {
   if (reload || is.null(.cfg_cache$v)) {
     p <- file.path(CHECO_ROOT, "scripts", "config.yaml")
+    if (!file.exists(p)) p <- file.path(CHECO_ROOT, "pipeline_r", "config.yaml")
     if (!file.exists(p)) stop("config.yaml not found: ", p)
     .cfg_cache$v <- yaml::read_yaml(p)
   }

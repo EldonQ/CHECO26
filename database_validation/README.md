@@ -1,6 +1,6 @@
 # CHECO26 validation
 
-The production inventory contains 21,788 rasters (183.2 GB). The proposed data deposit covers 21,710 layers (21,637 open and 73 noncommercial). Five HydroSHEDS layers are withheld for source licence terms. Three legacy h90m topology or ID layers and 70 degenerate GLU all-class patch layers are retained internally. The full raster deposit is pending.
+The production inventory contains 21,788 covariates (183.2 GB). The proposed deposit covers 21,685 layers, comprising 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC vegetation layers are withheld pending confirmation of their source terms, and five HydroSHEDS layers are withheld under their source agreement. Three legacy Hydrography90m direction or ID layers and 70 GLU all-class patch layers are withheld for quality. The public deposit is pending.
 
 ## 2026-11-22 revision
 

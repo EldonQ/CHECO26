@@ -4,17 +4,17 @@
 # 与早期 qa2 工作区的 r16_manifest.py、r18_public_release.py 对齐（两脚本不在交付树内）
 #
 # 产出（均在 00_docs/）：
-#   MANIFEST.csv                  CHECO 发布文件的 relpath / bytes / sha256 / mtime
+#   MANIFEST.csv                  CHECO 生产文件的 relpath / bytes / sha256 / mtime
 #                                 （covariates/ + 生产掩膜 mask_china.tif + 网格模板 template_albers1km.tif；
 #                                   species/ 物种记录与 masks/ 备选掩膜非本发布内容，不列）
-#   PUBLIC_RELEASE_MANIFEST.csv   每层的许可证分级（OPEN / NC / UNVERIFIED）
+#   PUBLIC_RELEASE_MANIFEST.csv   已核实并通过发布筛选的层（OPEN / NC）
 #   RESTRICTED_LAYERS.csv         不可再分发的层及理由
 #
-# 许可证分级依据（全部已核实，见 LICENCE_MATRIX.md）：
+# 逐层许可依据见 provenance_table.csv 与 LICENCE_REGISTRY.csv。
 #   OPEN        CC BY 4.0 等可自由再分发
 #   NC          仅限非商业使用（CC BY-NC 4.0）——可再分发但须标注
-#   RESTRICTED  禁止再分发（机构订阅 / FGDC 明确限制）
-#   UNVERIFIED  许可证文本尚未读到——不得对外发布
+#   RESTRICTED  公开存档受源条款限制
+#   UNVERIFIED  许可证据不足或相互冲突，暂不发布
 #
 # 关键变更：
 #   * anthro/landscan 125 层 → RESTRICTED（移入 archive，不进交付）
@@ -25,49 +25,9 @@
 # =============================================================================
 
 suppressPackageStartupMessages({ library(digest) })
-source(file.path(Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM"), "R/_bootstrap.R"),
-       encoding = "UTF-8")
-
-# ---- 许可证分级表（按数据集）----------------------------------------------
-# 键 = relpath 的前三段（theme/dataset），值 = (class, reason)
-LICENCE <- list(
-  "bioclim/chelsa21"               = c("OPEN",   "CHELSA v2.1 bioclimatic variables (CC0-1.0); see LICENCE_REGISTRY.csv"),
-  "bioclim/chelsa21-gfdl-esm4"     = c("OPEN",   "CHELSA v2.1 downscaled GFDL-ESM4 (CC0-1.0)"),
-  "bioclim/chelsa21-ipsl-cm6a-lr"  = c("OPEN",   "CHELSA v2.1 downscaled IPSL-CM6A-LR (CC0-1.0)"),
-  "bioclim/chelsa21-mpi-esm1-2-hr" = c("OPEN",   "CHELSA v2.1 downscaled MPI-ESM1-2-HR (CC0-1.0)"),
-  "bioclim/chelsa21-mri-esm2-0"    = c("OPEN",   "CHELSA v2.1 downscaled MRI-ESM2-0 (CC0-1.0)"),
-  "bioclim/chelsa21-ukesm1-0-ll"   = c("OPEN",   "CHELSA v2.1 downscaled UKESM1-0-LL (CC0-1.0)"),
-  "bioclim/chelsa21-ensmean"       = c("OPEN",   "Equal-weight mean of 5 CHELSA v2.1 GCMs (CC0-1.0)"),
-  "soil/csdlv2"                   = c("UNVERIFIED", "CSDLv2 licence text has not been read; see LICENCE_MATRIX.md section 2"),
-  "lulc/glu1km"                   = c("OPEN",   "Global LULC projection dataset (Zhang et al. 2023, Sci Data); see LICENCE_MATRIX.md"),
-  "lulc/clcd"                     = c("OPEN",   "CLCD v1.0.5, CC BY 4.0, DOI 10.5281/zenodo.18180184 (verified)"),
-  "lulc/hlu1km"                   = c("OPEN",   "Harmonised LULC 1960-2100, CC BY 4.0, DOI 10.5281/zenodo.15017066 (verified)"),
-  "anthro/smod"                   = c("OPEN",   "GHS-SMOD R2023A, CC BY 4.0 (copyright.txt verified)"),
-  "anthro/hfp"                    = c("OPEN",   "Mu et al. annual HFP, CC BY 4.0, DOI 10.6084/m9.figshare.16571064.v8 (verified)"),
-  "anthro/landscan"               = c("RESTRICTED", "LandScan Global is distributed by ORNL/East View under an institutional subscription licence that prohibits electronic redistribution"),
-  "anthro/foothii"                = c("UNVERIFIED", "WCS Human Footprint licence text has not been read; superseded by anthro/hfp"),
-  "vege/agb2019"                  = c("UNVERIFIED", "Source licence text has not been read"),
-  "vege/ch2019"                   = c("UNVERIFIED", "Source licence text has not been read"),
-  "vege/catcd"                    = c("UNVERIFIED", "Source licence text has not been read"),
-  "vege/glassndvi"                = c("UNVERIFIED", "Source licence text has not been read"),
-  "hydro/h90m"                    = c("NC",     "Hydrography90m, CC BY-NC 4.0; redistribution permitted with attribution, commercial use prohibited"),
-  "dist/h90m"                     = c("NC",     "Hydrography90m, CC BY-NC 4.0; redistribution permitted with attribution, commercial use prohibited"),
-  "hydro/hydrosheds"              = c("RESTRICTED", "HydroSHEDS FGDC metadata states the data shall not be redistributed without explicit written permission"),
-  "dist/grip4"                    = c("UNVERIFIED", "GRIP4 licence text has not been read"),
-  "dist/osm"                      = c("OPEN",   "OpenStreetMap, ODbL 1.0; attribution and share-alike required"),
-  "dist/gsw"                      = c("UNVERIFIED", "JRC Global Surface Water licence text has not been read"),
-  "dist/smod"                     = c("OPEN",   "Derived from GHS-SMOD R2023A, CC BY 4.0"),
-  "topo/chinadem"                 = c("UNVERIFIED", "Source licence text has not been read")
-)
-
-licence_of <- function(relpath_short) {
-  # relpath 形如 reg/<theme>/<dataset>/...，分级键是 theme/dataset（第 2、3 段）
-  parts <- strsplit(relpath_short, "/", fixed = TRUE)[[1]]
-  key <- if (length(parts) >= 3) paste(parts[2:3], collapse = "/") else relpath_short
-  v <- LICENCE[[key]]
-  if (is.null(v)) return(c("UNVERIFIED", "No licence rule registered for this dataset"))
-  v
-}
+.root <- Sys.getenv("CHECO_ROOT", getwd())
+.scripts <- if (dir.exists(file.path(.root, "R"))) "R" else "pipeline_r/scripts"
+source(file.path(.root, .scripts, "_bootstrap.R"), encoding = "UTF-8")
 
 # ---- 主流程 --------------------------------------------------------------
 main <- function(mode = c("all", "hash", "release"), workers = 8L) {
@@ -119,39 +79,30 @@ main <- function(mode = c("all", "hash", "release"), workers = 8L) {
     prov <- prov[prov$status == "active", ]
     cat(sprintf("active 层: %d\n", nrow(prov)))
 
-    # 2026-10-21：优先使用源表里已注入的结构化许可列
-    # （由 R/tools/build_licence_registry.R 从 LICENCE_REGISTRY.csv 写入）；
-    # 没有时回落到本脚本内置的 LICENCE 列表。
-    # 目的：每个发布层都带上可追溯的许可证名称、版本、链接、署名文本与证据等级。
-    # 2026-10-21：源表已注入 4 列许可信息
-    #   licence / licence_url / attribution / licence_status
-    # 其中 licence_status 形如 "VERIFIED (OPEN)"，括号内是分级。
-    # 详细证据在 LICENCE_REGISTRY.csv（25 行），不在逐层表里。
-    has_cols <- all(c("licence", "licence_url", "attribution", "licence_status") %in% names(prov))
-    if (has_cols && all(!is.na(prov$licence_status))) {
-      cat("\n\u8bb8\u53ef\u4fe1\u606f\u6765\u6e90: provenance_table.csv \u7684 4 \u4e2a\u8bb8\u53ef\u5217\n")
-      cls <- sub("^.*\\(([A-Z]+)\\)$", "\\1", prov$licence_status)
-      rel <- data.frame(
-        relpath        = prov$layer_path,
-        licence_class  = cls,
-        licence_status = prov$licence_status,
-        licence        = prov$licence,
-        licence_url    = prov$licence_url,
-        attribution    = prov$attribution,
-        source_dataset = prov$source_dataset,
-        source_doi_url = prov$source_doi_url,
-        stringsAsFactors = FALSE)
-    } else {
-      cat("\n\u8bb8\u53ef\u4fe1\u606f\u6765\u6e90: \u672c\u811a\u672c\u5185\u7f6e LICENCE \u5217\u8868\uff08\u65e7\u53e3\u5f84\uff09\n")
-      cls2 <- t(vapply(prov$layer_path, licence_of, c("", "")))
-      rel <- data.frame(
-        relpath = prov$layer_path,
-        licence_class = cls2[, 1],
-        reason = cls2[, 2],
-        source_dataset = prov$source_dataset,
-        source_doi_url = prov$source_doi_url,
-        stringsAsFactors = FALSE)
+    required <- c("licence", "licence_url", "attribution", "licence_status")
+    missing <- setdiff(required, names(prov))
+    if (length(missing)) {
+      stop("Missing provenance licence columns: ", paste(missing, collapse = ", "),
+           ". Run tools/build_licence_registry.R first.", call. = FALSE)
     }
+    status <- prov$licence_status
+    valid <- !is.na(status) &
+      grepl("^(VERIFIED|PROBABLE|UNVERIFIED) \\((OPEN|NC|RESTRICTED|UNVERIFIED)\\)$", status)
+    if (any(!valid)) {
+      stop("Invalid or missing licence_status: ",
+           paste(head(prov$layer_path[!valid]), collapse = ", "), call. = FALSE)
+    }
+
+    rel <- data.frame(
+      relpath        = prov$layer_path,
+      licence_class  = sub("^.*\\(([A-Z]+)\\)$", "\\1", status),
+      licence_status = status,
+      licence        = prov$licence,
+      licence_url    = prov$licence_url,
+      attribution    = prov$attribution,
+      source_dataset = prov$source_dataset,
+      source_doi_url = prov$source_doi_url,
+      stringsAsFactors = FALSE)
 
     # 受限层单独一张表
     res <- rel[rel$licence_class == "RESTRICTED", ]
@@ -162,13 +113,13 @@ main <- function(mode = c("all", "hash", "release"), workers = 8L) {
     withheld <- grepl("^reg/hydro/h90m/(direction|segment|sub-catchment)/", rel$relpath) |
       (grepl("^reg/lulc/glu1km/", rel$relpath) &
        grepl("patch(density|size)-all", rel$relpath))
-    pub <- rel[rel$licence_class != "RESTRICTED" & !withheld, ]
+    pub <- rel[rel$licence_status %in% c("VERIFIED (OPEN)", "VERIFIED (NC)") & !withheld, ]
     write.csv(pub, file.path(PATH_DOCS(), "PUBLIC_RELEASE_MANIFEST.csv"),
               row.names = FALSE, fileEncoding = "UTF-8")
 
     cat("\n许可证分级统计（active 层）:\n")
     print(table(rel$licence_class))
-    cat(sprintf("\n可公开发布: %d 层\n受限不可发布: %d 层\n", nrow(pub), nrow(res)))
+    cat(sprintf("\n拟公开发布: %d 层\n受限不可发布: %d 层\n", nrow(pub), nrow(res)))
   }
   invisible(NULL)
 }

@@ -7,34 +7,45 @@
 #   这不足以支撑"CC BY 4.0 可以收录 + 署名"这个判断，也无法审计。
 #
 # 本脚本产出：
-#   1) 00_docs/LICENCE_REGISTRY.csv      逐数据集的结构化许可登记（18 个字段）
-#   2) provenance_table.csv 追加 11 个许可列（每层都带可追溯的许可信息）
-#   3) PUBLIC_RELEASE_MANIFEST.csv      追加同样的许可列
-#   4) RESTRICTED_LAYERS.csv            追加同样的许可列
+#   1) 00_docs/LICENCE_REGISTRY.csv      逐数据集的结构化许可登记（含生产层数，共 19 列）
+#   2) provenance_table.csv 更新逐层许可及 NESDC 核查备注
+# 发布与受限清单由 R/14_manifest.R release 生成。
 #
 # 证据等级：
 #   verified   —— 读到官方 API / 许可证原文 / 发布方页面明示
 #   probable   —— 有间接依据（如论文声明 CC BY），但未读到数据页面的许可条款
-#   unverified —— 没有读到任何许可文本，标为待审
+#   unverified —— 许可证据不足或相互冲突
 #
 # 用法：Rscript R/tools/build_licence_registry.R [dry|write]
-Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
-source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
+.root <- Sys.getenv("CHECO_ROOT", getwd())
+.scripts <- if (dir.exists(file.path(.root, "R"))) "R" else "pipeline_r/scripts"
+source(file.path(.root, .scripts, "_bootstrap.R"), encoding = "UTF-8")
 
 # ---------------------------------------------------------------------------
 # 许可登记：每个数据集一行。字段含义见文件头。
 # ---------------------------------------------------------------------------
 registry <- function() {
   D <- function(key, label, cls, name, ver, spdx, url, attr, attr_text, sa,
-                comm, redist, ev_type, ev_detail, ev_url, conf, action) {
+                comm, redist, ev_type, ev_detail, ev_url, conf, action, checked = "2026-10-21") {
     data.frame(dataset_key = key, dataset_label = label, licence_class = cls,
                licence_name = name, licence_version = ver, licence_spdx = spdx,
                licence_url = url, attribution_required = attr,
                attribution_text = attr_text, share_alike = sa,
                commercial_use = comm, redistributable = redist,
                evidence_type = ev_type, evidence_detail = ev_detail,
-               evidence_url = ev_url, checked_date = "2026-10-21",
+               evidence_url = ev_url, checked_date = checked,
                confidence = conf, action = action, stringsAsFactors = FALSE)
+  }
+  nesdc <- function(key, label, citation, doi, record_id) {
+    D(key, label, "UNVERIFIED", "NESDC data licence pending confirmation",
+      "unknown", "NOASSERTION", "", NA, paste0(citation, "; NESDC dataset ", doi),
+      NA, "unconfirmed", FALSE, "publisher_page_conflict",
+      paste("The NESDC record labels its data-use licence CC BY-NC 4.0 but links to",
+            "https://creativecommons.org/licenses/by/4.0/ (CC BY 4.0). The page also",
+            "states that modification and redistribution require written permission."),
+      paste0("https://www.nesdc.org.cn/sdo/detail?id=", record_id), "unverified",
+      "Withhold; request confirmation of the applicable terms and permission for public redistribution of the 1 km derivatives",
+      checked = "2026-11-25")
   }
   rbind(
   D("lulc/hlu1km", "Harmonised global land use 1960-2100 (Woodman et al.)",
@@ -87,13 +98,13 @@ registry <- function() {
     "include with attribution and ODbL share-alike notice"),
   D("dist/gsw", "Distance to surface water (JRC Global Surface Water)",
     "OPEN", "Copernicus data policy (free, without restriction of use)", "n/a",
-    "Copernicus", "http://www.copernicus.eu/main/data-access/", TRUE,
+    "Copernicus", "https://storage.googleapis.com/water-world/downloads_ancillary/DataUsersGuidev2024_v.5.pdf#page=18", TRUE,
     "Source: EC JRC/Google. Pekel J.-F. et al., Nature 540, 418-422 (2016), doi:10.1038/nature20584",
     FALSE, "allowed", TRUE,
-    "publisher_page",
-    "JRC download page states: 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', with acknowledgement and citation required",
+    "licence_text",
+    "JRC Data Users Guide v5, page 18, states: 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', with acknowledgement and citation required",
     "https://global-surface-water.appspot.com/download", "verified",
-    "include with attribution and required citation"),
+    "include with attribution and required citation", checked = "2026-11-25"),
   D("bioclim/chelsa21", "Present-day bioclimatic variables (CHELSA v2.1, 1981-2010)",
     "OPEN", "Creative Commons Zero 1.0 Universal", "1.0", "CC0-1.0",
     "https://creativecommons.org/publicdomain/zero/1.0/", FALSE,
@@ -175,13 +186,13 @@ registry <- function() {
     "https://doi.org/10.18728/igb-fred-762.1", "verified",
     "include with attribution and NonCommercial notice"),
   D("hydro/hydrosheds", "Flow accumulation from HydroSHEDS Core v1.1 (ACC)",
-    "RESTRICTED", "HydroSHEDS Version 1 License Agreement (WWF)", "1.1", "NOASSERTION",
-    "https://www.hydrosheds.org/hydrosheds-core-downloads", TRUE,
-    "HydroSHEDS (WWF); Lehner B., Verdin K. & Jarvis A., New global hydrography derived from spaceborne elevation data, EOS Trans. 89(10), 93-94 (2008), doi:10.1029/2008EO150004",
-    FALSE, "allowed for use; not for redistribution", FALSE,
-    "licence_text", "LICENCE TEXT OBTAINED AND READ, 2026-10-21. Source: HydroSHEDS Technical Documentation v1.4 (April 2022, 29 pp, downloaded from data.hydrosheds.org), Appendix A - 'HYDROSHEDS VERSION 1 - LICENSE AGREEMENT'. This is a commercial-style distribution licence, not an open licence. The operative clauses are: s1.2 - 'End Users' means parties licensed the Licensed Materials 'for such party's use and not for redistribution'; s2.1.1 - the grant is 'worldwide, nonexclusive, non-transferable' and runs to the Licensee, not to the public; s2.1.2 - Licensee may distribute the Licensed Materials only 'incorporated into any Derivative Works to End Users, subject to ... an end user license agreement with terms that are at least as protective', and 'In no event shall Licensee license or distribute the Licensed Materials as a stand-alone product'; further distribution to other distributors is prohibited. s7.1 states the core data are 'free for non-commercial and commercial USE' but refers all redistribution questions to Appendix A. CONSEQUENCE FOR CHECO26: our 1 km averaged and focal layers are Derivative Works that we may use and may distribute under a protective end-user agreement, but we hold no right to deposit them in a public repository under an open licence, and recipients may not redistribute them. They are therefore withheld from the public deposit. Written permission from WWF would be required to release them openly.",
+    "RESTRICTED", "HydroSHEDS Version 1 License Agreement (WWF)", "1", "LicenseRef-HydroSHEDS-Core-V1",
+    "https://data.hydrosheds.org/file/technical-documentation/HydroSHEDS_TechDoc_v1_4.pdf#page=24", TRUE,
+    "HydroSHEDS (WWF); Lehner B., Verdin K. & Jarvis A., New global hydrography derived from spaceborne elevation data, EOS Trans. 89(10), 93-94 (2008), doi:10.1029/2008EO100001",
+    FALSE, "allowed for use subject to the agreement", FALSE, "licence_text",
+    "Technical Documentation v1.4 for data version 1.1, Appendix A sections 1.2 and 2.1.2. Distribution of licensed materials incorporated in derivatives requires protective end-user or authorised distributor terms. Section 2.2 and Exhibit B specify attribution.",
     "https://www.hydrosheds.org/products/hydrosheds", "verified",
-    "WITHHOLD from public deposit - the licence grants no right to redistribute under an open licence; written WWF permission required to release"),
+    "Withhold from the public deposit under the HydroSHEDS v1 agreement", checked = "2026-11-25"),
   D("soil/csdlv2", "China soil properties CSDLv2, 28 variables",
     "OPEN", "Creative Commons Attribution 4.0 International", "4.0", "CC-BY-4.0",
     "https://creativecommons.org/licenses/by/4.0/", TRUE,
@@ -199,33 +210,15 @@ registry <- function() {
     "Copernicus WorldDEM-90 terms, including attribution for modified data.",
     "https://dataspace.copernicus.eu/sites/default/files/media/files/2025-06/copernicus_contributing_mission_data_access_v2_cop_dem_licenses.pdf", "verified",
     "include with required Copernicus attribution"),
-  D("vege/ch2019", "Forest canopy height 2019 (GEDI + ICESat-2)",
-    "NC", "Creative Commons Attribution-NonCommercial 4.0 International", "4.0", "CC-BY-NC-4.0",
-    "https://creativecommons.org/licenses/by-nc/4.0/", TRUE,
-    "Liu X., Su Y., Hu T., Yang Q. et al., Neural network guided interpolation for mapping canopy height of China's forests by integrating GEDI and ICESat-2 data, Remote Sensing of Environment 269, 112844 (2022); data via NESDC, CC BY-NC 4.0",
-    FALSE, "not allowed", TRUE,
-    "publisher_page",
-    "The NESDC record page displays a '数据使用许可协议' (data use licence agreement) field reading CC BY-NC 4.0, read from the rendered page on 2026-10-21. IMPORTANT DISTINCTION: the bundled ftp_download_*.txt states '仅限个人使用，请勿传播' (personal use only, do not propagate) - that clause governs the ACCESS CREDENTIALS, not the data. The data itself is licensed CC BY-NC 4.0, which permits redistribution provided the non-commercial restriction is stated. An earlier pass of this audit mis-read the credential clause as a data restriction and classified these layers as restricted; corrected here.",
-    "http://www.nesdc.org.cn/", "verified",
-    "include with attribution and NonCommercial notice"),
-  D("vege/agb2019", "Forest aboveground biomass 2019",
-    "NC", "Creative Commons Attribution-NonCommercial 4.0 International", "4.0", "CC-BY-NC-4.0",
-    "https://creativecommons.org/licenses/by-nc/4.0/", TRUE,
-    "Yang Q., Niu C., Liu X. et al., Mapping high-resolution forest aboveground biomass of China using multisource remote sensing data, GIScience & Remote Sensing 60(1), 2203303 (2023); data via NESDC, CC BY-NC 4.0",
-    FALSE, "not allowed", TRUE,
-    "publisher_page",
-    "The NESDC record page displays a '数据使用许可协议' (data use licence agreement) field reading CC BY-NC 4.0, read from the rendered page on 2026-10-21. IMPORTANT DISTINCTION: the bundled ftp_download_*.txt states '仅限个人使用，请勿传播' (personal use only, do not propagate) - that clause governs the ACCESS CREDENTIALS, not the data. The data itself is licensed CC BY-NC 4.0, which permits redistribution provided the non-commercial restriction is stated. An earlier pass of this audit mis-read the credential clause as a data restriction and classified these layers as restricted; corrected here.",
-    "http://www.nesdc.org.cn/", "verified",
-    "include with attribution and NonCommercial notice"),
-  D("vege/glassndvi", "GLASS NDVI 2020-2022",
-    "NC", "Creative Commons Attribution-NonCommercial 4.0 International", "4.0", "CC-BY-NC-4.0",
-    "https://creativecommons.org/licenses/by-nc/4.0/", TRUE,
-    "Yang J., Dong J., Xiao X. et al., Divergent shifts in peak photosynthesis timing of temperate and alpine grasslands in China, Remote Sensing of Environment 233, 111395 (2019); data via NESDC, CC BY-NC 4.0",
-    FALSE, "not allowed", TRUE,
-    "publisher_page",
-    "The NESDC record page displays a '数据使用许可协议' (data use licence agreement) field reading CC BY-NC 4.0, read from the rendered page on 2026-10-21. IMPORTANT DISTINCTION: the bundled ftp_download_*.txt states '仅限个人使用，请勿传播' (personal use only, do not propagate) - that clause governs the ACCESS CREDENTIALS, not the data. The data itself is licensed CC BY-NC 4.0, which permits redistribution provided the non-commercial restriction is stated. An earlier pass of this audit mis-read the credential clause as a data restriction and classified these layers as restricted; corrected here.",
-    "http://www.nesdc.org.cn/", "verified",
-    "include with attribution and NonCommercial notice"),
+  nesdc("vege/ch2019", "Forest canopy height 2019 (GEDI + ICESat-2)",
+        "Liu X., Su Y., Hu T., Yang Q. et al., Neural network guided interpolation for mapping canopy height of China's forests by integrating GEDI and ICESat-2 data, Remote Sensing of Environment 269, 112844 (2022)",
+        "10.12199/nesdc.ecodb.rs.2024.027", "672d67777e28174998e63250"),
+  nesdc("vege/agb2019", "Forest aboveground biomass 2019",
+        "Yang Q., Niu C., Liu X. et al., Mapping high-resolution forest aboveground biomass of China using multisource remote sensing data, GIScience & Remote Sensing 60(1), 2203303 (2023)",
+        "10.12199/nesdc.ecodb.rs.2024.026", "672d67777e28174998e6324d"),
+  nesdc("vege/glassndvi", "GLASS NDVI 2020-2022",
+        "Yang J., Dong J., Xiao X. et al., Divergent shifts in peak photosynthesis timing of temperate and alpine grasslands in China, Remote Sensing of Environment 233, 111395 (2019)",
+        "10.12199/nesdc.ecodb.rs.2021.012", "60f68d757e28174f0e7d8d49"),
   D("vege/catcd", "Annual tree cover 1985-2025 (CATCD)",
     "OPEN", "Creative Commons Attribution 4.0 International", "4.0", "CC-BY-4.0",
     "https://creativecommons.org/licenses/by/4.0/", TRUE,
@@ -264,7 +257,10 @@ main <- function(mode = c("write", "dry")) {
   missing <- setdiff(names(tab), reg$dataset_key)
   extra   <- setdiff(reg$dataset_key, names(tab))
   cat(sprintf("登记表 %d 个数据集；磁盘 %d 个 active 数据集\n", nrow(reg), length(tab)))
-  if (length(missing)) cat("  **磁盘有但登记表缺**: ", paste(missing, collapse = ", "), "\n")
+  if (length(missing) || anyDuplicated(reg$dataset_key)) {
+    stop("Invalid licence registry coverage. Missing: ", paste(missing, collapse = ", "),
+         call. = FALSE)
+  }
   if (length(extra))   cat("  **登记表有但磁盘无**: ", paste(extra, collapse = ", "), "\n")
   cat(sprintf("层数合计: %s （应为 %s）\n",
               format(sum(reg$layers), big.mark = ","),
@@ -272,8 +268,8 @@ main <- function(mode = c("write", "dry")) {
 
   cat("\n按许可分级:\n"); print(table(reg$licence_class))
   cat("\n按证据等级:\n"); print(table(reg$confidence))
-  cat(sprintf("\n可再分发层数: %s\n", format(sum(reg$layers[reg$redistributable]), big.mark = ",")))
-  cat(sprintf("不可再分发层数: %s\n", format(sum(reg$layers[!reg$redistributable]), big.mark = ",")))
+  cat(sprintf("\n登记为可按许可分发的生产层数: %s\n", format(sum(reg$layers[reg$redistributable]), big.mark = ",")))
+  cat(sprintf("许可受限或待核实的生产层数: %s\n", format(sum(reg$layers[!reg$redistributable]), big.mark = ",")))
 
   if (mode == "dry") { cat("\n[dry] 未写入。\n"); return(invisible(reg)) }
 
@@ -287,23 +283,39 @@ main <- function(mode = c("write", "dry")) {
   # attribution_required 可由 attribution 是否为空推出，class/redistributable/action
   # 可由分级推出，evidence/checked 是数据集级信息。
   # 每层只需四列：licence（含版本）/ licence_url / attribution / licence_status。
-  # 详细证据留在 LICENCE_REGISTRY.csv（21 行），不复制到 21,110 行里。
+  # 完整证据留在 LICENCE_REGISTRY.csv，冲突摘要同步至涉及图层的 notes。
   m <- match(key, reg$dataset_key)
-  lic <- ifelse(is.na(reg$licence_version[m]) | reg$licence_version[m] %in% c("n/a", "unknown"),
-                reg$licence_spdx[m],
-                paste0(reg$licence_spdx[m]))
   add <- data.frame(
     licence        = reg$licence_spdx[m],
     licence_url    = reg$licence_url[m],
     attribution    = reg$attribution_text[m],
-    licence_status = ifelse(reg$confidence[m] == "unverified",
-                            paste0("UNVERIFIED (", reg$licence_class[m], ")"),
-                            paste0(toupper(reg$confidence[m]), " (", reg$licence_class[m], ")")),
+    licence_status = sprintf("%s (%s)", toupper(reg$confidence[m]), reg$licence_class[m]),
     stringsAsFactors = FALSE
   )
   cols <- names(add)
-  for (cc in cols) prov[[cc]] <- NA
-  prov[prov$status == "active", cols] <- add
+  for (cc in setdiff(cols, names(prov))) prov[[cc]] <- NA_character_
+  active <- which(prov$status == "active")
+  prov[active, cols] <- add
+
+  marker <- " [Licence audit] "
+  notes <- prov$notes[active]
+  notes[is.na(notes)] <- ""
+  previous <- grepl(marker, notes, fixed = TRUE)
+  notes[previous] <- sub(" \\[Licence audit\\] .*$", "", notes[previous])
+  conflict <- reg$evidence_type[m] == "publisher_page_conflict"
+  needs_update <- previous | conflict
+  notes[conflict] <- paste0(notes[conflict], marker, reg$evidence_detail[m[conflict]],
+                            " Source: ", reg$evidence_url[m[conflict]])
+  prov$notes[active[needs_update]] <- notes[needs_update]
+
+  # Correct the source identifiers verified in this licence audit.
+  hydro <- active[key == "hydro/hydrosheds"]
+  prov$source_doi_url[hydro] <- sub("2008EO150004", "2008EO100001", prov$source_doi_url[hydro], fixed = TRUE)
+  prov$source_citation[hydro] <- sub("2008EO150004", "2008EO100001", prov$source_citation[hydro], fixed = TRUE)
+  nesdc_rows <- active[conflict]
+  prov$source_doi_url[nesdc_rows] <- sub("\\.$", "", prov$source_doi_url[nesdc_rows])
+  prov$source_citation[nesdc_rows] <- sub("(10[.]12199/nesdc[.]ecodb[.]rs[.][0-9]{4}[.][0-9]{3})[.]", "\\1",
+                                         prov$source_citation[nesdc_rows])
 
   prov_out <- file.path(PATH_DOCS(), "provenance_table.csv")
   bak <- paste0(prov_out, ".bak_", format(Sys.time(), "%Y%m%d_%H%M%S"))
