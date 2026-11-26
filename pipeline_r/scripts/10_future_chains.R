@@ -87,8 +87,8 @@ run_gcm <- function(t) {
   force <- identical(Sys.getenv("CHECO_FORCE"), "1")
   if (file.exists(dst) && !force && check_alignment(dst))
     return(list(status = "skip", dst = dst))
-  if (mpi_temperature_group(t)) {
-    warp_mpi_temperature(t)
+  if (joint_temperature_group(t)) {
+    warp_joint_temperature(t)
     return(list(status = "ok", dst = dst))
   }
   if (!file.exists(t$src)) return(list(status = "error", dst = dst, note = paste("missing", t$src)))
@@ -98,21 +98,26 @@ run_gcm <- function(t) {
   list(status = "ok", dst = dst)
 }
 
-mpi_temperature_group <- function(t) {
-  t$chain == "mpi-esm1-2-hr" && t$v %in% c("bio05", "bio06", "bio07") &&
-    (t$cyear == "2085" || (t$cyear == "2055" && t$ssp != "ssp126"))
+temperature_vars <- c("bio05", "bio06", "bio07")
+
+joint_temperature_group <- function(t) {
+  t$v %in% temperature_vars &&
+    paste(t$chain, t$cyear, t$ssp, sep = "/") %in% CFG()$climate$joint_temperature_groups
 }
 
-warp_mpi_temperature <- function(t, output_vars = t$v) {
-  vars <- c("bio05", "bio06", "bio07")
+warp_joint_temperature <- function(t, output_vars = t$v) {
+  vars <- temperature_vars
+  stopifnot(joint_temperature_group(t), length(output_vars) > 0L,
+            all(output_vars %in% vars), !anyDuplicated(output_vars))
   siblings <- Filter(function(x) x$chain == t$chain && x$cyear == t$cyear &&
     x$ssp == t$ssp && x$v %in% vars, build_manifest())
   files <- setNames(vapply(siblings, function(x) x$src, ""), vapply(siblings, function(x) x$v, ""))
-  if (!all(file.exists(files))) stop("Missing MPI temperature inputs")
+  if (!identical(sort(names(files)), vars) || !all(file.exists(files)))
+    stop("Missing temperature inputs for ", paste(t$chain, t$cyear, t$ssp))
   source <- terra::crop(terra::rast(unname(files[vars])), t$crop_ext, snap = "out")
   # Decode all packed bands into a float stack. A joint GDAL warp uses the
   # same interpolation support for all three terms of BIO05 - BIO06 = BIO07.
-  tmp <- tempfile("mpi_temperature_", fileext = ".tif")
+  tmp <- tempfile("joint_temperature_", fileext = ".tif")
   on.exit(unlink(tmp), add = TRUE)
   unpacked <- terra::rast(nrows = nrow(source), ncols = ncol(source), nlyrs = length(vars),
                           extent = terra::ext(source), crs = terra::crs(source))
@@ -124,7 +129,7 @@ warp_mpi_temperature <- function(t, output_vars = t$v) {
   for (index in match(output_vars, vars)) {
     dst <- layer_path(chain_parts(t$chain, t$cyear, t$ssp, vars[index]))
     atomic_write_raster(dst, apply_china_mask(warped[[index]], NA), dtype = "float32")
-    if (!check_alignment(dst)) stop("MPI temperature alignment failed: ", dst)
+    if (!check_alignment(dst)) stop("Joint temperature alignment failed: ", dst)
   }
 }
 

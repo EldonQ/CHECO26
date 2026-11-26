@@ -11,6 +11,7 @@
 #   4) 12_make_docs.R   重建变量字典（填统计）+ LAYER_INDEX.md
 #   5) 14_manifest.R hash / release   MANIFEST.csv / PUBLIC_RELEASE_MANIFEST.csv / RESTRICTED_LAYERS.csv
 #
+#   6) tools/render_licence_matrix.R   用发布清单和登记表渲染许可说明
 # 自动设置 Windows UTF-8 locale；幂等，可反复跑。
 # =============================================================================
 
@@ -32,19 +33,22 @@ refresh_paths <- commandArgs(trailingOnly = TRUE)
 run_r("R/13_make_provenance.R", TRUE, refresh_paths)
 # 2) 许可注入
 run_r("R/tools/build_licence_registry.R", "write")
-# 3) enrich（Python，补 source_file/证据等级）
-py <- "E:/CHECO26/.venv/Scripts/python.exe"
-if (file.exists(py)) {
-  cat("\n########## scripts/enrich_provenance.py ##########\n")
-  st <- system2(py, shQuote(file.path(root, "scripts/enrich_provenance.py")))
-  if (st != 0) stop("enrich_provenance.py failed: ", st)
-} else {
-  cat("\nWARN: 未找到", py, "，跳过 enrich（chelsa21 的 source_file 已在 13 设好）\n")
+# 3) enrich (required for source paths and evidence grades)
+py <- Sys.getenv("CHECO_PYTHON", "")
+if (!nzchar(py)) {
+  bundled <- file.path(dirname(root), ".venv", "Scripts", "python.exe")
+  py <- if (file.exists(bundled)) bundled else unname(Sys.which("python"))
 }
+enrich <- file.path(root, "scripts", "enrich_provenance.py")
+if (!nzchar(py) || !file.exists(enrich)) stop("Cannot locate Python or scripts/enrich_provenance.py")
+cat("\n########## scripts/enrich_provenance.py ##########\n")
+st <- system2(py, c("-B", shQuote(enrich)))
+if (st != 0L) stop("enrich_provenance.py failed: ", st)
 # 4) 变量字典 + 索引
 run_r("R/12_make_docs.R", TRUE, refresh_paths)
 # 5) 清单
 run_r("R/14_manifest.R", "hash")
 run_r("R/14_manifest.R", "release")
+run_r("R/tools/render_licence_matrix.R")
 
 cat("\n==== 元数据重生成完成；请运行验收核验（四方一致 + 哈希复核）====\n")

@@ -11,6 +11,7 @@
 # 用法：
 #   Rscript R/tools/check_docs_consistency.R
 Sys.setenv(CHECO_ROOT = "E:/CHECO26/N-SDM")
+if (.Platform$OS.type == "windows") invisible(try(Sys.setlocale("LC_CTYPE", ".65001"), silent = TRUE))
 source("E:/CHECO26/N-SDM/R/_bootstrap.R", encoding = "UTF-8")
 
 bad <- 0L; ok <- 0L
@@ -142,4 +143,4 @@ main <- function() {
   invisible(bad)
 }
 
-if (sys.nframe() == 0L) main()
+if (sys.nframe() == 0L) quit(status = as.integer(main() > 0L))

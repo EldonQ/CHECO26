@@ -37,10 +37,10 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 | soil | 196 | **csdlv2** 28 attributes x (six standard depths + one whole-profile aggregate) |
 | anthro | 137 | **hfp** annual Human Footprint 2000–2024 x 5 scales (125) · **smod** urban and peri-urban class proportion 1975–2030 x 12 epochs (12) |
 | hydro | 44 | **h90m** 39 Hydrography90m layers, including legacy topology and ID rasters · **hydrosheds** 5 flow-accumulation layers |
-| vege | 30 | forest aboveground biomass (**agb2019**), forest canopy height (**ch2019**), tree canopy cover (**catcd**), GLASS NDVI 2020–2022 (**glassndvi**), each with focal windows |
+| vege | 30 | forest aboveground biomass (**agb2019**), forest canopy height (**ch2019**), 2025 tree canopy cover (**catcd**), GLASS NDVI 2020–2022 (**glassndvi**), each with focal windows |
 | dist | 17 | distance to roads and major roads (**grip4**), trails (**osm**), urban areas (**smod**), surface water (**gsw**), and four stream-distance surfaces (**h90m**) |
 | topo | 4 | Copernicus GLO-90 elevation and 1 km slope, aspect and RMS terrain ruggedness (**chinadem**) |
-| **Total** | **21,788** | **25 dataset entries from 19 source products** |
+| **Total** | **21,788** | **25 dataset entries** |
 
 Of the 21,788 layers, 5,502 are delivered at the native 1-km resolution and 16,286 are focal variants — 4,064 at 1 km and 4,074 at each of 5, 10 and 20 km. 3,982 of the native-resolution layers are class proportions; the remaining 1,520 are source layers plus 18 companion extrema. 17,674 layers describe a future scenario and 4,114 describe the present. Every one of these counts is reproducible from the manifest's `focal`, `attribute` and `period` columns.
 
@@ -81,7 +81,7 @@ inspect the database and run its worked examples:
 
 ## Data validation
 
-The production inventory contains 21,788 covariates (183.2 GB). The proposed deposit covers 21,685 layers, comprising 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC vegetation layers are withheld pending confirmation of their source terms, and five HydroSHEDS layers are withheld under their source agreement. Three legacy Hydrography90m direction or ID layers and 70 GLU all-class patch layers are withheld for quality. The public deposit is pending. The v2.2 source input inventory records the 660 pinned h90m tiles and four boundary files.
+The v2.3 production inventory contains 21,788 covariates (183.2 GB). The proposed deposit covers 21,685 layers, comprising 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC vegetation layers are withheld pending confirmation of their source terms, and five HydroSHEDS layers are withheld under their source agreement. Three legacy Hydrography90m direction or ID layers and 70 GLU all-class patch layers are withheld for quality. The public deposit is pending. The v2.2 source input inventory records the 660 pinned h90m tiles and four boundary files.
 
 MPI temperature triplets in five affected combinations are jointly warped from decoded source bands. The revised triplets have a maximum identity residual of 7.63 × 10⁻⁶ °C. The 27 future GDD ensembles use common eligible models across the three thresholds and agree with independent recomputation. GHS-SMOD includes classes 21, 22, 23 and 30. The four gridded feature distances match a second exact Euclidean transform. JRC water distance uses native maximum-extent pixel centres, verified in three regional source windows. The h90m upstream-cell elevation trio shares one cleaned 20-tile mosaic and obeys min ≤ mean ≤ max. Terrain uses Copernicus GLO-90 with EGM2008 heights. Derivatives use a complete 3×3 neighbourhood.
 
@@ -142,5 +142,7 @@ A data manuscript describing CHECO26 is in preparation. Until it is available,
 please cite the database through this repository:
 
 CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research. https://github.com/EldonQ/CHECO26
+
+For v2.3, all 55 CHELSA BIO05/06/07 triplets were checked across the national grid. Five additional model triplets and their five ensembles were rebuilt. The maximum absolute identity residual is 7.63 × 10⁻⁶ °C.
 
 Native-tile replay was audited on all 48 legacy h90m rasters. Version 2.2 updates nine extrema and the sparse outlet flag. The 22 historical means are retained after a comparison against independently coverage-weighted values. Three direction or ID layers remain internal. Native input checksums are in `data/H90M_SOURCE_MANIFEST.csv`.

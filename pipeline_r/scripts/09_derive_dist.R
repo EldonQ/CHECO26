@@ -142,13 +142,17 @@ run_task <- function(tag) {
 main <- function(only = NULL) {
   print_grid()
   tasks <- if (is.null(only)) TASKS else intersect(TASKS, only)
+  failed <- character()
   for (tag in tasks) {
     r <- tryCatch(run_task(tag), error = function(e) list(status = "error", note = conditionMessage(e)))
-    if (identical(r$status, "error")) cat(sprintf("  %-16s ERROR : %s\n", tag, r$note))
-    else if (identical(r$status, "skip")) cat(sprintf("  %-16s skip\n", tag))
+    if (identical(r$status, "error")) {
+      failed <- c(failed, tag)
+      cat(sprintf("  %-16s ERROR : %s\n", tag, r$note))
+    } else if (identical(r$status, "skip")) cat(sprintf("  %-16s skip\n", tag))
     else cat(sprintf("  %-16s ok   nfeat=%s  [%.1f, %.1f]  %.0f 秒\n",
                      tag, format(r$nfeat, big.mark = ","), r$vmin, r$vmax, r$sec))
   }
+  if (length(failed)) stop("Distance tasks failed: ", paste(failed, collapse = ", "), call. = FALSE)
   invisible(NULL)
 }
 

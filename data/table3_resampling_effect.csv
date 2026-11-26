@@ -1,4 +1,4 @@
-"layer","n_cells","med_abs_diff","p95_abs_diff","med_rel_diff_pct","p90_rel_diff_pct","pct_rel_under_1pct","med_within_cv_pct","p90_within_cv_pct"
-"vege / forest canopy height (30 m, cm->m)",200,0,0.393013805480876,0,4.51974570927606,75.5,90.0015928755299,907.324998041618
-"hydro / Hydrosheds accumulation (90 m)",200,1.95778810334723,568.961801335568,7.84691376275557,34.4061639492817,12,277.414240303429,480.874646493873
-"dist / stream distance downstream-near (90 m)",200,4.1906209788043,22.212240913913,2.47788143356238,8.79580453387814,26.5,76.9735806418012,97.0207094044396
+"layer","n_cells","relpath","med_n_src","med_abs_diff","p95_abs_diff","med_rel_diff_pct","p90_rel_diff_pct","pct_rel_under_1pct","med_within_cv_pct","p90_within_cv_pct"
+"vege / CATCD 2025 tree cover (30 m)",200,"reg/vege/catcd/treecover/reg_vege_catcd_treecover.tif",1380.3893673218,0.0836117580517004,1.17750454822617,2.2032022711162,19.4417578997094,31,128.483660803432,703.34527316236
+"lulc / CLCD 2000 forest proportion (30 m)",200,"reg/lulc/clcd/2000/forest/reg_lulc_clcd_2000_forest_prop.tif",1111.11111080647,0,2.3043909080922e-08,0,2.84874303851556e-06,100,65.1103635267702,564.387794641888
+"dist / stream distance downstream-near (90 m)",200,"reg/dist/h90m/stream-dist-dw-near/reg_dist_h90m_stream-dist-dw-near.tif",144.365754444007,4.1906209788043,22.212240913913,2.47788143356238,8.79580453387814,26.5,76.9735806418012,97.0207094044396

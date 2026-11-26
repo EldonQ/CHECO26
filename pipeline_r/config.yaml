@@ -168,6 +168,18 @@ climate:
     "2055": "2041-2070"
     "2085": "2071-2100"
   bio03_scale: 100                 # CHELSA bio03 原生分数(0-1)，×100 → WorldClim 百分数口径
+  # Stage 10 reprojects each of these BIO05/06/07 groups as a decoded stack.
+  joint_temperature_groups:
+    - mpi-esm1-2-hr/2055/ssp370
+    - mpi-esm1-2-hr/2055/ssp585
+    - mpi-esm1-2-hr/2085/ssp126
+    - mpi-esm1-2-hr/2085/ssp370
+    - mpi-esm1-2-hr/2085/ssp585
+    - ukesm1-0-ll/2025/ssp126
+    - ukesm1-0-ll/2025/ssp370
+    - ukesm1-0-ll/2025/ssp585
+    - ipsl-cm6a-lr/2055/ssp126
+    - mri-esm2-0/2055/ssp585
   crop_lonlat: [70, 138, 15, 56]   # 投影前裁剪窗口（lon_min,lon_max,lat_min,lat_max），覆盖模板留余量
   # ensmean = 5 个已交付 GCM 层的逐像元等权算术平均（后处理，非独立降尺度）
 

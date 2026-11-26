@@ -1,10 +1,10 @@
 {
   "title": "CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research",
-  "description": "<p>CHECO26 harmonizes 21,788 environmental raster layers for China on the 1 km China Albers grid (4,861 × 4,062 cells, float32, NoData −9999).</p><p>Twenty-five dataset entries from nineteen source products cover climate, soil, land cover, human pressure, hydrology, vegetation, distance and terrain. The inventory includes 16,286 focal layers at 1, 5, 10 and 20 km radii and 17 distance surfaces.</p><p>The proposed public deposit contains 21,710 layers: 21,637 under open terms and 73 with noncommercial source terms. Five HydroSHEDS layers are withheld for source licence terms. Three legacy h90m topology or ID layers and 70 degenerate GLU all-class patch layers are retained internally. The deposit is pending.</p>",
+  "description": "<p>CHECO26 v2.3 harmonizes 21,788 Chinese environmental layers on a 1 km China Albers grid.</p><p>The proposed deposit contains 21,685 layers, including 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC layers are pending licence confirmation, five HydroSHEDS layers are restricted, and 73 layers are retained internally for quality. The raster deposit is pending.</p>",
   "upload_type": "dataset",
   "access_right": "open",
   "license": "other-open",
-  "version": "2.2",
+  "version": "2.3",
   "language": "eng",
   "creators": [
     {

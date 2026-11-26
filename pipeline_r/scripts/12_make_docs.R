@@ -7,7 +7,7 @@
 # 不重推，而是保留已有行、剔除撤出数据集、为新数据集生成行。
 #
 # 产出：
-#   00_docs/variable_dictionary.csv   每个交付层一行（21,110 行 + 8 withdrawn）
+#   00_docs/variable_dictionary.csv   每个 active 生产层一行
 #   00_docs/LAYER_INDEX.md            按主题/数据集的层数索引
 # =============================================================================
 
@@ -109,6 +109,16 @@ main <- function(fill_stats = TRUE, refresh_paths = character()) {
   out <- out[out$relpath %in% act, ]
   cat(sprintf("合并后: %d 行（期望 21,788）\n", nrow(out)))
   stopifnot(!anyDuplicated(out$relpath))
+
+  outlet <- out$relpath == "reg/hydro/h90m/outlet/reg_hydro_h90m_outlet.tif"
+  out$sdm_note[outlet] <- "Sparse outlet flag. Valid cells are 1. Use as an event index."
+  forest_patch <- grepl("^reg/lulc/glu1km/.*_patch(density|size)-forest_f[0-9]+[.]tif$", out$relpath)
+  out$sdm_note[forest_patch] <- paste("Anchor-based disk metric. Intersecting forest may be",
+                                    "present when no patch is counted and this raster is NoData.")
+  catcd <- out$theme == "vege" & out$dataset == "catcd"
+  out$note[catcd] <- "CATCD 2025 TreeCover percent and its focal means."
+  smod <- grepl("^reg/anthro/smod/(2025|2030)/", out$relpath)
+  out$sdm_note[smod] <- "Future projection from GHSL Data Package 2023."
 
   if (fill_stats || length(refresh_paths)) {
     stopifnot(all(refresh_paths %in% out$relpath))

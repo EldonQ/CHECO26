@@ -17,6 +17,50 @@ chk <- function(label, ok, detail = "") {
   if (!ok) fails <<- fails + 1L
 }
 
+if ("--temperature" %in% commandArgs(trailingOnly = TRUE)) {
+  # Check all delivered BIO05/06/07 scenarios, including the historical climatology.
+  future <- new.env()
+  source(file.path(R_DIR, "10_future_chains.R"), local = future, encoding = "UTF-8")
+  vars <- future$temperature_vars
+  tasks <- Filter(function(t) t$v == "bio05", future$build_manifest())
+  groups <- c(list(c("reg", "bioclim", "chelsa21", "present")),
+               lapply(tasks, function(t) head(t$parts, -1L)))
+  stopifnot(length(groups) == 55L)
+  temperature_residual <- function(parts) {
+    paths <- vapply(vars, function(v) layer_path(c(parts, v)), "")
+    if (!all(vapply(paths, check_alignment, TRUE)))
+      stop("Temperature alignment failed: ", paste(parts, collapse = "/"))
+    rasters <- rast(c(PATH_MASK(), paths))
+    readStart(rasters)
+    on.exit(readStop(rasters))
+    peak <- 0
+    for (row in seq.int(1L, nrow(rasters), by = 128L)) {
+      n <- min(128L, nrow(rasters) - row + 1L)
+      block <- readValues(rasters, row = row, nrows = n, mat = TRUE)
+      land <- !is.na(block[, 1]) & block[, 1] == 1
+      valid <- !is.na(block[, 2:4, drop = FALSE])
+      if (!all(valid == land))
+        stop("Temperature mask mismatch: ", paste(parts, collapse = "/"))
+      if (any(land)) {
+        residual <- max(abs(block[land, 2] - block[land, 3] - block[land, 4]))
+        if (!is.finite(residual))
+          stop("Non-finite temperature residual: ", paste(parts, collapse = "/"))
+        peak <- max(peak, residual)
+      }
+    }
+    peak
+  }
+
+  peak <- 0
+  for (parts in groups) {
+    error <- temperature_residual(parts)
+    peak <- max(peak, error)
+    chk(paste(parts, collapse = "/"), error < 1e-5, sprintf("residual %.9g degC", error))
+  }
+  cat(sprintf("55 temperature triplets. Maximum residual %.9g degC. %d failures.\n", peak, fails))
+  quit(status = as.integer(fails > 0L))
+}
+
 cov <- PATH_COV()
 disk <- list.files(cov, pattern = "\\.tif$", recursive = TRUE, full.names = FALSE)
 disk <- disk[!grepl("\\.(tmp\\.tif|aux\\.xml)$", disk)]

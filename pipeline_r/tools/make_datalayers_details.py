@@ -384,10 +384,12 @@ def parse_row(row):
             variable = parts[4]
         else:
             variable = parts[3]
+            if dataset == "catcd":
+                sub_period = start_year = end_year = "2025"
     elif theme == "anthro":
         year = parts[3]
         variable = parts[4]
-        period = "present"
+        period = "future" if dataset == "smod" and int(year) > 2020 else "present"
         sub_period = year
         start_year = end_year = year
     elif theme == "lulc":

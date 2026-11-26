@@ -14,7 +14,7 @@ downloading anything.
 | `mask_china.tif` | China mask (1 = inside the national boundary, `all_touched=True`), 9,490,310 valid cells |
 | `table2_dataset_layer_counts.csv` | machine-readable version of Table 1 in the manuscript: layer counts per dataset entry |
 | `H90M_SOURCE_MANIFEST.csv` | Native Hydrography90m input sizes and SHA-256 values, including the clipping boundary |
-| `table3_resampling_effect.csv` | machine-readable version of Table 2: the resampling check on three representative layers |
+| `table3_resampling_effect.csv` | machine-readable version of Table 2: the 200-cell resampling checks for CATCD 2025, CLCD 2000 forest and h90m distance |
 | `sample_layers/reg/...` | nine representative delivered layers, checked cell by cell against the delivery tree, kept in the delivery directory layout so the naming convention is self-documenting |
 | `source_layers/chelsa21/...` | the raw 30 arc-sec CHELSA v2.1 source of one sample layer (bio01, packed INT2U with scale 0.1 / offset −273.15), used by the standardization example to demonstrate reprojection from EPSG:4326 |
 | `source_layers/smod/...` | GHS-SMOD 2020 settlement classes cropped to the China window (30 arc-sec, CC BY 4.0), the public input of the distance example |
@@ -68,6 +68,8 @@ the production dictionary by [`../pipeline_r/tools/make_datalayers_details.py`](
 | `reg/lulc/glu1km/2020/forest/..._prop_f20000.tif` | lulc | Global LULC projection | same derivation at the widest window (41 x 41), which uses the explicit count path |
 | `reg/dist/grip4/road/...` | dist | GRIP4 | distance to the road network |
 | `reg/dist/smod/urban/...` | dist | GHS-SMOD | distance to settlements, reproduced by the distance example |
+
+The five CATCD products describe the 2025 TreeCover snapshot and its focal means. GHS-SMOD's 2025 and 2030 layers are source projections.
 
 `release_status` identifies proposed deposit candidates and layers retained internally. Use the `category` and `dataset` columns together to locate `dataset_key` in `LICENCE_REGISTRY.csv`.
 The GLO-90 source tile URLs and SHA-256 hashes are pinned in `COPDEM90_source_tiles.csv`. `H90M_SOURCE_MANIFEST.csv` pins 660 native Hydrography90m rasters and the four components of the historical clipping boundary. Paths in that inventory are relative to the h90m source root.

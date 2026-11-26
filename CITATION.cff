@@ -7,8 +7,7 @@ title: "CHECO26: A China-wide cross-thematic raster database at 1-km resolution 
 abstract: >-
   A uniform-grid library of 21,788 environmental layers covering China at 1 km in
   an equal-area Albers projection (WGS 84, central meridian 105 E, standard
-  parallels 25 N and 47 N). Twenty-five dataset entries drawn from nineteen source
-  products across eight categories (bioclim, soil, lulc, anthro, hydro, vege,
+  parallels 25 N and 47 N). Twenty-five dataset entries across eight categories (bioclim, soil, lulc, anthro, hydro, vege,
   dist, topo) are standardised to one grid of 4,861 x 4,062 cells, one data type
   (float32) and one NoData convention (-9999). Besides the harmonised source
   layers the database delivers 16,286 focal-statistics layers at four radii
@@ -18,7 +17,7 @@ abstract: >-
   China-relevant projection (GLU1km, 540 layers) and a harmonised yearly
   reconstruction 1960-2100 under five SSP-RCP scenarios (18,440 layers). Total
   volume is 183.2 GB. The proposed public deposit contains 21,685 layers.
-version: "2.2"
+version: "2.3"
 type: dataset
 keywords:
   - environmental covariates

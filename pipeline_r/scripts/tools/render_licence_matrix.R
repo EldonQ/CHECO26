@@ -48,4 +48,5 @@ render_licence_matrix <- function(docs = PATH_DOCS()) {
   invisible(md)
 }
 
-if (sys.nframe() == 0L) render_licence_matrix()
+main <- function() render_licence_matrix()
+if (sys.nframe() == 0L) main()

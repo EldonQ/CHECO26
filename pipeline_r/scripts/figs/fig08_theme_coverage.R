@@ -11,7 +11,7 @@
 # Usage: Rscript R/figs/fig08_theme_coverage.R
 
 root <- Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM")
-out_dir <- file.path(root, "00_docs", "SUBMISSION", "figures")
+out_dir <- Sys.getenv("CHECO_FIGURES_OUT", file.path(root, "00_docs", "SUBMISSION", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # ---- coverage table -----------------------------------------------------------
@@ -23,16 +23,17 @@ rows <- list(
   list(theme = "lulc",    name = "hlu1km (SSP-RCP)",          kind = "scen",   span = c(2021, 2100), pts = NULL, year = NA),
   list(theme = "lulc",    name = "clcd",                      kind = "obs",    span = c(2000, 2025), pts = NULL, year = NA),
   list(theme = "lulc",    name = "glu1km",                    kind = "pt",     span = NULL, pts = c(2020, 2030, 2050, 2100), year = NA),
-  list(theme = "bioclim", name = "chelsa21",                  kind = "static", span = NULL, pts = NULL, year = NA),
+  list(theme = "bioclim", name = "chelsa21",                  kind = "obs",    span = c(1981, 2010), pts = NULL, year = NA),
   list(theme = "bioclim", name = "chelsa21 (5-GCM ensmean)",  kind = "pt",     span = NULL, pts = c(2025, 2055, 2085), year = NA),
   list(theme = "bioclim", name = "chelsa21 (single GCM)",     kind = "pt",     span = NULL, pts = c(2025, 2055, 2085), year = NA),
   list(theme = "soil",    name = "csdlv2",                    kind = "static", span = NULL, pts = NULL, year = NA),
   list(theme = "anthro",  name = "hfp",                       kind = "obs",    span = c(2000, 2024), pts = NULL, year = NA),
-  list(theme = "anthro",  name = "smod",                      kind = "pt",     span = NULL, pts = seq(1975, 2030, by = 5), year = NA),
+  list(theme = "anthro",  name = "smod",                      kind = "pt",     span = NULL, pts = seq(1975, 2020, by = 5), year = NA),
+  list(theme = "anthro",  name = "smod (projected)",          kind = "scen_pt", span = NULL, pts = c(2025, 2030), year = NA),
   list(theme = "hydro",   name = "h90m",                      kind = "static", span = NULL, pts = NULL, year = NA),
   list(theme = "hydro",   name = "hydrosheds",                kind = "static", span = NULL, pts = NULL, year = NA),
   list(theme = "vege",    name = "glassndvi",                 kind = "obs",    span = c(2020, 2022), pts = NULL, year = NA),
-  list(theme = "vege",    name = "catcd",                     kind = "obs",    span = c(1985, 2025), pts = NULL, year = NA),
+  list(theme = "vege",    name = "catcd",                     kind = "pt",     span = NULL, pts = 2025, year = NA),
   list(theme = "vege",    name = "ch2019 (canopy height)",    kind = "static", span = NULL, pts = NULL, year = 2019),
   list(theme = "vege",    name = "agb2019 (biomass)",         kind = "static", span = NULL, pts = NULL, year = 2019),
   list(theme = "dist",    name = "roads, water, trails",      kind = "static", span = NULL, pts = NULL, year = NA),
@@ -71,7 +72,7 @@ draw <- function() {
             xaxs = "i", yaxs = "i", family = "sans")
   on.exit(par(op), add = TRUE)
 
-  plot(NA, xlim = XLIM, ylim = c(0.2, YTOP + 3.4), axes = FALSE, xlab = "", ylab = "")
+  plot(NA, xlim = XLIM, ylim = c(0.2, YTOP + 5.0), axes = FALSE, xlab = "", ylab = "")
 
   segments(1960, ypos, 2100, ypos, col = col_rule, lwd = 0.6)
   abline(v = 2020, lty = 3, lwd = 1.0, col = "#8C8C8C")
@@ -86,7 +87,8 @@ draw <- function() {
     if (!is.null(r$pts)) {
       pts <- r$pts[r$pts >= 1960 & r$pts <= 2100]
       segments(min(pts), y, max(pts), y, col = col_pt, lwd = 0.7)
-      points(pts, rep(y, length(pts)), pch = 21, bg = "white", col = col_pt,
+      points(pts, rep(y, length(pts)), pch = if (r$kind == "scen_pt") 24 else 21,
+             bg = if (r$kind == "scen_pt") col_scen else "white", col = col_pt,
              cex = 0.72, lwd = 0.9)
     }
     if (r$kind == "static") {
@@ -115,14 +117,13 @@ draw <- function() {
   mtext("no time dimension", side = 3, at = STATIC_X, cex = 0.66, line = 0.2,
         col = "#555555")
 
-  legend(x = 1958, y = YTOP + 3.25, xjust = 0, yjust = 1, ncol = 2, bty = "n",
+  legend(x = 1958, y = YTOP + 4.8, xjust = 0, yjust = 1, ncol = 2, bty = "n",
          cex = 0.72, seg.len = 1.5, x.intersp = 0.7, y.intersp = 1.05,
-         legend = c("observed series", "scenario / projection", "epochs",
-                    "static layer"),
-         pch = c(NA, NA, 21, 22), lty = c(1, 1, NA, NA), lwd = c(6, 6, NA, NA),
-         pt.bg = c(NA, NA, "white", col_static),
-         pt.cex = c(NA, NA, 0.8, 1.0),
-         col = c(col_obs, col_scen, col_pt, "#6E6E6E"))
+         legend = c("historical coverage", "scenario / projection", "epochs",
+                    "projected epochs", "static layer"),
+         pch = c(NA, NA, 21, 24, 22), lty = c(1, 1, NA, NA, NA), lwd = c(6, 6, NA, NA, NA),
+         pt.bg = c(NA, NA, "white", col_scen, col_static), pt.cex = c(NA, NA, 0.8, 0.8, 1.0),
+         col = c(col_obs, col_scen, col_pt, col_pt, "#6E6E6E"))
 }
 
 for (dev in c("png", "pdf")) {

@@ -21,7 +21,7 @@
 #     该脚本补齐 source_file、variable_definition 的 [doc]/[std]/[name] 等级与类别的
 #     源图例代码、hlu1km urban/water 的时间不变性注记，以及 19 个 _max/_min 层的重采样
 #     声明。它是幂等的，可反复运行（--check 只报告不写盘）。两步都跑完，表才是
-#     21,118 行 × 25 列全部填充的状态。
+#     溯源和定义证据等级齐全。
 #
 #     验证：scripts/enrich_provenance.py --check 应输出四项改动数全为 0。
 #
@@ -313,13 +313,6 @@ rows_chelsa <- function() {
         r$missing_boundary_rule <- "Exclude source Int32 NoData 2147483647 before resampling."
       }
     }
-    if (parts[3] == "chelsa21-mpi-esm1-2-hr" && v %in% c("bio05", "bio06", "bio07") &&
-        (parts[5] == "2085" || (parts[5] == "2055" && parts[6] != "ssp126"))) {
-      r$script_function <- "R/10_future_chains.R : warp_mpi_temperature"
-      r$processing_steps <- paste("Decode the three aligned source bands to a float stack, jointly project",
-                                  "with bilinear resampling, mask and store as float32.")
-      r$derivation_formula <- "BIO05, BIO06 and BIO07 share interpolation support."
-    }
     out[[length(out) + 1L]] <<- r
   }
   for (v in vars) {
@@ -415,6 +408,37 @@ reconcile_source_lineage <- function(d) {
     d$derivation_formula[nongdd] <- "Equal-weight mean of available standardized GCM members."
     d$missing_boundary_rule[nongdd] <- "Ignore missing members. NoData when no member is available or outside the national mask."
   }
+  joint_keys <- as.character(unlist(CFG()$climate$joint_temperature_groups))
+  joint <- which(d$status == "active" & grepl(
+    "^reg/bioclim/chelsa21-[^/]+/scenario/[0-9]{4}/[^/]+/bio0[567]/", paths))
+  joint <- joint[sub("^reg/bioclim/chelsa21-([^/]+)/scenario/([^/]+/[^/]+)/.*$", "\\1/\\2",
+                     paths[joint]) %in% joint_keys]
+  d$script_function[joint] <- "R/10_future_chains.R : warp_joint_temperature"
+  d$processing_steps[joint] <- paste("Decode aligned native BIO05, BIO06 and BIO07 into a float32",
+    "stack, jointly project with bilinear resampling, and apply the national mask.")
+  d$derivation_formula[joint] <- "BIO05, BIO06 and BIO07 share bilinear interpolation support."
+  d$source_scale_offset[joint] <- ifelse(grepl("/bio07/", paths[joint]),
+    "Scale 0.1, offset 0 (annual temperature difference)",
+    "Scale 0.1, offset -273.15 (degrees Celsius)")
+  d$source_nodata[joint] <- "65535 (native packed inputs)"
+  d$notes[joint] <- "The three native inputs use the same grid and are projected as one decoded stack."
+
+  smod <- which(d$status == "active" & startsWith(paths, "reg/dist/smod/"))
+  d$source_dataset[smod] <- "GHS-SMOD R2023A, 2020 epoch; settlement classes 21, 22, 23 and 30"
+  d$source_scale_offset[smod] <- "None (categorical class codes)"
+  projected_smod <- which(d$status == "active" & grepl("^reg/anthro/smod/(2025|2030)/", paths))
+  d$notes[projected_smod] <- "Future projection in the JRC GHSL 2023 Data Package."
+
+  catcd <- which(d$status == "active" & startsWith(paths, "reg/vege/catcd/"))
+  d$source_doi_url[catcd] <- "10.5281/zenodo.19160322"
+  d$source_citation[catcd] <- paste(
+    "Cai et al., China Annual Tree Cover Dataset, Part VI, version 3 (2026),",
+    "CATCD_2025.tif, https://doi.org/10.5281/zenodo.19160322.",
+    "Methods: https://doi.org/10.1016/j.isprsjprs.2024.08.001.")
+  d$script_function[catcd] <- "R/03_ingest_static.R : warp_to_template"
+  focal_catcd <- catcd[grepl("_f[0-9]+[.]tif$", paths[catcd])]
+  d$script_function[focal_catcd] <- "R/04_ingest_timeseries.R : focal_mean (standardized 2025 layer)"
+  d$notes[catcd] <- "Delivered coverage is the 2025 TreeCover band and its focal means."
   d
 }
 

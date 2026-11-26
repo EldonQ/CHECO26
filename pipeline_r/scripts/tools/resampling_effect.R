@@ -31,17 +31,15 @@ n_cell <- if (length(commandArgs(TRUE))) as.integer(commandArgs(TRUE)[1]) else 3
 # 候选：每个主题挑一个有代表性的连续型层
 # nd   = 源 nodata 值（必须显式排除；terra 未必读得到声明）
 # scale = 源单位换算（见溯源表 source_scale_offset）
-# 2026-10-21：vege 的源以**厘米**存储（nodata=65535），若不乘 0.01 会得到
-# 319 m 的"平均冠层高度"这种物理不可能值——第一次跑就踩了这个坑。
 cases <- list(
-  list(key = "vege / forest canopy height (30 m, cm->m)",
-       our = "reg/vege/ch2019/ch/reg_vege_ch2019_ch.tif",
-       src = "E:/CHECO26/NDVI_forest aboveground biomass_forest canopy height/forest canopy height/_/China_Forest_Canopy_Height_2019.tif",
-       nd = 65535, scale = 0.01),
-  list(key = "hydro / Hydrosheds accumulation (90 m)",
-       our = "reg/hydro/hydrosheds/accumulation/reg_hydro_hydrosheds_accumulation.tif",
-       src = "E:/HydroSHEDS Core Data/work/00_src/as_acc_3s.tif",
-       nd = NA_real_, scale = 1),
+  list(key = "vege / CATCD 2025 tree cover (30 m)",
+       our = "reg/vege/catcd/treecover/reg_vege_catcd_treecover.tif",
+       src = P("catcd"),
+       nd = -128, scale = 1),
+  list(key = "lulc / CLCD 2000 forest proportion (30 m)",
+       our = "reg/lulc/clcd/2000/forest/reg_lulc_clcd_2000_forest_prop.tif",
+       src = file.path(PATH_ARCHIVE(), "clcd-albert", "CLCD_v01_2000_albert.tif"),
+       nd = 0, scale = 1, class = 2),
   list(key = "dist / stream distance downstream-near (90 m)",
        our = "reg/dist/h90m/stream-dist-dw-near/reg_dist_h90m_stream-dist-dw-near.tif",
        src = h90m,
@@ -101,6 +99,7 @@ for (cs in cases) {
         bad <- is.na(v) | (!is.na(nd) & v == nd)
         if (all(bad)) return(c(mean = NA_real_, stdev = NA_real_, cnt = 0))
         vv <- v[!bad]; cc <- c[!bad]
+        if (!is.null(cs$class)) vv <- as.numeric(vv == cs$class)
         m  <- sum(vv * cc) / sum(cc)
         var <- sum(cc * (vv - m)^2) / sum(cc)
         c(mean = m * sc, stdev = sqrt(max(var, 0)) * sc, cnt = sum(cc))
@@ -141,6 +140,7 @@ for (cs in cases) {
 
   res[[length(res) + 1L]] <- data.frame(
     layer = cs$key, n_cells = got,
+    relpath = cs$our, med_n_src = median(m[, "n_src"]),
     med_abs_diff = median(absd), p95_abs_diff = as.numeric(quantile(absd, 0.95)),
     med_rel_diff_pct = 100 * median(reld),
     p90_rel_diff_pct = 100 * as.numeric(quantile(reld, 0.90)),
@@ -150,6 +150,7 @@ for (cs in cases) {
   rm(src); gc(verbose = FALSE)
 }
 
+if (length(res) != length(cases)) stop("Incomplete resampling validation")
 if (length(res)) {
   out <- do.call(rbind, res)
   f <- Sys.getenv("CHECO_EFFECT_CSV", file.path(PATH_DOCS(), "resampling_effect.csv"))

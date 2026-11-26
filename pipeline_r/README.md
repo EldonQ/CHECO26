@@ -1,6 +1,6 @@
 # CHECO26 pipeline (R)
 
-This pipeline supports the v2.2 delivery: 21,788 layers, 183.2 GB,
+This pipeline supports the v2.3 delivery: 21,788 layers, 183.2 GB,
 float32 on the China_Albers 1-km grid.
 
 It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That
@@ -49,6 +49,8 @@ pipeline_r/
 
 ## Running it
 
+Use `data/LICENCE_REGISTRY.csv` and the production release manifest to determine release eligibility. Distance-stage input errors abort the pipeline.
+
 The scripts resolve their paths from a single root, `CHECO_ROOT`, and read
 `<CHECO_ROOT>/scripts/config.yaml`. That layout is the delivery layout, which is
 wider than this repository: the delivery root also holds `data/covariates/`,
@@ -60,6 +62,8 @@ export CHECO_ROOT=/path/to/delivery      # or set it in scripts/_bootstrap.R
 Rscript scripts/02_template.R
 Rscript scripts/run_all.R 04 09 10 17 18  # revised stages with their production sources
 Rscript scripts/19_rebuild_h90m_legacy.R stream_dist_proximity outlet
+# Copy pipeline_r/tools/enrich_provenance.py to <CHECO_ROOT>/scripts/ before running run_metadata_chelsa.R.
+# Rscript <CHECO_ROOT>/R/tools/accept_chelsa.R --temperature checks all 55 temperature groups.
 ```
 
 `config.yaml` in this folder is a copy of the delivery configuration, so the grid

@@ -14,8 +14,8 @@
 # Usage: Rscript R/figs/fig02_layers_atlas.R
 
 root <- Sys.getenv("CHECO_ROOT", "E:/CHECO26/N-SDM")
-tile_dir <- file.path(root, "00_docs", "figures", "tiles")
-out_dir  <- file.path(root, "00_docs", "SUBMISSION", "figures")
+tile_dir <- Sys.getenv("CHECO_ATLAS_TILE_DIR", file.path(root, "00_docs", "figures", "tiles"))
+out_dir <- Sys.getenv("CHECO_FIGURES_OUT", file.path(root, "00_docs", "SUBMISSION", "figures"))
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # ---- palette ---------------------------------------------------------------
@@ -30,8 +30,8 @@ STRIPS <- list(
   list(letter = "(a)", title = "All layers", n = "21,788 layers",
        sub = "8 themes \u00d7 25 datasets",
        note = "1,503 + 3,982 + 16,286 + 17",
-       tiles = c("t_ph", "t_elev", "t_canopy"),
-       labels = c("soil pH, 0-5 cm", "elevation", "canopy height")),
+       tiles = c("t_ph", "t_elev", "t_catcd2025"),
+       labels = c("soil pH, 0-5 cm", "elevation", "tree cover, 2025")),
   list(letter = "(b)", title = "Composition", n = "3,982 layers",
        sub = "3 products \u00d7 5 scales",
        note = "one share per class",
