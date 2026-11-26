@@ -115,17 +115,25 @@ warp_joint_temperature <- function(t, output_vars = t$v) {
   if (!identical(sort(names(files)), vars) || !all(file.exists(files)))
     stop("Missing temperature inputs for ", paste(t$chain, t$cyear, t$ssp))
   source <- terra::crop(terra::rast(unname(files[vars])), t$crop_ext, snap = "out")
-  # Decode all packed bands into a float stack. A joint GDAL warp uses the
-  # same interpolation support for all three terms of BIO05 - BIO06 = BIO07.
+  # Use the same exact pixel-centre transform and four-neighbour interpolation
+  # for all three decoded bands. Explicit support avoids chunk-dependent
+  # widening of the GDAL bilinear kernel when the target resolution is coarser.
   tmp <- tempfile("joint_temperature_", fileext = ".tif")
-  on.exit(unlink(tmp), add = TRUE)
+  projected <- tempfile("joint_temperature_grid_", fileext = ".tif")
+  on.exit(unlink(c(tmp, projected)), add = TRUE)
   unpacked <- terra::rast(nrows = nrow(source), ncols = ncol(source), nlyrs = length(vars),
                           extent = terra::ext(source), crs = terra::crs(source))
   unpacked <- terra::setValues(unpacked, terra::values(source))
   decoded <- terra::writeRaster(unpacked, tmp, datatype = "FLT4S",
                                 gdal = c("TILED=YES", "COMPRESS=DEFLATE"))
-  warped <- terra::project(decoded, GRID()$rast,
-                            method = terra_method(CFG()$resampling$continuous), align = FALSE)
+  grid <- GRID()
+  coord <- format(c(grid$xmin, grid$ymin, grid$xmax, grid$ymax), scientific = FALSE, trim = TRUE)
+  options <- c("-t_srs", grid$crs, "-te", coord, "-ts", grid$width, grid$height,
+               "-r", "bilinear", "-et", "0", "-ovr", "NONE",
+               "-wo", "XSCALE=1", "-wo", "YSCALE=1",
+               "-ot", "Float32", "-co", "TILED=YES", "-co", "COMPRESS=DEFLATE")
+  sf::gdal_utils("warp", terra::sources(decoded)[1], projected, options = options, quiet = TRUE)
+  warped <- terra::rast(projected)
   for (index in match(output_vars, vars)) {
     dst <- layer_path(chain_parts(t$chain, t$cyear, t$ssp, vars[index]))
     atomic_write_raster(dst, apply_china_mask(warped[[index]], NA), dtype = "float32")

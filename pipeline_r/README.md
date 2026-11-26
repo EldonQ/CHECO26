@@ -1,6 +1,6 @@
 # CHECO26 pipeline (R)
 
-This pipeline supports the v2.3 delivery: 21,788 layers, 183.2 GB,
+This pipeline supports the v2.3 delivery: 21,788 layers, 183.1 GB,
 float32 on the China_Albers 1-km grid.
 
 It supersedes an earlier Python pipeline that produced a 1,595-layer delivery. That
@@ -63,7 +63,7 @@ Rscript scripts/02_template.R
 Rscript scripts/run_all.R 04 09 10 17 18  # revised stages with their production sources
 Rscript scripts/19_rebuild_h90m_legacy.R stream_dist_proximity outlet
 # Copy pipeline_r/tools/enrich_provenance.py to <CHECO_ROOT>/scripts/ before running run_metadata_chelsa.R.
-# Rscript <CHECO_ROOT>/R/tools/accept_chelsa.R --temperature checks all 55 temperature groups.
+# Rscript <CHECO_ROOT>/R/tools/accept_chelsa.R --temperature checks all 55 temperature triplets and compares the 30 repaired model rasters against native cell-centre interpolation.
 ```
 
 `config.yaml` in this folder is a copy of the delivery configuration, so the grid

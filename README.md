@@ -26,7 +26,7 @@ The [detailed list](https://github.com/EldonQ/CHECO26/blob/main/data/CHECO26_dat
 | Data type                   | float32, every layer without exception |
 | NoData                      | -9999, every layer |
 | Storage                     | GeoTIFF, DEFLATE compressed, 256 x 256 tiles |
-| Volume                      | 183.2 GB (170.6 GiB) |
+| Volume                      | 183.1 GB (170.6 GiB) |
 
 ## Layer inventory
 
@@ -68,7 +68,7 @@ pipeline is in [`pipeline_r/`](pipeline_r/).
 
 ## Data availability
 
-CHECO26 is a database of 183.2 GB and 21,788 float32 GeoTIFF layers on the China_Albers
+CHECO26 is a database of 183.1 GB and 21,788 float32 GeoTIFF layers on the China_Albers
 1-km grid. It is described in a data manuscript currently in preparation and is not yet
 publicly released. This repository provides everything needed to
 inspect the database and run its worked examples:
@@ -81,13 +81,13 @@ inspect the database and run its worked examples:
 
 ## Data validation
 
-The v2.3 production inventory contains 21,788 covariates (183.2 GB). The proposed deposit covers 21,685 layers, comprising 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC vegetation layers are withheld pending confirmation of their source terms, and five HydroSHEDS layers are withheld under their source agreement. Three legacy Hydrography90m direction or ID layers and 70 GLU all-class patch layers are withheld for quality. The public deposit is pending. The v2.2 source input inventory records the 660 pinned h90m tiles and four boundary files.
+The v2.3 production inventory contains 21,788 covariates (183.1 GB). The proposed deposit covers 21,685 layers, comprising 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC vegetation layers are withheld pending confirmation of their source terms, and five HydroSHEDS layers are withheld under their source agreement. Three legacy Hydrography90m direction or ID layers and 70 GLU all-class patch layers are withheld for quality. The public deposit is pending. The v2.2 source input inventory records the 660 pinned h90m tiles and four boundary files.
 
 MPI temperature triplets in five affected combinations are jointly warped from decoded source bands. The revised triplets have a maximum identity residual of 7.63 × 10⁻⁶ °C. The 27 future GDD ensembles use common eligible models across the three thresholds and agree with independent recomputation. GHS-SMOD includes classes 21, 22, 23 and 30. The four gridded feature distances match a second exact Euclidean transform. JRC water distance uses native maximum-extent pixel centres, verified in three regional source windows. The h90m upstream-cell elevation trio shares one cleaned 20-tile mosaic and obeys min ≤ mean ≤ max. Terrain uses Copernicus GLO-90 with EGM2008 heights. Derivatives use a complete 3×3 neighbourhood.
 
 ## Running the code
 
-Two things run without the 183.2 GB archive:
+Two things run without the 183.1 GB archive:
 
 - **The three worked examples** in `layer_standardization_example/`, `focal_statistics_example/`
   and `distance_layers_example/`. They are R scripts that call the production functions from
@@ -131,7 +131,7 @@ data disk rather than the system disk.
 | [`distance_layers_example/`](distance_layers_example/) | distance-surface worked example (R, calls production `dist_from_feature()`) |
 | [`figs/`](figs/) | README figures |
 
-The delivered rasters are not in this repository: 183.2 GB cannot live in git.
+The delivered rasters are not in this repository: 183.1 GB cannot live in git.
 What ships here is the layer manifest, the grid definition, the pipeline that
 produced the layers, and the validation evidence — enough to understand, audit
 and run the worked examples on the bundled data. Full production requires the versioned sources.
@@ -143,6 +143,6 @@ please cite the database through this repository:
 
 CHECO26: A China-wide cross-thematic raster database at 1-km resolution for ecological research. https://github.com/EldonQ/CHECO26
 
-For v2.3, all 55 CHELSA BIO05/06/07 triplets were checked across the national grid. Five additional model triplets and their five ensembles were rebuilt. The maximum absolute identity residual is 7.63 × 10⁻⁶ °C.
+For v2.3, all 55 CHELSA BIO05/06/07 triplets were checked across the national grid. Ten model triplets were jointly reprojected with exact pixel-centre coordinates and fixed four-neighbour bilinear interpolation. All nine matching ensemble triplets were rebuilt. The maximum absolute identity residual is 7.63 × 10⁻⁶ °C.
 
 Native-tile replay was audited on all 48 legacy h90m rasters. Version 2.2 updates nine extrema and the sparse outlet flag. The 22 historical means are retained after a comparison against independently coverage-weighted values. Three direction or ID layers remain internal. Native input checksums are in `data/H90M_SOURCE_MANIFEST.csv`.

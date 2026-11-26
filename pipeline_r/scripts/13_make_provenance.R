@@ -415,13 +415,15 @@ reconcile_source_lineage <- function(d) {
                      paths[joint]) %in% joint_keys]
   d$script_function[joint] <- "R/10_future_chains.R : warp_joint_temperature"
   d$processing_steps[joint] <- paste("Decode aligned native BIO05, BIO06 and BIO07 into a float32",
-    "stack, jointly project with bilinear resampling, and apply the national mask.")
-  d$derivation_formula[joint] <- "BIO05, BIO06 and BIO07 share bilinear interpolation support."
+    "stack. Transform the target cell centres exactly onto the native grid; apply the same",
+    "four-neighbour bilinear weights to each band and apply the national mask.")
+  d$derivation_formula[joint] <- paste("Four-neighbour bilinear interpolation on native cell centres.",
+    "BIO05, BIO06 and BIO07 share interpolation support.")
   d$source_scale_offset[joint] <- ifelse(grepl("/bio07/", paths[joint]),
     "Scale 0.1, offset 0 (annual temperature difference)",
     "Scale 0.1, offset -273.15 (degrees Celsius)")
   d$source_nodata[joint] <- "65535 (native packed inputs)"
-  d$notes[joint] <- "The three native inputs use the same grid and are projected as one decoded stack."
+  d$notes[joint] <- "Joint GDAL warp uses -et 0, native resolution and fixed XSCALE=YSCALE=1."
 
   smod <- which(d$status == "active" & startsWith(paths, "reg/dist/smod/"))
   d$source_dataset[smod] <- "GHS-SMOD R2023A, 2020 epoch; settlement classes 21, 22, 23 and 30"

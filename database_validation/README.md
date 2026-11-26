@@ -1,6 +1,6 @@
 # CHECO26 validation
 
-The v2.3 production inventory contains 21,788 covariates (183.2 GB). The proposed deposit covers 21,685 layers, comprising 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC vegetation layers are withheld pending confirmation of their source terms, and five HydroSHEDS layers are withheld under their source agreement. Three legacy Hydrography90m direction or ID layers and 70 GLU all-class patch layers are withheld for quality. The public deposit is pending.
+The v2.3 production inventory contains 21,788 covariates (183.1 GB). The proposed deposit covers 21,685 layers, comprising 21,637 OPEN layers and 48 Hydrography90m derivatives under CC BY-NC 4.0. Twenty-five NESDC vegetation layers are withheld pending confirmation of their source terms, and five HydroSHEDS layers are withheld under their source agreement. Three legacy Hydrography90m direction or ID layers and 70 GLU all-class patch layers are withheld for quality. The public deposit is pending.
 
 ## 2026-11-22 revision
 
@@ -8,6 +8,6 @@ MPI temperature triplets in five affected combinations are jointly warped from d
 
 The production raster SHA-256 manifest, variable dictionary and provenance are generated together. Earlier independent full-pixel scans describe historical versions. The revised outputs have focused independent acceptance checks. The nine public sample files match their production counterparts byte for byte.
 
-The v2.3 temperature validation covers all 55 CHELSA BIO05/06/07 triplets. The maximum absolute residual is 7.63 × 10⁻⁶ °C. The 15 refreshed ensemble outputs match an independent five-member average cell by cell. Table 2 uses CATCD 2025 tree cover, CLCD 2000 forest proportion and h90m downstream distance, with 200 valid cells per example.
+The v2.3 temperature validation covers all 55 CHELSA BIO05/06/07 triplets. The maximum absolute residual is 7.63 × 10⁻⁶ °C. The 27 refreshed ensemble outputs match an independent five-member average cell by cell. Across 30 reprojected model rasters, 1,290 sample values match independent native-grid interpolation to within 3.3 × 10⁻⁶ °C. Table 2 uses CATCD 2025 tree cover, CLCD 2000 forest proportion and h90m downstream distance, with 200 valid cells per example.
 
 Native-tile replay was audited on all 48 legacy h90m rasters. Version 2.2 updates nine extrema and the sparse outlet flag. The 22 historical means are retained after a comparison against independently coverage-weighted values. Three direction or ID layers remain internal. Native input checksums are in `data/H90M_SOURCE_MANIFEST.csv`. The outlet flag increases from 18,551 to 18,557 valid 1 km cells (40 added, 34 removed). Nine extrema differ at a total of 13 cells. Eight groups satisfy min ≤ mean ≤ max throughout their common valid masks. Reprocessing and release selection preserve the legacy source terms.

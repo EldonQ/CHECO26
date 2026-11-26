@@ -57,7 +57,50 @@ if ("--temperature" %in% commandArgs(trailingOnly = TRUE)) {
     peak <- max(peak, error)
     chk(paste(parts, collapse = "/"), error < 1e-5, sprintf("residual %.9g degC", error))
   }
-  cat(sprintf("55 temperature triplets. Maximum residual %.9g degC. %d failures.\n", peak, fails))
+  cat(sprintf("55 temperature triplets. Maximum residual %.9g degC.\n", peak))
+
+  # Check spatial fidelity independently of the BIO05 - BIO06 = BIO07 identity.
+  mask_grid <- rast(PATH_MASK())
+  set.seed(20261126)
+  draw <- sample.int(ncell(mask_grid), 500L)
+  in_mask <- extract(mask_grid, draw)[[1L]] == 1
+  cells <- head(draw[which(in_mask)], 40L)
+  # Retain the high-gradient locations identified in the v2.3 audit.
+  cells <- c(cells, cellFromRowCol(mask_grid, c(2831L, 2833L, 724L), c(1869L, 913L, 1298L)))
+  stopifnot(length(cells) == 43L)
+  centres <- xyFromCell(mask_grid, cells)
+
+  temperature_inputs <- Filter(future$joint_temperature_group, future$build_manifest())
+  n_ref <- 0L
+  ref_peak <- 0
+  for (task in temperature_inputs) {
+    src <- rast(task$src)
+    xy <- project(centres, crs(mask_grid), crs(src))
+    col <- (xy[, 1] - xmin(src)) / res(src)[1L] - 0.5
+    row <- (ymax(src) - xy[, 2]) / res(src)[2L] - 0.5
+    c0 <- floor(col)
+    r0 <- floor(row)
+    dx <- col - c0
+    dy <- row - r0
+    references <- function(dr, dc) {
+      extract(src, cellFromRowCol(src, r0 + 1L + dr, c0 + 1L + dc))[[1L]]
+    }
+    expected <- references(0L, 0L) * (1 - dx) * (1 - dy) +
+      references(0L, 1L) * dx * (1 - dy) +
+      references(1L, 0L) * (1 - dx) * dy +
+      references(1L, 1L) * dx * dy
+    native <- is.finite(expected)
+    observed <- extract(rast(layer_path(task$parts)), cells)[[1L]]
+    if (sum(native) < 40L || any(!is.finite(observed[native])))
+      stop("Insufficient native reference cells: ", paste(task$parts, collapse = "/"))
+    error <- max(abs(expected[native] - observed[native]))
+    ref_peak <- max(ref_peak, error)
+    n_ref <- n_ref + sum(native)
+    chk(paste("Native four-centre sample", paste(task$parts, collapse = "/")), error < 1e-5,
+        sprintf("maximum difference %.9g degC", error))
+  }
+  cat(sprintf("%d native centre checks. Maximum difference %.9g degC. %d failures.\n",
+              n_ref, ref_peak, fails))
   quit(status = as.integer(fails > 0L))
 }
 
